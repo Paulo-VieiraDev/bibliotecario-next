@@ -4,26 +4,35 @@ export type Turma = {
   alunos: Aluno[]
 }
 
-export type Aluno = {
+export interface Aluno {
   id: string
+  created_at: string
   nome: string
   matricula: string
-  turmaId: string
+  turma_id: string
 }
 
-export type Livro = {
+export interface Livro {
   id: string
+  created_at: string
   titulo: string
   autor: string
-  isbn: string
+  editora: string
+  ano: number
   quantidade: number
 }
 
-export type Emprestimo = {
+export interface Emprestimo {
   id: string
-  livroId: string
-  alunoId: string
-  dataEmprestimo: Date
-  dataDevolucao: Date | null
-  status: 'emprestado' | 'devolvido'
+  created_at: string
+  livro_id: string
+  aluno_id: string
+  data_emprestimo: string
+  data_devolucao: string | null
+  status: "emprestado" | "devolvido"
+}
+
+export interface EmprestimoComDetalhes extends Emprestimo {
+  livro: Livro
+  aluno: Aluno
 } 
