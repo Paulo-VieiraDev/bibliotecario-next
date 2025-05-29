@@ -1,11 +1,24 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import { AuthGuard } from "@/components/auth-guard"
 import { useAuth } from "@/hooks/use-auth"
 import { ModeToggle } from "@/components/mode-toggle"
-import { LogOut, BarChart3, BookMarked, BookOpen, Users } from "lucide-react"
+import { LogOut, BarChart3, BookMarked, BookOpen, Users, User } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import { getUsuario } from "@/services/usuarios"
+import type { Usuario } from "@/services/usuarios"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Button } from "@/components/ui/button"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 const routes = [
   {
@@ -31,8 +44,38 @@ const routes = [
 ]
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-  const { signOut } = useAuth()
+  const { user, signOut, error } = useAuth()
   const pathname = usePathname()
+  const [usuario, setUsuario] = useState<Usuario | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    if (user) {
+      getUsuario(user.id)
+        .then(setUsuario)
+        .catch((err) => {
+          console.error('Erro ao carregar usuário:', err)
+          setUsuario(null)
+        })
+        .finally(() => setLoading(false))
+    }
+  }, [user])
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-red-500">Erro: {error.message}</div>
+      </div>
+    )
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    )
+  }
 
   return (
     <AuthGuard>
@@ -42,18 +85,38 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           <h2 className="text-2xl font-extrabold text-primary tracking-tight">Biblioteca Escolar</h2>
           <div className="ml-auto flex items-center space-x-4">
             <ModeToggle />
-            <button
-              className="bg-primary hover:bg-secondary text-white rounded-full p-2 shadow transition"
-              onClick={signOut}
-              title="Sair"
-            >
-              <LogOut className="h-5 w-5" />
-            </button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                  <Avatar className="h-8 w-8">
+                    <AvatarImage src={usuario?.avatar_url} alt={usuario?.nome} />
+                    <AvatarFallback>
+                      {usuario?.nome?.[0]}{usuario?.sobrenome?.[0]}
+                    </AvatarFallback>
+                  </Avatar>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56" align="end" forceMount>
+                <DropdownMenuLabel className="font-normal">
+                  <div className="flex flex-col space-y-1">
+                    <p className="text-sm font-medium leading-none">{usuario?.nome} {usuario?.sobrenome}</p>
+                    <p className="text-xs leading-none text-muted-foreground">
+                      {usuario?.funcao}
+                    </p>
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={signOut}>
+                  <LogOut className="mr-2 h-4 w-4" />
+                  <span>Sair</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </header>
 
-        {/* Espaço para a topbar fixa */}
-        <div className="flex pt-16 min-h-screen">
+        {/* Layout principal */}
+        <div className="flex h-screen pt-16">
           {/* Sidebar começa abaixo da topbar */}
           <aside className="w-64 bg-white border-r flex flex-col shadow-lg rounded-br-3xl">
             <div className="p-8 pb-4 font-extrabold text-2xl tracking-tight flex items-center gap-3 select-none">

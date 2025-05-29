@@ -35,7 +35,7 @@ export default function EmprestimosPage() {
     try {
       const data = await getEmprestimos()
       setEmprestimos(data)
-    } catch (error) {
+    } catch {
       toast.error("Erro ao carregar empréstimos")
     } finally {
       setLoading(false)
@@ -51,7 +51,7 @@ export default function EmprestimosPage() {
       await devolverLivro(id)
       toast.success("Livro devolvido com sucesso!")
       loadEmprestimos()
-    } catch (error) {
+    } catch {
       toast.error("Erro ao devolver livro")
     }
   }
@@ -90,7 +90,7 @@ export default function EmprestimosPage() {
                   {emprestimo.livro.titulo} - {emprestimo.livro.autor}
                 </TableCell>
                 <TableCell>
-                  {emprestimo.aluno.nome} - {emprestimo.aluno.matricula}
+                  {emprestimo.aluno.nome}
                 </TableCell>
                 <TableCell>
                   {new Date(emprestimo.data_emprestimo).toLocaleDateString()}

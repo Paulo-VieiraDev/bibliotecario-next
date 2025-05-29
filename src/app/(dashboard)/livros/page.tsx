@@ -65,42 +65,65 @@ export default function LivrosPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="container py-6 space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold">Livros</h1>
+        <div>
+          <h1 className="text-3xl font-bold text-blue-800">Livros</h1>
+          <p className="text-gray-500 mt-1">Gerencie o acervo da biblioteca</p>
+        </div>
         <LivroDialog onSuccess={loadLivros} trigger={
-          <Button>
+          <Button className="bg-blue-600 hover:bg-blue-700">
             <Plus className="mr-2 h-4 w-4" />
             Novo Livro
           </Button>
         } />
       </div>
 
-      <div className="border rounded-lg">
+      <div className="rounded-lg border bg-white shadow-sm">
         <Table>
           <TableHeader>
-            <TableRow>
-              <TableHead>Título</TableHead>
-              <TableHead>Autor</TableHead>
-              <TableHead>ISBN</TableHead>
-              <TableHead>Quantidade</TableHead>
-              <TableHead className="w-[100px]">Ações</TableHead>
+            <TableRow className="bg-gray-50 hover:bg-gray-50">
+              <TableHead className="font-semibold text-gray-700">Título</TableHead>
+              <TableHead className="font-semibold text-gray-700">Autor</TableHead>
+              <TableHead className="font-semibold text-gray-700">Editora</TableHead>
+              <TableHead className="font-semibold text-gray-700">Edição</TableHead>
+              <TableHead className="font-semibold text-gray-700">Quantidade</TableHead>
+              <TableHead className="font-semibold text-gray-700">Categoria</TableHead>
+              <TableHead className="font-semibold text-gray-700">Ano/Série</TableHead>
+              <TableHead className="font-semibold text-gray-700">Etapa</TableHead>
+              <TableHead className="font-semibold text-gray-700">Tipo</TableHead>
+              <TableHead className="font-semibold text-gray-700">Vida útil</TableHead>
+              <TableHead className="w-[100px] font-semibold text-gray-700">Ações</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {livros.map((livro) => (
-              <TableRow key={livro.id}>
-                <TableCell>{livro.titulo}</TableCell>
+              <TableRow key={livro.id} className="hover:bg-gray-50">
+                <TableCell className="font-medium">{livro.titulo}</TableCell>
                 <TableCell>{livro.autor}</TableCell>
-                <TableCell>{livro.isbn}</TableCell>
-                <TableCell>{livro.quantidade}</TableCell>
+                <TableCell>{livro.editora}</TableCell>
+                <TableCell>{livro.edicao}</TableCell>
+                <TableCell>
+                  <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                    livro.quantidade > 0 
+                      ? "bg-green-100 text-green-800" 
+                      : "bg-red-100 text-red-800"
+                  }`}>
+                    {livro.quantidade}
+                  </span>
+                </TableCell>
+                <TableCell>{livro.categoria}</TableCell>
+                <TableCell>{livro.categoria === "Didático" ? livro.ano_serie : ""}</TableCell>
+                <TableCell>{livro.categoria === "Didático" ? livro.etapa : ""}</TableCell>
+                <TableCell>{livro.categoria === "Didático" ? livro.tipo_didatico : ""}</TableCell>
+                <TableCell>{livro.vida_util ? livro.vida_util : ""}</TableCell>
                 <TableCell>
                   <div className="flex items-center gap-2">
                     <LivroDialog
                       livro={livro}
                       onSuccess={loadLivros}
                       trigger={
-                        <Button variant="ghost" size="icon">
+                        <Button variant="ghost" size="icon" className="hover:bg-blue-50 hover:text-blue-600">
                           <span className="sr-only">Editar</span>
                           <Pencil className="h-4 w-4" />
                         </Button>
@@ -108,7 +131,7 @@ export default function LivrosPage() {
                     />
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
-                        <Button variant="ghost" size="icon">
+                        <Button variant="ghost" size="icon" className="hover:bg-red-50 hover:text-red-600">
                           <span className="sr-only">Excluir</span>
                           <Trash2 className="h-4 w-4" />
                         </Button>
@@ -122,7 +145,10 @@ export default function LivrosPage() {
                         </AlertDialogHeader>
                         <AlertDialogFooter>
                           <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                          <AlertDialogAction onClick={() => handleDelete(livro.id)}>
+                          <AlertDialogAction 
+                            onClick={() => handleDelete(livro.id)}
+                            className="bg-red-600 hover:bg-red-700"
+                          >
                             Excluir
                           </AlertDialogAction>
                         </AlertDialogFooter>

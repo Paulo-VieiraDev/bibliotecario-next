@@ -8,7 +8,6 @@ export interface Aluno {
   id: string
   created_at: string
   nome: string
-  matricula: string
   turma_id: string
 }
 
@@ -18,8 +17,13 @@ export interface Livro {
   titulo: string
   autor: string
   editora: string
-  ano: number
+  edicao: string
   quantidade: number
+  vida_util?: number
+  categoria: string
+  ano_serie?: string
+  etapa?: string
+  tipo_didatico?: string
 }
 
 export interface Emprestimo {

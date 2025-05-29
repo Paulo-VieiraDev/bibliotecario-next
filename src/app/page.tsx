@@ -116,7 +116,7 @@ export default function Home() {
           Tecnologias Utilizadas
         </h3>
 
-        <div className="max-w-6xl mx-auto grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 justify-items-center relative z-10">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 md:gap-8 justify-items-center relative z-10">
           {/* Next.js Card */}
           <div className="relative w-full max-w-64 h-80 rounded-2xl shadow-lg overflow-hidden flex flex-col items-center bg-gray-100 transform hover:scale-105 transition duration-300 ease-in-out">
             <div className="w-full h-full absolute inset-0">
@@ -163,7 +163,7 @@ export default function Home() {
           <div className="relative w-full max-w-64 h-80 rounded-2xl shadow-lg overflow-hidden flex flex-col items-center bg-gray-100 transform hover:scale-105 transition duration-300 ease-in-out">
             <div className="w-full h-full absolute inset-0">
               <Image src="/cards/shadcnui-bg.png" alt="Shadcn UI Background" fill className="object-cover" />
-              <div className="absolute inset-0 bg-gradient-to-t from-gray-900/95 via-gray-800/80 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-gray-900/80 via-gray-800/60 to-transparent" />
             </div>
             <div className="relative flex flex-col items-center justify-start w-full h-full z-10 pt-8 px-6">
               <div className="mb-6 flex items-center justify-center w-16 h-16 rounded-full bg-white/80 shadow-lg">
@@ -173,10 +173,25 @@ export default function Home() {
               <p className="text-white text-sm text-center drop-shadow-lg">Biblioteca de componentes React acessíveis e modernos, garantindo experiência de usuário profissional e consistente.</p>
             </div>
           </div>
+          {/* Vercel Card */}
+          <div className="relative w-full max-w-64 h-80 rounded-2xl shadow-lg overflow-hidden flex flex-col items-center bg-gray-100 transform hover:scale-105 transition duration-300 ease-in-out">
+            <div className="w-full h-full absolute inset-0">
+              <Image src="/cards/vercel-bg.png" alt="Vercel Background" fill className="object-cover" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/90 to-transparent" />
+            </div>
+            <div className="relative flex flex-col items-center justify-start w-full h-full z-10 pt-8 px-6">
+              <div className="mb-6 flex items-center justify-center w-16 h-16 rounded-full bg-white/80 shadow-lg">
+                <Image src="/icons/vercel.png" alt="Vercel Logo" width={40} height={40} />
+              </div>
+              <h4 className="text-white text-xl font-bold mb-2 text-center drop-shadow-lg">Vercel</h4>
+              <p className="text-white text-sm text-center drop-shadow-lg">Plataforma de deploy e hospedagem que oferece performance, segurança e escalabilidade para aplicações web modernas.</p>
+            </div>
+          </div>
         </div>
         <div className="max-w-4xl mx-auto mt-16 text-center text-gray-700 text-base leading-relaxed">
           <p className="mb-4"><span className="font-extrabold text-blue-800">Supabase</span> foi utilizado como backend-as-a-service, permitindo autenticação, armazenamento e consultas em tempo real, sem necessidade de servidor próprio.</p>
-          <p><span className="font-extrabold text-blue-800">Shadcn UI</span> trouxe componentes de interface elegantes, responsivos e acessíveis, elevando o padrão visual e de usabilidade do sistema.</p>
+          <p className="mb-4"><span className="font-extrabold text-blue-800">Shadcn UI</span> trouxe componentes de interface elegantes, responsivos e acessíveis, elevando o padrão visual e de usabilidade do sistema.</p>
+          <p><span className="font-extrabold text-blue-800">Vercel</span> proporciona uma infraestrutura robusta para deploy e hospedagem, garantindo alta performance e disponibilidade do sistema.</p>
         </div>
       </section>
 

@@ -18,11 +18,53 @@ import { toast } from "sonner"
 import type { Livro } from "@/types"
 import { createLivro, updateLivro } from "@/services/livros"
 
+const categorias = [
+  { value: "Didático", label: "Didático" },
+  { value: "Literatura Infantil", label: "Literatura Infantil (6 a 8 anos)" },
+  { value: "Infantojuvenil", label: "Infantojuvenil (9 a 12 anos)" },
+  { value: "Juvenil", label: "Juvenil (13 a 18 anos)" },
+  { value: "Adulto", label: "Adulto" },
+  { value: "Técnico", label: "Técnico" },
+  { value: "Paradidático", label: "Paradidático" },
+]
+
+const etapas = [
+  { value: "Fundamental", label: "Fundamental" },
+  { value: "Médio", label: "Ensino Médio" },
+]
+
+const tiposDidatico = [
+  { value: "Aluno", label: "Aluno" },
+  { value: "Professor", label: "Professor" },
+]
+
+const anosSerie = [
+  { value: "6º ano", label: "6º ano" },
+  { value: "7º ano", label: "7º ano" },
+  { value: "8º ano", label: "8º ano" },
+  { value: "9º ano", label: "9º ano" },
+  { value: "1º EM", label: "1º EM" },
+  { value: "2º EM", label: "2º EM" },
+  { value: "3º EM", label: "3º EM" },
+]
+
+function etapaDoEnsino(anoSerie: string) {
+  if (["6º ano", "7º ano", "8º ano", "9º ano"].includes(anoSerie)) return "Fundamental"
+  if (["1º EM", "2º EM", "3º EM"].includes(anoSerie)) return "Médio"
+  return ""
+}
+
 const livroSchema = z.object({
   titulo: z.string().min(1, "Título é obrigatório"),
   autor: z.string().min(1, "Autor é obrigatório"),
-  isbn: z.string().min(1, "ISBN é obrigatório"),
-  quantidade: z.coerce.number().min(1, "Quantidade deve ser maior que 0"),
+  editora: z.string().min(1, "Editora é obrigatória"),
+  edicao: z.string().min(1, "Edição é obrigatória"),
+  quantidade: z.coerce.number().min(1, "Quantidade é obrigatória"),
+  vida_util: z.coerce.number().optional(),
+  categoria: z.string().min(1, "Categoria é obrigatória"),
+  ano_serie: z.string().optional(),
+  etapa: z.string().optional(),
+  tipo_didatico: z.string().optional(),
 })
 
 type LivroFormValues = z.infer<typeof livroSchema>
@@ -35,14 +77,22 @@ interface LivroFormProps {
 
 export function LivroForm({ livro, onSuccess, onCancel }: LivroFormProps) {
   const [loading, setLoading] = useState(false)
+  const [categoria, setCategoria] = useState(livro?.categoria ?? "")
+  const [anoSerieSelecionado, setAnoSerieSelecionado] = useState(livro?.ano_serie ?? "")
 
   const form = useForm<LivroFormValues>({
     resolver: zodResolver(livroSchema),
     defaultValues: {
       titulo: livro?.titulo ?? "",
       autor: livro?.autor ?? "",
-      isbn: livro?.isbn ?? "",
+      editora: livro?.editora ?? "",
+      edicao: livro?.edicao ?? "",
       quantidade: livro?.quantidade ?? 1,
+      vida_util: livro?.vida_util ?? undefined,
+      categoria: livro?.categoria ?? "",
+      ano_serie: livro?.ano_serie ?? "",
+      etapa: livro?.etapa ?? "",
+      tipo_didatico: livro?.tipo_didatico ?? "",
     },
   })
 
@@ -57,7 +107,7 @@ export function LivroForm({ livro, onSuccess, onCancel }: LivroFormProps) {
         toast.success("Livro cadastrado com sucesso!")
       }
       onSuccess?.()
-    } catch (error) {
+    } catch {
       toast.error("Erro ao salvar livro")
     } finally {
       setLoading(false)
@@ -66,68 +116,207 @@ export function LivroForm({ livro, onSuccess, onCancel }: LivroFormProps) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="w-full max-w-2xl flex flex-col gap-6">
         <FormField
           control={form.control}
           name="titulo"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Título</FormLabel>
+              <div className="flex items-center mb-1">
+                <span className="px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 text-xs font-semibold mr-2">Título</span>
+                <FormLabel className="text-gray-700 font-semibold">Título do livro</FormLabel>
+              </div>
               <FormControl>
-                <Input {...field} />
+                <Input {...field} placeholder="Digite o título" />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-
         <FormField
           control={form.control}
           name="autor"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Autor</FormLabel>
+              <div className="flex items-center mb-1">
+                <span className="px-2 py-0.5 rounded-full bg-green-100 text-green-700 text-xs font-semibold mr-2">Autor</span>
+                <FormLabel className="text-gray-700 font-semibold">Autor</FormLabel>
+              </div>
               <FormControl>
-                <Input {...field} />
+                <Input {...field} placeholder="Digite o autor" />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-
         <FormField
           control={form.control}
-          name="isbn"
+          name="editora"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>ISBN</FormLabel>
+              <div className="flex items-center mb-1">
+                <span className="px-2 py-0.5 rounded-full bg-purple-100 text-purple-700 text-xs font-semibold mr-2">Editora</span>
+                <FormLabel className="text-gray-700 font-semibold">Editora</FormLabel>
+              </div>
               <FormControl>
-                <Input {...field} />
+                <Input {...field} placeholder="Digite a editora" />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-
+        <div className="flex flex-col md:flex-row gap-4">
+          <FormField
+            control={form.control}
+            name="edicao"
+            render={({ field }) => (
+              <FormItem className="flex-1">
+                <div className="flex items-center mb-1">
+                  <span className="px-2 py-0.5 rounded-full bg-yellow-100 text-yellow-700 text-xs font-semibold mr-2">Edição</span>
+                  <FormLabel className="text-gray-700 font-semibold">Edição</FormLabel>
+                </div>
+                <FormControl>
+                  <Input {...field} placeholder="Ex: 1ª edição, 4ª edição" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="quantidade"
+            render={({ field }) => (
+              <FormItem className="flex-1">
+                <div className="flex items-center mb-1">
+                  <span className="px-2 py-0.5 rounded-full bg-pink-100 text-pink-700 text-xs font-semibold mr-2">Quantidade</span>
+                  <FormLabel className="text-gray-700 font-semibold">Quantidade</FormLabel>
+                </div>
+                <FormControl>
+                  <Input type="number" min={1} {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
         <FormField
           control={form.control}
-          name="quantidade"
+          name="vida_util"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Quantidade</FormLabel>
+              <div className="flex items-center mb-1">
+                <span className="px-2 py-0.5 rounded-full bg-gray-200 text-gray-700 text-xs font-semibold mr-2">Vida útil</span>
+                <FormLabel className="text-gray-700 font-semibold">Vida útil (anos) <span className='text-gray-400'>(opcional)</span></FormLabel>
+              </div>
               <FormControl>
-                <Input type="number" min={1} {...field} />
+                <Input type="number" min={1} {...field} placeholder="Ex: 3" />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-
-        <div className="flex justify-end gap-2">
-          <Button type="button" variant="outline" onClick={onCancel}>
+        <FormField
+          control={form.control}
+          name="categoria"
+          render={({ field }) => (
+            <FormItem>
+              <div className="flex items-center mb-1">
+                <span className="px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-700 text-xs font-semibold mr-2">Categoria</span>
+                <FormLabel className="text-gray-700 font-semibold">Categoria</FormLabel>
+              </div>
+              <FormControl>
+                <select
+                  {...field}
+                  className="w-full border-gray-300 rounded-md focus:ring-1 focus:ring-pink-400"
+                  onChange={e => {
+                    field.onChange(e)
+                    setCategoria(e.target.value)
+                  }}
+                >
+                  <option value="">Selecione...</option>
+                  {categorias.map(cat => (
+                    <option key={cat.value} value={cat.value}>{cat.label}</option>
+                  ))}
+                </select>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        {/* Campos extras para Didático */}
+        {categoria === "Didático" && (
+          <div className="flex flex-col gap-6 w-full md:max-h-[60vh] md:overflow-y-auto">
+            <div className="flex flex-col md:flex-row gap-4">
+              <FormField
+                control={form.control}
+                name="ano_serie"
+                render={({ field }) => (
+                  <FormItem className="flex-1">
+                    <div className="flex items-center mb-1">
+                      <span className="px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 text-xs font-semibold mr-2">Ano/Série</span>
+                      <FormLabel className="text-gray-700 font-semibold">Ano/Série</FormLabel>
+                    </div>
+                    <FormControl>
+                      <select
+                        {...field}
+                        className="w-full border-gray-300 rounded-md focus:ring-1 focus:ring-blue-400"
+                        value={field.value}
+                        onChange={e => {
+                          field.onChange(e)
+                          setAnoSerieSelecionado(e.target.value)
+                        }}
+                      >
+                        <option value="">Selecione...</option>
+                        {anosSerie.map(ano => (
+                          <option key={ano.value} value={ano.value}>{ano.label}</option>
+                        ))}
+                      </select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <div className="flex-1">
+                <div className="flex items-center mb-1">
+                  <span className="px-2 py-0.5 rounded-full bg-green-100 text-green-700 text-xs font-semibold mr-2">Etapa</span>
+                  <FormLabel className="text-gray-700 font-semibold">Etapa do ensino</FormLabel>
+                </div>
+                <div className="w-full text-base text-gray-700 font-medium border border-indigo-200 rounded-md py-2 bg-indigo-50 px-3">
+                  {etapaDoEnsino(anoSerieSelecionado) || "Selecione o ano/série"}
+                </div>
+              </div>
+            </div>
+            <FormField
+              control={form.control}
+              name="tipo_didatico"
+              render={({ field }) => (
+                <FormItem>
+                  <div className="flex items-center mb-1">
+                    <span className="px-2 py-0.5 rounded-full bg-pink-100 text-pink-700 text-xs font-semibold mr-2">Tipo</span>
+                    <FormLabel className="text-gray-700 font-semibold">Professor ou Aluno?</FormLabel>
+                  </div>
+                  <FormControl>
+                    <select
+                      {...field}
+                      className="w-full border-gray-300 rounded-md focus:ring-1 focus:ring-green-400"
+                    >
+                      <option value="">Selecione...</option>
+                      {tiposDidatico.map(tp => (
+                        <option key={tp.value} value={tp.value}>{tp.label}</option>
+                      ))}
+                    </select>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+        )}
+        <div className="flex justify-center gap-4 w-full pt-2">
+          <Button type="button" variant="outline" onClick={onCancel} className="rounded-md flex-1">
             Cancelar
           </Button>
-          <Button type="submit" disabled={loading}>
+          <Button type="submit" disabled={loading} className="rounded-md flex-1">
             {loading ? "Salvando..." : livro ? "Atualizar" : "Cadastrar"}
           </Button>
         </div>

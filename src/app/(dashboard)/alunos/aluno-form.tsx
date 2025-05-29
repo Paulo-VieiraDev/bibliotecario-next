@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
@@ -28,7 +28,6 @@ import { getTurmas } from "@/services/turmas"
 
 const alunoSchema = z.object({
   nome: z.string().min(1, "Nome é obrigatório"),
-  matricula: z.string().min(1, "Matrícula é obrigatória"),
   turma_id: z.string().min(1, "Turma é obrigatória"),
 })
 
@@ -48,7 +47,6 @@ export function AlunoForm({ aluno, onSuccess, onCancel, turmas }: AlunoFormProps
     resolver: zodResolver(alunoSchema),
     defaultValues: {
       nome: aluno?.nome ?? "",
-      matricula: aluno?.matricula ?? "",
       turma_id: aluno?.turma_id ?? "",
     },
   })
@@ -73,68 +71,55 @@ export function AlunoForm({ aluno, onSuccess, onCancel, turmas }: AlunoFormProps
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="w-full flex flex-col items-center gap-6">
         <FormField
           control={form.control}
           name="nome"
           render={({ field }) => (
-            <FormItem>
-              <FormLabel>Nome</FormLabel>
+            <FormItem className="w-full flex flex-col items-center">
+              <div className="flex items-center w-11/12 mb-1">
+                <span className="px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 text-xs font-semibold mr-2">Nome</span>
+                <FormLabel className="text-center text-base text-gray-700 font-medium flex-1">Digite o nome</FormLabel>
+              </div>
               <FormControl>
-                <Input {...field} />
+                <Input {...field} className="w-11/12 mx-auto" />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-
-        <FormField
-          control={form.control}
-          name="matricula"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Matrícula</FormLabel>
-              <FormControl>
-                <Input {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
         <FormField
           control={form.control}
           name="turma_id"
           render={({ field }) => (
-            <FormItem>
-              <FormLabel>Turma</FormLabel>
-              <Select
-                onValueChange={field.onChange}
-                defaultValue={field.value}
-              >
-                <FormControl>
-                  <SelectTrigger>
+            <FormItem className="w-full flex flex-col items-center">
+              <div className="flex items-center w-11/12 mb-1">
+                <span className="px-2 py-0.5 rounded-full bg-purple-100 text-purple-700 text-xs font-semibold mr-2">Turma</span>
+                <FormLabel className="text-center text-base text-gray-700 font-medium flex-1">Selecione a turma</FormLabel>
+              </div>
+              <FormControl>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <SelectTrigger className="w-11/12 mx-auto border-gray-300 rounded-md focus:ring-1 focus:ring-purple-400">
                     <SelectValue placeholder="Selecione uma turma" />
                   </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {turmas.map((turma) => (
-                    <SelectItem key={turma.id} value={turma.id}>
-                      {turma.nome}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+                  <SelectContent>
+                    {turmas.map((turma) => (
+                      <SelectItem key={turma.id} value={turma.id}>
+                        {turma.nome}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-
-        <div className="flex justify-end gap-2">
-          <Button type="button" variant="outline" onClick={onCancel}>
+        <div className="flex gap-3 justify-center w-11/12 pt-2">
+          <Button type="button" variant="outline" onClick={onCancel} className="rounded-md w-1/2">
             Cancelar
           </Button>
-          <Button type="submit" disabled={loading}>
+          <Button type="submit" disabled={loading} className="rounded-md w-1/2">
             {loading ? "Salvando..." : aluno ? "Atualizar" : "Cadastrar"}
           </Button>
         </div>
