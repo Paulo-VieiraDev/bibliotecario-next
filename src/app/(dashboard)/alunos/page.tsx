@@ -114,7 +114,7 @@ export default function AlunosPage() {
         } />
       </div>
 
-      <div className="rounded-lg border bg-white shadow-sm">
+      <div className="rounded-lg border bg-white dark:bg-zinc-900 shadow-sm">
         <Table>
           <TableBody>
             {turmas
@@ -124,14 +124,14 @@ export default function AlunosPage() {
                   .sort((a, b) => a.nome.localeCompare(b.nome))
                 if (alunosDaTurma.length === 0) return []
                 return [
-                  <TableRow key={turma.id} className="bg-white">
+                  <TableRow key={turma.id} className="bg-white dark:bg-zinc-800">
                     <TableCell colSpan={2} className="py-4">
                       <span className={`inline-flex items-center rounded-full px-4 py-1 text-base font-bold ${turmaColor(turma.nome)}`}>{turma.nome}</span>
                     </TableCell>
                   </TableRow>,
                   ...alunosDaTurma.map(aluno => (
-                    <TableRow key={aluno.id} className="hover:bg-gray-50">
-                      <TableCell className="font-medium pl-8 py-3">{aluno.nome}</TableCell>
+                    <TableRow key={aluno.id} className="hover:bg-gray-50 dark:hover:bg-zinc-800">
+                      <TableCell className="font-medium pl-8 py-3 text-gray-900 dark:text-gray-100">{aluno.nome}</TableCell>
                       <TableCell className="py-3 text-right pr-4">
                         <div className="flex items-center gap-2 justify-end">
                           <AlunoDialog

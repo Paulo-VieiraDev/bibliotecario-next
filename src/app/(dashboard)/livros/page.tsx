@@ -79,26 +79,26 @@ export default function LivrosPage() {
         } />
       </div>
 
-      <div className="rounded-lg border bg-white shadow-sm">
+      <div className="rounded-lg border bg-white dark:bg-zinc-900 shadow-sm">
         <Table>
           <TableHeader>
-            <TableRow className="bg-gray-50 hover:bg-gray-50">
-              <TableHead className="font-semibold text-gray-700">Título</TableHead>
-              <TableHead className="font-semibold text-gray-700">Autor</TableHead>
-              <TableHead className="font-semibold text-gray-700">Editora</TableHead>
-              <TableHead className="font-semibold text-gray-700">Edição</TableHead>
-              <TableHead className="font-semibold text-gray-700">Quantidade</TableHead>
-              <TableHead className="font-semibold text-gray-700">Categoria</TableHead>
-              <TableHead className="font-semibold text-gray-700">Ano/Série</TableHead>
-              <TableHead className="font-semibold text-gray-700">Etapa</TableHead>
-              <TableHead className="font-semibold text-gray-700">Tipo</TableHead>
-              <TableHead className="font-semibold text-gray-700">Vida útil</TableHead>
-              <TableHead className="w-[100px] font-semibold text-gray-700">Ações</TableHead>
+            <TableRow className="bg-gray-50 dark:bg-zinc-800 hover:bg-gray-50 dark:hover:bg-zinc-800">
+              <TableHead className="font-semibold text-gray-700 dark:text-gray-100">Título</TableHead>
+              <TableHead className="font-semibold text-gray-700 dark:text-gray-100">Autor</TableHead>
+              <TableHead className="font-semibold text-gray-700 dark:text-gray-100">Editora</TableHead>
+              <TableHead className="font-semibold text-gray-700 dark:text-gray-100">Edição</TableHead>
+              <TableHead className="font-semibold text-gray-700 dark:text-gray-100">Quantidade</TableHead>
+              <TableHead className="font-semibold text-gray-700 dark:text-gray-100">Categoria</TableHead>
+              <TableHead className="font-semibold text-gray-700 dark:text-gray-100">Ano/Série</TableHead>
+              <TableHead className="font-semibold text-gray-700 dark:text-gray-100">Etapa</TableHead>
+              <TableHead className="font-semibold text-gray-700 dark:text-gray-100">Tipo</TableHead>
+              <TableHead className="font-semibold text-gray-700 dark:text-gray-100">Vida útil</TableHead>
+              <TableHead className="w-[100px] font-semibold text-gray-700 dark:text-gray-100">Ações</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {livros.map((livro) => (
-              <TableRow key={livro.id} className="hover:bg-gray-50">
+              <TableRow key={livro.id} className="hover:bg-gray-50 dark:hover:bg-zinc-800">
                 <TableCell className="font-medium">{livro.titulo}</TableCell>
                 <TableCell>{livro.autor}</TableCell>
                 <TableCell>{livro.editora}</TableCell>

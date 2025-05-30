@@ -17,6 +17,112 @@ import {
   Atom,
   Cpu,
 } from 'lucide-react';
+import { FeatureCard } from "@/components/home/feature-card"
+import { TechCard } from "@/components/home/tech-card"
+import { BenefitCard } from "@/components/home/benefit-card"
+
+const features = [
+  {
+    icon: BookText,
+    title: "Cadastro de Livros",
+    description: "Adicione, edite e organize o acervo da biblioteca de forma prática e rápida, com detalhes completos de cada obra.",
+    borderColor: "border-blue-500",
+    iconColor: "text-blue-700",
+    bgColor: "bg-blue-100"
+  },
+  {
+    icon: Repeat2,
+    title: "Empréstimos e Devoluções",
+    description: "Gerencie todo o fluxo de empréstimos e devoluções, com um histórico detalhado e rastreável para cada usuário.",
+    borderColor: "border-green-500",
+    iconColor: "text-green-700",
+    bgColor: "bg-green-100"
+  },
+  {
+    icon: BarChart2,
+    title: "Relatórios e Estatísticas",
+    description: "Acompanhe o uso da biblioteca com relatórios claros de movimentação e estatísticas de leitura, facilitando a análise.",
+    borderColor: "border-purple-500",
+    iconColor: "text-purple-700",
+    bgColor: "bg-purple-100"
+  }
+]
+
+const technologies = [
+  {
+    title: "Next.js",
+    description: "Framework moderno para aplicações web rápidas, seguras e escaláveis.",
+    iconSrc: "/icons/nextjs.png",
+    bgSrc: "/cards/nextjs-bg.png",
+    gradientFrom: "from-black/60",
+    gradientVia: "via-black/30"
+  },
+  {
+    title: "Tailwind CSS",
+    description: "Estilização ágil e responsiva, garantindo visual moderno em qualquer dispositivo.",
+    iconSrc: "/icons/tailwindcss.png",
+    bgSrc: "/cards/tailwindcss-bg.png",
+    gradientFrom: "from-blue-900/90",
+    gradientVia: "via-blue-700/60"
+  },
+  {
+    title: "Supabase",
+    description: "Banco de dados em nuvem, seguro e escalável, utilizado para armazenar livros, usuários e movimentações em tempo real.",
+    iconSrc: "/icons/supabase.png",
+    bgSrc: "/cards/supabase-bg.png",
+    gradientFrom: "from-green-900/90",
+    gradientVia: "via-green-700/60"
+  },
+  {
+    title: "Shadcn UI",
+    description: "Biblioteca de componentes React acessíveis e modernos, garantindo experiência de usuário profissional e consistente.",
+    iconSrc: "/icons/shadcnui.png",
+    bgSrc: "/cards/shadcnui-bg.png",
+    gradientFrom: "from-gray-900/80",
+    gradientVia: "via-gray-800/60"
+  },
+  {
+    title: "Vercel",
+    description: "Plataforma de deploy e hospedagem que oferece performance, segurança e escalabilidade para aplicações web modernas.",
+    iconSrc: "/icons/vercel.png",
+    bgSrc: "/cards/vercel-bg.png",
+    gradientFrom: "from-black/90",
+    gradientVia: "via-black/90"
+  }
+]
+
+const benefits = [
+  {
+    icon: UserCheck,
+    title: "Facilidade de uso",
+    description: "Interface intuitiva para toda a equipe escolar."
+  },
+  {
+    icon: RotateCcw,
+    title: "Controle Moderno",
+    description: "Sistema atualizado para gerenciar o acervo de forma eficiente."
+  },
+  {
+    icon: ShieldAlert,
+    title: "Menos Perdas",
+    description: "Diminuição significativa de livros perdidos ou extraviados."
+  },
+  {
+    icon: BarChart3,
+    title: "Decisões Inteligentes",
+    description: "Informações claras para auxiliar na gestão escolar."
+  },
+  {
+    icon: Eye,
+    title: "Fácil de Entender",
+    description: "Design moderno e adaptável a qualquer tela."
+  },
+  {
+    icon: Target,
+    title: "Pensado para a escola",
+    description: "Sistema desenvolvido especificamente para o ambiente escolar."
+  }
+]
 
 export default function Home() {
   return (
@@ -76,36 +182,9 @@ export default function Home() {
         </h3>
 
         <div className="relative grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12 z-10">
-          {/* Feature Card 1: Cadastro de Livros */}
-          <div className="bg-white rounded-2xl shadow-xl p-8 flex flex-col items-center text-center border-b-4 border-blue-500 transform hover:scale-105 transition duration-300 ease-in-out">
-            <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mb-6 shadow-md">
-              <BookText size={48} className="text-blue-700" />
-            </div>
-            <h4 className="text-2xl font-extrabold text-blue-700 mb-3 drop-shadow-sm">Cadastro de Livros</h4>
-            <p className="text-gray-700 text-base leading-relaxed">
-              Adicione, edite e organize o acervo da biblioteca de forma prática e rápida, com detalhes completos de cada obra.
-            </p>
-          </div>
-          {/* Feature Card 2: Empréstimos e Devoluções */}
-          <div className="bg-white rounded-2xl shadow-xl p-8 flex flex-col items-center text-center border-b-4 border-green-500 transform hover:scale-105 transition duration-300 ease-in-out">
-            <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-6 shadow-md">
-              <Repeat2 size={48} className="text-green-700" />
-            </div>
-            <h4 className="text-2xl font-extrabold text-blue-700 mb-3 drop-shadow-sm">Empréstimos e Devoluções</h4>
-            <p className="text-gray-700 text-base leading-relaxed">
-              Gerencie todo o fluxo de empréstimos e devoluções, com um histórico detalhado e rastreável para cada usuário.
-            </p>
-          </div>
-          {/* Feature Card 3: Relatórios e Estatísticas */}
-          <div className="bg-white rounded-2xl shadow-xl p-8 flex flex-col items-center text-center border-b-4 border-purple-500 transform hover:scale-105 transition duration-300 ease-in-out">
-            <div className="w-20 h-20 bg-purple-100 rounded-full flex items-center justify-center mb-6 shadow-md">
-              <BarChart2 size={48} className="text-purple-700" />
-            </div>
-            <h4 className="text-2xl font-extrabold text-blue-700 mb-3 drop-shadow-sm">Relatórios e Estatísticas</h4>
-            <p className="text-gray-700 text-base leading-relaxed">
-              Acompanhe o uso da biblioteca com relatórios claros de movimentação e estatísticas de leitura, facilitando a análise.
-            </p>
-          </div>
+          {features.map((feature, index) => (
+            <FeatureCard key={index} {...feature} />
+          ))}
         </div>
       </section>
 
@@ -117,76 +196,9 @@ export default function Home() {
         </h3>
 
         <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 md:gap-8 justify-items-center relative z-10">
-          {/* Next.js Card */}
-          <div className="relative w-full max-w-64 h-80 rounded-2xl shadow-lg overflow-hidden flex flex-col items-center bg-gray-100 transform hover:scale-105 transition duration-300 ease-in-out">
-            <div className="w-full h-full absolute inset-0">
-              <Image src="/cards/nextjs-bg.png" alt="Next.js Background" fill className="object-cover" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent" />
-            </div>
-            <div className="relative flex flex-col items-center justify-start w-full h-full z-10 pt-8 px-6">
-              <div className="mb-6 flex items-center justify-center w-16 h-16 rounded-full bg-white/80 shadow-lg">
-                <Image src="/icons/nextjs.png" alt="Next.js Logo" width={40} height={40} />
-              </div>
-              <h4 className="text-white text-xl font-bold mb-2 text-center drop-shadow-lg">Next.js</h4>
-              <p className="text-white text-sm text-center drop-shadow-lg">Framework moderno para aplicações web rápidas, seguras e escaláveis.</p>
-            </div>
-          </div>
-          {/* Tailwind CSS Card */}
-          <div className="relative w-full max-w-64 h-80 rounded-2xl shadow-lg overflow-hidden flex flex-col items-center bg-gray-100 transform hover:scale-105 transition duration-300 ease-in-out">
-            <div className="w-full h-full absolute inset-0">
-              <Image src="/cards/tailwindcss-bg.png" alt="Tailwind CSS Background" fill className="object-cover" />
-              <div className="absolute inset-0 bg-gradient-to-t from-blue-900/90 via-blue-700/60 to-transparent" />
-            </div>
-            <div className="relative flex flex-col items-center justify-start w-full h-full z-10 pt-8 px-6">
-              <div className="mb-6 flex items-center justify-center w-16 h-16 rounded-full bg-white/80 shadow-lg">
-                <Image src="/icons/tailwindcss.png" alt="Tailwind CSS Logo" width={40} height={40} />
-              </div>
-              <h4 className="text-white text-xl font-bold mb-2 text-center drop-shadow-lg">Tailwind CSS</h4>
-              <p className="text-white text-sm text-center drop-shadow-lg">Estilização ágil e responsiva, garantindo visual moderno em qualquer dispositivo.</p>
-            </div>
-          </div>
-          {/* Supabase Card */}
-          <div className="relative w-full max-w-64 h-80 rounded-2xl shadow-lg overflow-hidden flex flex-col items-center bg-gray-100 transform hover:scale-105 transition duration-300 ease-in-out">
-            <div className="w-full h-full absolute inset-0">
-              <Image src="/cards/supabase-bg.png" alt="Supabase Background" fill className="object-cover" />
-              <div className="absolute inset-0 bg-gradient-to-t from-green-900/90 via-green-700/60 to-transparent" />
-            </div>
-            <div className="relative flex flex-col items-center justify-start w-full h-full z-10 pt-8 px-6">
-              <div className="mb-6 flex items-center justify-center w-16 h-16 rounded-full bg-white/80 shadow-lg">
-                <Image src="/icons/supabase.png" alt="Supabase Logo" width={40} height={40} />
-              </div>
-              <h4 className="text-white text-xl font-bold mb-2 text-center drop-shadow-lg">Supabase</h4>
-              <p className="text-white text-sm text-center drop-shadow-lg">Banco de dados em nuvem, seguro e escalável, utilizado para armazenar livros, usuários e movimentações em tempo real.</p>
-            </div>
-          </div>
-          {/* Shadcn UI Card */}
-          <div className="relative w-full max-w-64 h-80 rounded-2xl shadow-lg overflow-hidden flex flex-col items-center bg-gray-100 transform hover:scale-105 transition duration-300 ease-in-out">
-            <div className="w-full h-full absolute inset-0">
-              <Image src="/cards/shadcnui-bg.png" alt="Shadcn UI Background" fill className="object-cover" />
-              <div className="absolute inset-0 bg-gradient-to-t from-gray-900/80 via-gray-800/60 to-transparent" />
-            </div>
-            <div className="relative flex flex-col items-center justify-start w-full h-full z-10 pt-8 px-6">
-              <div className="mb-6 flex items-center justify-center w-16 h-16 rounded-full bg-white/80 shadow-lg">
-                <Image src="/icons/shadcnui.png" alt="Shadcn UI Logo" width={40} height={40} />
-              </div>
-              <h4 className="text-white text-xl font-bold mb-2 text-center drop-shadow-lg">Shadcn UI</h4>
-              <p className="text-white text-sm text-center drop-shadow-lg">Biblioteca de componentes React acessíveis e modernos, garantindo experiência de usuário profissional e consistente.</p>
-            </div>
-          </div>
-          {/* Vercel Card */}
-          <div className="relative w-full max-w-64 h-80 rounded-2xl shadow-lg overflow-hidden flex flex-col items-center bg-gray-100 transform hover:scale-105 transition duration-300 ease-in-out">
-            <div className="w-full h-full absolute inset-0">
-              <Image src="/cards/vercel-bg.png" alt="Vercel Background" fill className="object-cover" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/90 to-transparent" />
-            </div>
-            <div className="relative flex flex-col items-center justify-start w-full h-full z-10 pt-8 px-6">
-              <div className="mb-6 flex items-center justify-center w-16 h-16 rounded-full bg-white/80 shadow-lg">
-                <Image src="/icons/vercel.png" alt="Vercel Logo" width={40} height={40} />
-              </div>
-              <h4 className="text-white text-xl font-bold mb-2 text-center drop-shadow-lg">Vercel</h4>
-              <p className="text-white text-sm text-center drop-shadow-lg">Plataforma de deploy e hospedagem que oferece performance, segurança e escalabilidade para aplicações web modernas.</p>
-            </div>
-          </div>
+          {technologies.map((tech, index) => (
+            <TechCard key={index} {...tech} />
+          ))}
         </div>
         <div className="max-w-4xl mx-auto mt-16 text-center text-gray-700 text-base leading-relaxed">
           <p className="mb-4"><span className="font-extrabold text-blue-800">Supabase</span> foi utilizado como backend-as-a-service, permitindo autenticação, armazenamento e consultas em tempo real, sem necessidade de servidor próprio.</p>
@@ -204,54 +216,9 @@ export default function Home() {
 
         {/* Layout em Grid com Cards */}
         <div className="relative grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12 z-10">
-          {/* Facilidade de uso */}
-          <div className="flex flex-col items-center p-6 rounded-2xl shadow-lg bg-white hover:shadow-2xl transition duration-300 ease-in-out transform hover:scale-105">
-            <div className="w-16 h-16 mb-4 flex items-center justify-center rounded-full bg-blue-100 text-blue-800">
-              <UserCheck size={32} />
-            </div>
-            <h4 className="text-xl font-extrabold mb-2 text-blue-800 text-center">Facilidade de uso</h4>
-            <p className="text-gray-700 text-base text-center">Interface intuitiva para toda a equipe escolar.</p>
-          </div>
-          {/* Modernização do controle */}
-          <div className="flex flex-col items-center p-6 rounded-2xl shadow-lg bg-white hover:shadow-2xl transition duration-300 ease-in-out transform hover:scale-105">
-            <div className="w-16 h-16 mb-4 flex items-center justify-center rounded-full bg-blue-100 text-blue-800">
-              <RotateCcw size={32} />
-            </div>
-            <h4 className="text-xl font-extrabold mb-2 text-blue-800 text-center">Controle Moderno</h4>
-            <p className="text-gray-700 text-base text-center">Sistema atualizado para gerenciar o acervo de forma eficiente.</p>
-          </div>
-          {/* Redução de perdas */}
-          <div className="flex flex-col items-center p-6 rounded-2xl shadow-lg bg-white hover:shadow-2xl transition duration-300 ease-in-out transform hover:scale-105">
-            <div className="w-16 h-16 mb-4 flex items-center justify-center rounded-full bg-blue-100 text-blue-800">
-              <ShieldAlert size={32} />
-            </div>
-            <h4 className="text-xl font-extrabold mb-2 text-blue-800 text-center">Menos Perdas</h4>
-            <p className="text-gray-700 text-base text-center">Diminuição significativa de livros perdidos ou extraviados.</p>
-          </div>
-          {/* Relatórios para decisão */}
-          <div className="flex flex-col items-center p-6 rounded-2xl shadow-lg bg-white hover:shadow-2xl transition duration-300 ease-in-out transform hover:scale-105">
-            <div className="w-16 h-16 mb-4 flex items-center justify-center rounded-full bg-blue-100 text-blue-800">
-              <BarChart3 size={32} />
-            </div>
-            <h4 className="text-xl font-extrabold mb-2 text-blue-800 text-center">Decisões Inteligentes</h4>
-            <p className="text-gray-700 text-base text-center">Informações claras para auxiliar na gestão escolar.</p>
-          </div>
-          {/* Visual intuitivo */}
-          <div className="flex flex-col items-center p-6 rounded-2xl shadow-lg bg-white hover:shadow-2xl transition duration-300 ease-in-out transform hover:scale-105">
-            <div className="w-16 h-16 mb-4 flex items-center justify-center rounded-full bg-blue-100 text-blue-800">
-              <Eye size={32} />
-            </div>
-            <h4 className="text-xl font-extrabold mb-2 text-blue-800 text-center">Fácil de Entender</h4>
-            <p className="text-gray-700 text-base text-center">Design moderno e adaptável a qualquer tela.</p>
-          </div>
-          {/* Pensado para a escola */}
-          <div className="flex flex-col items-center p-6 rounded-2xl shadow-lg bg-white hover:shadow-2xl transition duration-300 ease-in-out transform hover:scale-105">
-            <div className="w-16 h-16 mb-4 flex items-center justify-center rounded-full bg-blue-100 text-blue-800">
-              <Target size={32} />
-            </div>
-            <h4 className="text-xl font-extrabold mb-2 text-blue-800 text-center">Feito Sob Medida</h4>
-            <p className="text-gray-700 text-base text-center">Desenvolvido pensando nas necessidades da sua escola.</p>
-          </div>
+          {benefits.map((benefit, index) => (
+            <BenefitCard key={index} {...benefit} />
+          ))}
         </div>
       </section>
 
