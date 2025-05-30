@@ -2,11 +2,17 @@
 
 import { useEffect, useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend, LineChart, Line } from "recharts"
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend, LineChart, Line, LabelList } from "recharts"
 import { Skeleton } from "@/components/ui/skeleton"
 import { supabase } from "@/lib/supabase"
+import { Medal, Award, Star, TrendingUp, TrendingDown, MinusCircle, Trophy, Calendar, BarChart2 } from "lucide-react"
 
-const COLORS = ["#6366f1", "#f59e42", "#10b981", "#ef4444", "#fbbf24", "#3b82f6"]
+const COLORS = [
+  "#4E79A7", "#F28E2B", "#E15759", "#76B7B2", "#59A14F",
+  "#EDC948", "#B07AA1", "#FF9DA7", "#9C755F", "#BAB0AC",
+  "#86BCB6", "#D37295", "#FABFD2", "#B6992D", "#499894",
+  "#E17C05", "#F1CE63", "#D4A6C8", "#7A7A7A", "#A0CBE8"
+]
 
 interface LivroEmprestado {
   titulo: string
@@ -89,146 +95,267 @@ export default function RelatoriosPage() {
     </div>
   )
 
+  // Funções auxiliares para os cards de resumo
+  function getPercentChange(meses: { mes: string; quantidade: number }[]) {
+    if (!meses || meses.length < 2) return 0;
+    const atual = meses[meses.length - 1].quantidade;
+    const anterior = meses[meses.length - 2].quantidade;
+    if (anterior === 0) return 100;
+    return Math.round(((atual - anterior) / anterior) * 100);
+  }
+
+  function getMesRecordeObj(meses: { mes: string; quantidade: number }[]) {
+    if (!meses || meses.length === 0) return undefined;
+    return meses.reduce((max, m) => m.quantidade > max.quantidade ? m : max, meses[0]);
+  }
+
+  function getMaiorValor(meses: { mes: string; quantidade: number }[]) {
+    if (!meses || meses.length === 0) return 0;
+    return Math.max(...meses.map(m => m.quantidade));
+  }
+
+  function formatMesAno(obj?: { mes: string; quantidade: number }) {
+    if (!obj || !obj.mes) return '-';
+    const [ano, mes] = obj.mes.split('-');
+    const meses = [
+      'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+      'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+    ];
+    const mesNum = parseInt(mes, 10);
+    return `${meses[mesNum - 1]}/${ano}`;
+  }
+
+  function ResumoEmprestimosMes({ meses }: { meses: { mes: string; quantidade: number }[] }) {
+    if (!meses || meses.length === 0) return null;
+    const atual = meses[meses.length - 1];
+    const anterior = meses.length > 1 ? meses[meses.length - 2] : atual;
+    const percentChange = anterior && anterior !== atual ? (anterior.quantidade === 0 ? 100 : Math.round(((atual.quantidade - anterior.quantidade) / anterior.quantidade) * 100)) : 0;
+    const mediaMensal = Math.round(meses.reduce((sum, m) => sum + m.quantidade, 0) / meses.length);
+    // Mês recorde
+    const mesRecorde = meses.reduce((max, m) => m.quantidade > max.quantidade ? m : max, meses[0]);
+    function formatMesAno(mes: string) {
+      const [ano, m] = mes.split('-');
+      const mesesNomes = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+      return `${mesesNomes[parseInt(m, 10) - 1]}/${ano}`;
+    }
+    return (
+      <div className="flex flex-col md:flex-row gap-8 items-center justify-center w-full">
+        {/* Card: Mês anterior (reorganizado, textos neutros, dark/light harmonioso) */}
+        <div
+          className={`flex flex-col items-center justify-center rounded-2xl border shadow p-6 flex-1 min-w-[220px] h-[210px] max-w-xs mx-auto transition-all duration-200 hover:shadow-lg hover:scale-[1.03]
+            ${percentChange > 0 ? 'bg-green-50 dark:bg-green-900/40 border-green-100 dark:border-green-800' : percentChange < 0 ? 'bg-red-50 dark:bg-red-900/40 border-red-100 dark:border-red-800' : 'bg-blue-50 dark:bg-blue-900/40 border-blue-100 dark:border-blue-800'}
+          `}
+          title="Clique para ver detalhes do mês anterior"
+        >
+          <Calendar
+            className="w-7 h-7 mb-2"
+            strokeWidth={2.2}
+            color={percentChange > 0 ? '#22c55e' : percentChange < 0 ? '#ef4444' : '#2563eb'}
+          />
+          <div className="text-base font-semibold text-zinc-800 dark:text-zinc-100 mb-1">Mês anterior</div>
+          <div className="text-xs text-zinc-500 dark:text-zinc-400 mb-2">{formatMesAno(anterior.mes)}</div>
+          <div className="text-4xl font-extrabold text-zinc-900 dark:text-zinc-100 mb-0.5">{anterior.quantidade}</div>
+          <div className="text-xs text-zinc-500 dark:text-zinc-400 mb-3">empréstimos</div>
+          <div className="mt-2 flex flex-col items-center">
+            <span className="text-xs text-zinc-500 dark:text-zinc-400 mb-1">Variação</span>
+            <span className={`px-2 py-0.5 rounded-full font-bold text-sm
+              ${percentChange > 0 ? 'bg-green-200/80 dark:bg-green-700/80' : percentChange < 0 ? 'bg-red-200/80 dark:bg-red-700/80' : 'bg-blue-200/80 dark:bg-blue-700/80'}
+              text-zinc-800 dark:text-zinc-100
+            `}>
+              {percentChange > 0 && '+'}{percentChange}%
+            </span>
+          </div>
+        </div>
+        {/* Card: Mês recorde (textos neutros) */}
+        <div className="flex flex-col items-center justify-center rounded-2xl border shadow p-6 flex-1 min-w-[220px] h-[210px] max-w-xs mx-auto bg-yellow-50 dark:bg-yellow-900/40 border-yellow-100 dark:border-yellow-800 transition-all duration-200 hover:shadow-lg hover:scale-[1.03]">
+          <Trophy className="w-7 h-7 text-yellow-500 mb-2" strokeWidth={2.2} />
+          <div className="text-base font-semibold text-zinc-800 dark:text-zinc-100 mb-1">Mês recorde</div>
+          <div className="text-xs text-zinc-500 dark:text-zinc-400 mb-2">{formatMesAno(mesRecorde.mes)}</div>
+          <div className="text-4xl font-extrabold text-zinc-900 dark:text-zinc-100 mb-0.5">{mesRecorde.quantidade}</div>
+          <div className="text-xs text-zinc-500 dark:text-zinc-400 mb-3">empréstimos</div>
+        </div>
+        {/* Card: Média mensal (textos neutros) */}
+        <div className="flex flex-col items-center justify-center rounded-2xl border shadow p-6 flex-1 min-w-[220px] h-[210px] max-w-xs mx-auto bg-purple-50 dark:bg-purple-900/40 border-purple-100 dark:border-purple-800 transition-all duration-200 hover:shadow-lg hover:scale-[1.03]">
+          <BarChart2 className="w-7 h-7 text-purple-500 mb-2" strokeWidth={2.2} />
+          <div className="text-base font-semibold text-zinc-800 dark:text-zinc-100 mb-4">Média mensal</div>
+          <div className="text-4xl font-extrabold text-zinc-900 dark:text-zinc-100 mb-0.5">{mediaMensal}</div>
+          <div className="text-xs text-zinc-500 dark:text-zinc-400 mb-3">empréstimos</div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="container py-6 space-y-8">
       <div>
-        <h1 className="text-3xl font-bold text-blue-800">Relatórios da Biblioteca</h1>
-        <p className="text-gray-500 mt-1">Acompanhe as estatísticas e métricas da biblioteca</p>
+        <h1 className="text-3xl font-bold text-blue-800 dark:text-blue-300">Relatórios da Biblioteca</h1>
+        <p className="text-gray-500 dark:text-gray-300 mt-1">Acompanhe as estatísticas e métricas da biblioteca</p>
       </div>
       
       {/* Cards de resumo */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         {isLoading ? (
           Array(4).fill(0).map((_, i) => (
-            <Card key={i} className="bg-white shadow-sm">
+            <Card key={i} className="bg-white dark:bg-zinc-900 shadow-sm">
               <CardHeader><Skeleton className="h-6 w-24" /></CardHeader>
               <CardContent><Skeleton className="h-8 w-16" /></CardContent>
             </Card>
           ))
         ) : (
           <>
-            <Card className="bg-white shadow-sm border-blue-100">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-blue-800">Total de Livros</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold text-blue-600">{totalLivros}</div>
-                <p className="text-xs text-gray-500 mt-1">Livros cadastrados</p>
-              </CardContent>
-            </Card>
-            <Card className="bg-white shadow-sm border-green-100">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-green-800">Total de Alunos</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold text-green-600">{totalAlunos}</div>
-                <p className="text-xs text-gray-500 mt-1">Alunos cadastrados</p>
-              </CardContent>
-            </Card>
-            <Card className="bg-white shadow-sm border-purple-100">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-purple-800">Total de Empréstimos</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold text-purple-600">{totalEmprestimos}</div>
-                <p className="text-xs text-gray-500 mt-1">Empréstimos realizados</p>
-              </CardContent>
-            </Card>
-            <Card className="bg-white shadow-sm border-yellow-100">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-yellow-800">Empréstimos em Aberto</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold text-yellow-600">{emprestimosAbertos}</div>
-                <p className="text-xs text-gray-500 mt-1">Livros não devolvidos</p>
-              </CardContent>
-            </Card>
+            {/* Card: Total de Livros */}
+            <div className="flex flex-col items-center justify-center rounded-2xl border shadow p-8 bg-blue-50 dark:bg-blue-900/40 border-blue-100 dark:border-blue-800 transition-all duration-200 hover:shadow-lg hover:scale-[1.03] min-h-[180px] md:min-h-[220px] h-auto flex-1 min-w-0">
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-7 h-7 mb-2" fill="none" viewBox="0 0 24 24" stroke="#2563eb" strokeWidth={2.2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 6V4m0 2v2m0-2h6a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V8a2 2 0 012-2h6z" /></svg>
+              <div className="text-base font-semibold text-zinc-800 dark:text-zinc-100 mb-1">Total de Livros</div>
+              <div className="text-4xl font-extrabold text-zinc-900 dark:text-zinc-100 mb-0.5">{totalLivros}</div>
+              <div className="text-xs text-zinc-500 dark:text-zinc-400 mt-2">Livros cadastrados</div>
+            </div>
+            {/* Card: Total de Alunos */}
+            <div className="flex flex-col items-center justify-center rounded-2xl border shadow p-8 bg-green-50 dark:bg-green-900/40 border-green-100 dark:border-green-800 transition-all duration-200 hover:shadow-lg hover:scale-[1.03] min-h-[180px] md:min-h-[220px] h-auto flex-1 min-w-0">
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-7 h-7 mb-2" fill="none" viewBox="0 0 24 24" stroke="#22c55e" strokeWidth={2.2}><path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+              <div className="text-base font-semibold text-zinc-800 dark:text-zinc-100 mb-1">Total de Alunos</div>
+              <div className="text-4xl font-extrabold text-zinc-900 dark:text-zinc-100 mb-0.5">{totalAlunos}</div>
+              <div className="text-xs text-zinc-500 dark:text-zinc-400 mt-2">Alunos cadastrados</div>
+            </div>
+            {/* Card: Total de Empréstimos */}
+            <div className="flex flex-col items-center justify-center rounded-2xl border shadow p-8 bg-purple-50 dark:bg-purple-900/40 border-purple-100 dark:border-purple-800 transition-all duration-200 hover:shadow-lg hover:scale-[1.03] min-h-[180px] md:min-h-[220px] h-auto flex-1 min-w-0">
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-7 h-7 mb-2" fill="none" viewBox="0 0 24 24" stroke="#a21caf" strokeWidth={2.2}><path strokeLinecap="round" strokeLinejoin="round" d="M8 17l4 4 4-4m-4-5v9" /></svg>
+              <div className="text-base font-semibold text-zinc-800 dark:text-zinc-100 mb-1">Total de Empréstimos</div>
+              <div className="text-4xl font-extrabold text-zinc-900 dark:text-zinc-100 mb-0.5">{totalEmprestimos}</div>
+              <div className="text-xs text-zinc-500 dark:text-zinc-400 mt-2">Empréstimos realizados</div>
+            </div>
+            {/* Card: Empréstimos em Aberto */}
+            <div className="flex flex-col items-center justify-center rounded-2xl border shadow p-8 bg-yellow-50 dark:bg-yellow-900/40 border-yellow-100 dark:border-yellow-800 transition-all duration-200 hover:shadow-lg hover:scale-[1.03] min-h-[180px] md:min-h-[220px] h-auto flex-1 min-w-0">
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-7 h-7 mb-2" fill="none" viewBox="0 0 24 24" stroke="#eab308" strokeWidth={2.2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+              <div className="text-base font-semibold text-zinc-800 dark:text-zinc-100 mb-1">Empréstimos em Aberto</div>
+              <div className="text-4xl font-extrabold text-zinc-900 dark:text-zinc-100 mb-0.5">{emprestimosAbertos}</div>
+              <div className="text-xs text-zinc-500 dark:text-zinc-400 mt-2">Livros não devolvidos</div>
+            </div>
           </>
         )}
       </div>
 
       {/* Gráficos */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card className="bg-white shadow-sm p-6">
-          <h2 className="text-lg font-semibold text-gray-800 mb-4">Livros mais emprestados</h2>
+        <Card className="bg-white dark:bg-zinc-900 shadow-sm p-6">
+          <h2 className="text-lg font-semibold text-gray-800 dark:text-zinc-100 mb-4">Livros mais emprestados</h2>
           {isLoading ? (
-            <Skeleton className="h-[300px] w-full" />
+            <Skeleton className="h-[340px] w-full" />
           ) : livrosMaisEmprestados.length === 0 ? (
             renderEmptyState("Nenhum livro emprestado encontrado")
           ) : (
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={livrosMaisEmprestados}>
-                <XAxis dataKey="titulo" />
-                <YAxis />
-                <Tooltip 
-                  contentStyle={{ 
-                    backgroundColor: 'white',
-                    border: '1px solid #e5e7eb',
-                    borderRadius: '0.5rem',
-                    boxShadow: '0 1px 3px 0 rgb(0 0 0 / 0.1)'
-                  }}
+            <ResponsiveContainer width="100%" height={340}>
+              <BarChart
+                data={livrosMaisEmprestados.slice(0, 5)}
+                layout="vertical"
+                barCategoryGap={32}
+                margin={{ left: 24, right: 24, top: 16, bottom: 16 }}
+              >
+                <XAxis type="number" hide />
+                <YAxis
+                  dataKey="titulo"
+                  type="category"
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fill: 'var(--foreground)', fontWeight: 700, fontSize: 16 }}
+                  width={180}
                 />
-                <Bar dataKey="quantidade" fill="#6366f1" radius={[4, 4, 0, 0]} />
+                <Tooltip
+                  cursor={{ fill: 'rgba(100,100,255,0.08)' }}
+                  contentStyle={{
+                    backgroundColor: 'var(--card)',
+                    color: 'var(--card-foreground)',
+                    border: '1px solid #333',
+                    borderRadius: '0.5rem',
+                    boxShadow: '0 1px 3px 0 rgb(0 0 0 / 0.3)'
+                  }}
+                  labelStyle={{ color: 'var(--card-foreground)', fontWeight: 600 }}
+                  itemStyle={{ color: 'var(--card-foreground)' }}
+                  formatter={(value) => [`${value} empréstimos`, '']}
+                />
+                <Bar
+                  dataKey="quantidade"
+                  radius={[16, 16, 16, 16]}
+                  minPointSize={6}
+                  isAnimationActive={true}
+                >
+                  {livrosMaisEmprestados.slice(0, 5).map((entry, index) => (
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={COLORS[index % COLORS.length]}
+                      style={{ filter: 'drop-shadow(0 2px 8px rgba(0,0,0,0.10))' }}
+                    />
+                  ))}
+                </Bar>
               </BarChart>
             </ResponsiveContainer>
           )}
         </Card>
 
-        <Card className="bg-white shadow-sm p-6">
-          <h2 className="text-lg font-semibold text-gray-800 mb-4">Empréstimos por turma</h2>
+        <Card className="bg-white dark:bg-zinc-900 shadow-sm p-6">
+          <h2 className="text-lg font-semibold text-gray-800 dark:text-zinc-100 mb-4">Empréstimos por turma</h2>
           {isLoading ? (
-            <Skeleton className="h-[300px] w-full" />
+            <Skeleton className="h-[380px] w-full" />
           ) : emprestimosPorTurma.length === 0 ? (
             renderEmptyState("Nenhum empréstimo por turma encontrado")
           ) : (
-            <ResponsiveContainer width="100%" height={300}>
+            <ResponsiveContainer width="100%" height={380}>
               <PieChart>
-                <Pie 
-                  data={emprestimosPorTurma} 
-                  dataKey="quantidade" 
-                  nameKey="turma" 
-                  cx="50%" 
-                  cy="50%" 
-                  outerRadius={100} 
-                  fill="#3b82f6" 
-                  label={({ name, percent }) => `${name} (${(percent * 100).toFixed(0)}%)`}
+                <Pie
+                  data={[...emprestimosPorTurma].sort((a, b) => a.turma.localeCompare(b.turma))}
+                  dataKey="quantidade"
+                  nameKey="turma"
+                  cx="50%"
+                  cy="50%"
+                  outerRadius={130}
+                  innerRadius={65}
+                  label={({ name, percent }) =>
+                    percent > 0.01 ? `${name} (${(percent * 100).toFixed(0)}%)` : ""
+                  }
+                  labelLine={false}
                 >
-                  {emprestimosPorTurma.map((entry, index) => (
+                  {[...emprestimosPorTurma].sort((a, b) => a.turma.localeCompare(b.turma)).map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
-                <Tooltip 
-                  contentStyle={{ 
-                    backgroundColor: 'white',
-                    border: '1px solid #e5e7eb',
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: 'var(--card)',
+                    color: 'var(--card-foreground)',
+                    border: '1px solid #333',
                     borderRadius: '0.5rem',
-                    boxShadow: '0 1px 3px 0 rgb(0 0 0 / 0.1)'
+                    boxShadow: '0 1px 3px 0 rgb(0 0 0 / 0.3)'
                   }}
+                  labelStyle={{ color: 'var(--card-foreground)', fontWeight: 600 }}
+                  itemStyle={{ color: 'var(--card-foreground)' }}
+                  formatter={(value, name, props) => [`${value} empréstimos`, '']}
                 />
-                <Legend />
               </PieChart>
             </ResponsiveContainer>
           )}
         </Card>
 
-        <Card className="bg-white shadow-sm p-6">
-          <h2 className="text-lg font-semibold text-gray-800 mb-4">Evolução dos empréstimos por mês</h2>
+        <Card className="bg-white dark:bg-zinc-900 shadow-sm p-6">
+          <h2 className="text-lg font-semibold text-gray-800 dark:text-zinc-100 mb-4">Evolução dos empréstimos por mês</h2>
           {isLoading ? (
             <Skeleton className="h-[300px] w-full" />
-          ) : emprestimosPorMes.length === 0 ? (
-            renderEmptyState("Nenhum empréstimo registrado nos últimos 12 meses")
+          ) : emprestimosPorMes.length < 3 ? (
+            <ResumoEmprestimosMes meses={emprestimosPorMes} />
           ) : (
             <ResponsiveContainer width="100%" height={300}>
               <LineChart data={emprestimosPorMes}>
-                <XAxis dataKey="mes" />
-                <YAxis />
+                <XAxis dataKey="mes" stroke="#8884d8" tick={{ fill: 'var(--foreground)' }} />
+                <YAxis stroke="#8884d8" tick={{ fill: 'var(--foreground)' }} />
                 <Tooltip 
                   contentStyle={{ 
-                    backgroundColor: 'white',
-                    border: '1px solid #e5e7eb',
+                    backgroundColor: 'var(--card)',
+                    color: 'var(--card-foreground)',
+                    border: '1px solid #333',
                     borderRadius: '0.5rem',
-                    boxShadow: '0 1px 3px 0 rgb(0 0 0 / 0.1)'
+                    boxShadow: '0 1px 3px 0 rgb(0 0 0 / 0.3)'
                   }}
+                  labelStyle={{ color: 'var(--card-foreground)' }}
+                  itemStyle={{ color: 'var(--card-foreground)' }}
                 />
                 <Line 
                   type="monotone" 
@@ -243,8 +370,8 @@ export default function RelatoriosPage() {
           )}
         </Card>
 
-        <Card className="bg-white shadow-sm p-6">
-          <h2 className="text-lg font-semibold text-gray-800 mb-4">Alunos com mais empréstimos</h2>
+        <Card className="bg-white dark:bg-zinc-900 shadow-sm p-6">
+          <h2 className="text-lg font-semibold text-gray-800 dark:text-zinc-100 mb-4">Alunos com mais empréstimos</h2>
           {isLoading ? (
             <Skeleton className="h-[300px] w-full" />
           ) : alunosMaisEmprestimos.length === 0 ? (
@@ -253,17 +380,28 @@ export default function RelatoriosPage() {
             <div className="overflow-x-auto">
               <table className="min-w-full text-sm">
                 <thead>
-                  <tr className="border-b">
-                    <th className="text-left p-2 font-semibold text-gray-700">Aluno</th>
-                    <th className="text-left p-2 font-semibold text-gray-700">Quantidade</th>
+                  <tr>
+                    <th className="text-left p-2 font-semibold text-gray-700 dark:text-zinc-100">Aluno</th>
+                    <th className="text-center p-2 font-semibold text-gray-700 dark:text-zinc-100">Quantidade</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {alunosMaisEmprestimos.map((a: AlunoEmprestimo) => (
-                    <tr key={a.nome} className="border-b hover:bg-gray-50">
-                      <td className="p-2">{a.nome}</td>
-                      <td className="p-2">
-                        <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
+                  {alunosMaisEmprestimos.slice(0, 5).map((a, i) => (
+                    <tr
+                      key={a.nome}
+                      className="border-b last:border-0 hover:bg-blue-50 dark:hover:bg-zinc-800 transition"
+                    >
+                      <td className="p-2 font-bold flex items-center gap-2">
+                        {i === 0 && <Medal className="w-5 h-5 text-yellow-500" />}
+                        {i === 1 && <Award className="w-5 h-5 text-gray-400" />}
+                        {i === 2 && <Star className="w-5 h-5 text-yellow-400" />}
+                        {a.nome}
+                      </td>
+                      <td className="p-2 text-center">
+                        <span className={`inline-flex items-center rounded-full px-3 py-0.5 text-base font-semibold
+                          ${i === 0 ? "bg-blue-600 text-white" : i === 1 ? "bg-blue-400 text-white" : i === 2 ? "bg-yellow-400 text-white" : "bg-blue-100 text-blue-800"}
+                          ${a.quantidade === 0 ? "bg-gray-200 text-gray-500" : ""}
+                        `}>
                           {a.quantidade}
                         </span>
                       </td>

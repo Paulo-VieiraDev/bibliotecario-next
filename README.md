@@ -68,3 +68,29 @@ Acesse [http://localhost:3000](http://localhost:3000) no navegador.
 
 ## Licença
 Este projeto é livre para uso educacional.
+
+## Deploy no Vercel
+
+1. Faça o push do projeto para o GitHub.
+2. No Vercel, importe o repositório e selecione o framework Next.js.
+3. Configure as variáveis de ambiente necessárias (ex: SUPABASE_URL, SUPABASE_ANON_KEY, etc).
+4. O comando de build padrão é `next build`.
+5. O diretório de saída é `/.next` (padrão do Next.js).
+6. Certifique-se de que existe pelo menos uma rota (página ou API) em `src/app`.
+
+## Boas práticas para o GitHub
+
+- Inclua um `.gitignore` adequado (já incluso).
+- Mantenha o `README.md` atualizado com instruções de uso e deploy.
+- Use branches para novas features/correções.
+- Faça commits claros e frequentes.
+
+## Estrutura recomendada
+
+- src/app: páginas e rotas
+- src/components: componentes reutilizáveis
+- src/services: integrações externas
+- src/lib: utilidades e configs
+- src/types: tipos TypeScript
+
+Pronto para deploy no Vercel e versionamento no GitHub!
