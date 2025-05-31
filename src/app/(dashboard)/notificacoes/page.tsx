@@ -5,7 +5,6 @@ import { useNotificacoes } from "@/hooks/use-notificacoes"
 import { Bell, Info, AlertTriangle, Award } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useState, useEffect } from "react"
-import { marcarNotificacaoComoLida } from "@/hooks/use-notificacoes"
 import { toast } from "sonner"
 import type { Notificacao } from "@/types"
 

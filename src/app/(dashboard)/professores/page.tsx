@@ -23,7 +23,6 @@ export default function ProfessoresPage() {
   const [professorDialog, setProfessorDialog] = useState<{ open: boolean; editId?: string }>({ open: false })
   const [professorNome, setProfessorNome] = useState("")
   const [erroNome, setErroNome] = useState("")
-  const [loading, setLoading] = useState(true)
 
   // Carregar professores ao iniciar
   useEffect(() => {
@@ -36,8 +35,6 @@ export default function ProfessoresPage() {
       setProfessores(data)
     } catch {
       toast.error("Erro ao carregar professores")
-    } finally {
-      setLoading(false)
     }
   }
 

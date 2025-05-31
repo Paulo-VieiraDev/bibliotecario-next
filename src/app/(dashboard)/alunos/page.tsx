@@ -2,7 +2,7 @@
 
 import React from "react"
 import { useEffect, useState } from "react"
-import { Pencil, Trash2, Plus, Users, School, UserX, Eye } from "lucide-react"
+import { Pencil, Trash2, Plus, Users, School, UserX } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { getAlunos, deleteAluno } from "@/services/alunos"
 import { getTurmas } from "@/services/turmas"
@@ -17,10 +17,6 @@ const TURMA_COLORS = [
   "#86BCB6", "#D37295", "#FABFD2", "#B6992D", "#499894",
   "#E17C05", "#F1CE63", "#D4A6C8", "#7A7A7A", "#A0CBE8"
 ]
-
-function getInitial(nome: string) {
-  return nome?.trim()?.charAt(0)?.toUpperCase() || "?"
-}
 
 export default function AlunosPage() {
   const [alunos, setAlunos] = useState<Aluno[]>([])
@@ -189,9 +185,4 @@ export default function AlunosPage() {
       </div>
     </div>
   )
-}
-
-function avatarColor(nome: string) {
-  const colors = ["#2563eb", "#f59e42", "#ef4444", "#10b981", "#a855f7"];
-  return colors[nome.charCodeAt(0) % colors.length];
 } 
