@@ -84,7 +84,7 @@ export function AlunoForm({ aluno, onSuccess, onCancel, turmas }: AlunoFormProps
               <FormControl>
                 <Input {...field} className="w-11/12 mx-auto" />
               </FormControl>
-              <FormMessage />
+              <FormMessage className="w-11/12 text-left mt-1" />
             </FormItem>
           )}
         />
@@ -111,7 +111,7 @@ export function AlunoForm({ aluno, onSuccess, onCancel, turmas }: AlunoFormProps
                   </SelectContent>
                 </Select>
               </FormControl>
-              <FormMessage />
+              <FormMessage className="w-11/12 text-left mt-1" />
             </FormItem>
           )}
         />

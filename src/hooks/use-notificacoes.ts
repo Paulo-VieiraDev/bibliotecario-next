@@ -30,4 +30,12 @@ export function useNotificacoes(usuarioId?: string) {
   }, [usuarioId]);
 
   return { notificacoes, loading };
+}
+
+export async function marcarNotificacaoComoLida(id: number) {
+  const { error } = await supabase
+    .from("notificacoes")
+    .update({ lida: true })
+    .eq("id", id);
+  if (error) throw error;
 } 

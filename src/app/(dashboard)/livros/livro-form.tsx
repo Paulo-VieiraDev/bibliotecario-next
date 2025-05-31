@@ -60,11 +60,21 @@ const livroSchema = z.object({
   editora: z.string().min(1, "Editora é obrigatória"),
   edicao: z.string().min(1, "Edição é obrigatória"),
   quantidade: z.coerce.number().min(1, "Quantidade é obrigatória"),
+  quantidade_disponivel: z.coerce.number().min(0),
   vida_util: z.coerce.number().optional(),
   categoria: z.string().min(1, "Categoria é obrigatória"),
   ano_serie: z.string().optional(),
   etapa: z.string().optional(),
   tipo_didatico: z.string().optional(),
+}).refine((data) => {
+  // Se for livro didático, os campos específicos são obrigatórios
+  if (data.categoria === "Didático") {
+    return !!data.ano_serie && !!data.etapa && !!data.tipo_didatico
+  }
+  return true
+}, {
+  message: "Livros didáticos precisam ter ano/série, etapa e tipo (aluno/professor)",
+  path: ["categoria"]
 })
 
 type LivroFormValues = z.infer<typeof livroSchema>
@@ -88,6 +98,7 @@ export function LivroForm({ livro, onSuccess, onCancel }: LivroFormProps) {
       editora: livro?.editora ?? "",
       edicao: livro?.edicao ?? "",
       quantidade: livro?.quantidade ?? 1,
+      quantidade_disponivel: livro?.quantidade_disponivel ?? livro?.quantidade ?? 1,
       vida_util: livro?.vida_util ?? undefined,
       categoria: livro?.categoria ?? "",
       ano_serie: livro?.ano_serie ?? "",
@@ -107,8 +118,13 @@ export function LivroForm({ livro, onSuccess, onCancel }: LivroFormProps) {
         toast.success("Livro cadastrado com sucesso!")
       }
       onSuccess?.()
-    } catch {
-      toast.error("Erro ao salvar livro")
+    } catch (error) {
+      console.error('Erro ao salvar livro:', error)
+      if (error instanceof Error) {
+        toast.error(error.message)
+      } else {
+        toast.error("Erro ao salvar livro")
+      }
     } finally {
       setLoading(false)
     }

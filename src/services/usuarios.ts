@@ -41,8 +41,9 @@ export async function getUsuario(id: string) {
     // Primeiro, vamos verificar se o usuário está autenticado
     const { data: { user }, error: authError } = await supabase.auth.getUser()
     if (authError) {
-      console.error('Erro de autenticação:', authError)
-      throw new Error('Erro de autenticação: ' + authError.message)
+      const errorMessage = `Erro de autenticação: ${authError.message || 'Erro desconhecido'}`
+      console.error(errorMessage, authError)
+      throw new Error(errorMessage)
     }
     if (!user) {
       throw new Error('Usuário não autenticado')
@@ -56,7 +57,13 @@ export async function getUsuario(id: string) {
       .single()
 
     if (error) {
-      console.error('Erro ao buscar usuário:', error)
+      // Log detalhado do erro
+      console.error('Erro ao buscar usuário:', {
+        code: error.code,
+        message: error.message,
+        details: error.details,
+        hint: error.hint
+      })
       
       // Se o erro for porque o usuário não existe, vamos criar um novo
       if (error.code === 'PGRST116') {
@@ -71,7 +78,7 @@ export async function getUsuario(id: string) {
           created_at: new Date().toISOString()
         }
 
-        console.log('Dados do novo usuário:', novoUsuario)
+        console.log('Tentando criar novo usuário:', novoUsuario)
 
         const { data: createdUser, error: createError } = await supabase
           .from("usuarios")
@@ -80,30 +87,45 @@ export async function getUsuario(id: string) {
           .single()
 
         if (createError) {
-          console.error('Erro ao criar usuário:', createError)
-          throw new Error('Erro ao criar usuário: ' + createError.message)
+          const createErrorMessage = `Erro ao criar usuário: ${createError.message || 'Erro desconhecido'}`
+          console.error(createErrorMessage, {
+            code: createError.code,
+            message: createError.message,
+            details: createError.details,
+            hint: createError.hint
+          })
+          throw new Error(createErrorMessage)
         }
 
         console.log('Usuário criado com sucesso:', createdUser)
         return createdUser as Usuario
       }
 
-      throw new Error('Erro ao buscar usuário: ' + error.message)
+      // Se não for erro de usuário não encontrado, lança o erro com detalhes
+      throw new Error(`Erro ao buscar usuário: ${error.message || 'Erro desconhecido'}`)
+    }
+
+    if (!data) {
+      throw new Error('Usuário não encontrado e não foi possível criar um novo')
     }
 
     console.log('Usuário encontrado:', data)
     return data as Usuario
   } catch (error) {
+    // Melhor tratamento de erros
     if (error instanceof Error) {
       console.error('Erro detalhado:', {
         message: error.message,
         name: error.name,
-        stack: error.stack
+        stack: error.stack,
+        cause: error.cause
       })
+      throw error
     } else {
-      console.error('Erro desconhecido:', error)
+      const errorMessage = 'Erro desconhecido ao buscar usuário'
+      console.error(errorMessage, error)
+      throw new Error(errorMessage)
     }
-    throw error
   }
 }
 

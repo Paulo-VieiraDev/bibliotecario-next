@@ -131,7 +131,6 @@ export default function RelatoriosPage() {
     const anterior = meses.length > 1 ? meses[meses.length - 2] : atual;
     const percentChange = anterior && anterior !== atual ? (anterior.quantidade === 0 ? 100 : Math.round(((atual.quantidade - anterior.quantidade) / anterior.quantidade) * 100)) : 0;
     const mediaMensal = Math.round(meses.reduce((sum, m) => sum + m.quantidade, 0) / meses.length);
-    // Mês recorde
     const mesRecorde = meses.reduce((max, m) => m.quantidade > max.quantidade ? m : max, meses[0]);
     function formatMesAno(mes: string) {
       const [ano, m] = mes.split('-');
@@ -139,47 +138,34 @@ export default function RelatoriosPage() {
       return `${mesesNomes[parseInt(m, 10) - 1]}/${ano}`;
     }
     return (
-      <div className="flex flex-col md:flex-row gap-8 items-center justify-center w-full">
-        {/* Card: Mês anterior (reorganizado, textos neutros, dark/light harmonioso) */}
-        <div
-          className={`flex flex-col items-center justify-center rounded-2xl border shadow p-6 flex-1 min-w-[220px] h-[210px] max-w-xs mx-auto transition-all duration-200 hover:shadow-lg hover:scale-[1.03]
-            ${percentChange > 0 ? 'bg-green-50 dark:bg-green-900/40 border-green-100 dark:border-green-800' : percentChange < 0 ? 'bg-red-50 dark:bg-red-900/40 border-red-100 dark:border-red-800' : 'bg-blue-50 dark:bg-blue-900/40 border-blue-100 dark:border-blue-800'}
-          `}
-          title="Clique para ver detalhes do mês anterior"
-        >
-          <Calendar
-            className="w-7 h-7 mb-2"
-            strokeWidth={2.2}
-            color={percentChange > 0 ? '#22c55e' : percentChange < 0 ? '#ef4444' : '#2563eb'}
-          />
-          <div className="text-base font-semibold text-zinc-800 dark:text-zinc-100 mb-1">Mês anterior</div>
-          <div className="text-xs text-zinc-500 dark:text-zinc-400 mb-2">{formatMesAno(anterior.mes)}</div>
-          <div className="text-4xl font-extrabold text-zinc-900 dark:text-zinc-100 mb-0.5">{anterior.quantidade}</div>
-          <div className="text-xs text-zinc-500 dark:text-zinc-400 mb-3">empréstimos</div>
-          <div className="mt-2 flex flex-col items-center">
-            <span className="text-xs text-zinc-500 dark:text-zinc-400 mb-1">Variação</span>
-            <span className={`px-2 py-0.5 rounded-full font-bold text-sm
-              ${percentChange > 0 ? 'bg-green-200/80 dark:bg-green-700/80' : percentChange < 0 ? 'bg-red-200/80 dark:bg-red-700/80' : 'bg-blue-200/80 dark:bg-blue-700/80'}
-              text-zinc-800 dark:text-zinc-100
-            `}>
-              {percentChange > 0 && '+'}{percentChange}%
-            </span>
-          </div>
+      <div className="flex flex-col md:flex-row gap-6 items-stretch justify-center w-full">
+        {/* Card: Mês anterior */}
+        <div className="flex flex-col items-center justify-center rounded-xl border bg-green-50 dark:bg-green-900/40 p-6 flex-1 min-w-[160px] min-h-[160px] max-w-xs mx-auto transition-transform duration-200 hover:scale-105">
+          <Calendar className="w-7 h-7 mb-2 text-green-600 dark:text-green-300" strokeWidth={2.2} />
+          <div className="font-semibold text-zinc-800 dark:text-zinc-100 mb-1 text-center">Mês anterior</div>
+          <div className="text-xs text-zinc-500 dark:text-zinc-400 mb-1 text-center">{formatMesAno(anterior.mes)}</div>
+          <div className="text-2xl font-extrabold text-zinc-900 dark:text-zinc-100 mb-0.5 text-center">{anterior.quantidade}</div>
+          <div className="text-xs text-zinc-500 dark:text-zinc-400 mb-1 text-center">empréstimos</div>
+          <span className={`px-2 py-0.5 rounded-full font-bold text-xs mt-1 text-center
+            ${percentChange > 0 ? 'bg-green-200/80 dark:bg-green-700/80 text-green-900 dark:text-green-100' : percentChange < 0 ? 'bg-red-200/80 dark:bg-red-700/80 text-red-900 dark:text-red-100' : 'bg-blue-200/80 dark:bg-blue-700/80 text-blue-900 dark:text-blue-100'}
+          `}>
+            {percentChange > 0 && '+'}{percentChange}%
+          </span>
         </div>
-        {/* Card: Mês recorde (textos neutros) */}
-        <div className="flex flex-col items-center justify-center rounded-2xl border shadow p-6 flex-1 min-w-[220px] h-[210px] max-w-xs mx-auto bg-yellow-50 dark:bg-yellow-900/40 border-yellow-100 dark:border-yellow-800 transition-all duration-200 hover:shadow-lg hover:scale-[1.03]">
-          <Trophy className="w-7 h-7 text-yellow-500 mb-2" strokeWidth={2.2} />
-          <div className="text-base font-semibold text-zinc-800 dark:text-zinc-100 mb-1">Mês recorde</div>
-          <div className="text-xs text-zinc-500 dark:text-zinc-400 mb-2">{formatMesAno(mesRecorde.mes)}</div>
-          <div className="text-4xl font-extrabold text-zinc-900 dark:text-zinc-100 mb-0.5">{mesRecorde.quantidade}</div>
-          <div className="text-xs text-zinc-500 dark:text-zinc-400 mb-3">empréstimos</div>
+        {/* Card: Mês recorde */}
+        <div className="flex flex-col items-center justify-center rounded-xl border bg-yellow-50 dark:bg-yellow-900/40 p-6 flex-1 min-w-[160px] min-h-[160px] max-w-xs mx-auto transition-transform duration-200 hover:scale-105">
+          <Trophy className="w-7 h-7 mb-2 text-yellow-500" strokeWidth={2.2} />
+          <div className="font-semibold text-zinc-800 dark:text-zinc-100 mb-1 text-center">Mês recorde</div>
+          <div className="text-xs text-zinc-500 dark:text-zinc-400 mb-1 text-center">{formatMesAno(mesRecorde.mes)}</div>
+          <div className="text-2xl font-extrabold text-zinc-900 dark:text-zinc-100 mb-0.5 text-center">{mesRecorde.quantidade}</div>
+          <div className="text-xs text-zinc-500 dark:text-zinc-400 mb-1 text-center">empréstimos</div>
         </div>
-        {/* Card: Média mensal (textos neutros) */}
-        <div className="flex flex-col items-center justify-center rounded-2xl border shadow p-6 flex-1 min-w-[220px] h-[210px] max-w-xs mx-auto bg-purple-50 dark:bg-purple-900/40 border-purple-100 dark:border-purple-800 transition-all duration-200 hover:shadow-lg hover:scale-[1.03]">
-          <BarChart2 className="w-7 h-7 text-purple-500 mb-2" strokeWidth={2.2} />
-          <div className="text-base font-semibold text-zinc-800 dark:text-zinc-100 mb-4">Média mensal</div>
-          <div className="text-4xl font-extrabold text-zinc-900 dark:text-zinc-100 mb-0.5">{mediaMensal}</div>
-          <div className="text-xs text-zinc-500 dark:text-zinc-400 mb-3">empréstimos</div>
+        {/* Card: Média mensal */}
+        <div className="flex flex-col items-center justify-center rounded-xl border bg-purple-50 dark:bg-purple-900/40 p-6 flex-1 min-w-[160px] min-h-[160px] max-w-xs mx-auto transition-transform duration-200 hover:scale-105">
+          <BarChart2 className="w-7 h-7 mb-2 text-purple-500" strokeWidth={2.2} />
+          <div className="font-semibold text-zinc-800 dark:text-zinc-100 mb-1 text-center">Média mensal</div>
+          <div className="text-2xl font-extrabold text-zinc-900 dark:text-zinc-100 mb-0.5 text-center">{mediaMensal}</div>
+          <div className="text-xs text-zinc-500 dark:text-zinc-400 mb-1 text-center">empréstimos</div>
         </div>
       </div>
     );
@@ -191,7 +177,7 @@ export default function RelatoriosPage() {
         <h1 className="text-3xl font-bold text-blue-800 dark:text-blue-300">Relatórios da Biblioteca</h1>
         <p className="text-gray-500 dark:text-gray-300 mt-1">Acompanhe as estatísticas e métricas da biblioteca</p>
       </div>
-      
+
       {/* Cards de resumo */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         {isLoading ? (
@@ -302,7 +288,7 @@ export default function RelatoriosPage() {
             <ResponsiveContainer width="100%" height={380}>
               <PieChart>
                 <Pie
-                  data={[...emprestimosPorTurma].sort((a, b) => a.turma.localeCompare(b.turma))}
+                  data={emprestimosPorTurma.filter(t => t.turma).sort((a, b) => (a.turma || '').localeCompare(b.turma || ''))}
                   dataKey="quantidade"
                   nameKey="turma"
                   cx="50%"
@@ -314,7 +300,7 @@ export default function RelatoriosPage() {
                   }
                   labelLine={false}
                 >
-                  {[...emprestimosPorTurma].sort((a, b) => a.turma.localeCompare(b.turma)).map((entry, index) => (
+                  {emprestimosPorTurma.filter(t => t.turma).sort((a, b) => (a.turma || '').localeCompare(b.turma || '')).map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
@@ -335,45 +321,20 @@ export default function RelatoriosPage() {
           )}
         </Card>
 
+        {/* Resumo dos empréstimos mensais - restaurar visual anterior, cards grandes centralizados, sem gráfico */}
         <Card className="bg-white dark:bg-zinc-900 shadow-sm p-6">
-          <h2 className="text-lg font-semibold text-gray-800 dark:text-zinc-100 mb-4">Evolução dos empréstimos por mês</h2>
+          <h2 className="text-lg font-semibold text-gray-800 dark:text-zinc-100 mb-6 text-left">Resumo dos empréstimos mensais</h2>
           {isLoading ? (
-            <Skeleton className="h-[300px] w-full" />
-          ) : emprestimosPorMes.length < 3 ? (
-            <ResumoEmprestimosMes meses={emprestimosPorMes} />
+            <Skeleton className="h-[380px] w-full" />
           ) : (
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={emprestimosPorMes}>
-                <XAxis dataKey="mes" stroke="#8884d8" tick={{ fill: 'var(--foreground)' }} />
-                <YAxis stroke="#8884d8" tick={{ fill: 'var(--foreground)' }} />
-                <Tooltip 
-                  contentStyle={{ 
-                    backgroundColor: 'var(--card)',
-                    color: 'var(--card-foreground)',
-                    border: '1px solid #333',
-                    borderRadius: '0.5rem',
-                    boxShadow: '0 1px 3px 0 rgb(0 0 0 / 0.3)'
-                  }}
-                  labelStyle={{ color: 'var(--card-foreground)' }}
-                  itemStyle={{ color: 'var(--card-foreground)' }}
-                />
-                <Line 
-                  type="monotone" 
-                  dataKey="quantidade" 
-                  stroke="#10b981" 
-                  strokeWidth={2}
-                  dot={{ fill: '#10b981', strokeWidth: 2 }}
-                  activeDot={{ r: 6, fill: '#10b981' }}
-                />
-              </LineChart>
-            </ResponsiveContainer>
+            <ResumoEmprestimosMes meses={emprestimosPorMes} />
           )}
         </Card>
 
         <Card className="bg-white dark:bg-zinc-900 shadow-sm p-6">
           <h2 className="text-lg font-semibold text-gray-800 dark:text-zinc-100 mb-4">Alunos com mais empréstimos</h2>
           {isLoading ? (
-            <Skeleton className="h-[300px] w-full" />
+            <Skeleton className="h-[380px] w-full" />
           ) : alunosMaisEmprestimos.length === 0 ? (
             renderEmptyState("Nenhum aluno com empréstimos encontrado")
           ) : (
@@ -412,7 +373,16 @@ export default function RelatoriosPage() {
             </div>
           )}
         </Card>
+
+
       </div>
+      <style jsx global>{`
+        @keyframes bounce {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-6px); }
+        }
+        .animate-bounce-slow { animation: bounce 2.5s infinite; }
+      `}</style>
     </div>
   )
 }

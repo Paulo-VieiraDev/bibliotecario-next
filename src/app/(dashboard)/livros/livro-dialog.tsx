@@ -30,11 +30,14 @@ export function LivroDialog({ livro, onSuccess, trigger }: LivroDialogProps) {
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent aria-describedby="livro-dialog-description">
         <DialogHeader>
           <DialogTitle>
             {livro ? "Editar Livro" : "Novo Livro"}
           </DialogTitle>
+          <div id="livro-dialog-description" className="sr-only">
+            {livro ? "Formulário para editar um livro existente" : "Formulário para adicionar um novo livro"}
+          </div>
         </DialogHeader>
         <LivroForm
           livro={livro}

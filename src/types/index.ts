@@ -19,6 +19,7 @@ export interface Livro {
   editora: string
   edicao: string
   quantidade: number
+  quantidade_disponivel: number
   vida_util?: number
   categoria: string
   ano_serie?: string
@@ -30,7 +31,8 @@ export interface Emprestimo {
   id: string
   created_at: string
   livro_id: string
-  aluno_id: string
+  aluno_id: string | null
+  professor_id?: string | null
   data_emprestimo: string
   data_devolucao: string | null
   status: "emprestado" | "devolvido"
@@ -38,5 +40,12 @@ export interface Emprestimo {
 
 export interface EmprestimoComDetalhes extends Emprestimo {
   livro: Livro
-  aluno: Aluno
+  aluno?: Aluno
+  professor?: Professor
+}
+
+export interface Professor {
+  id: string
+  nome: string
+  created_at: string
 } 

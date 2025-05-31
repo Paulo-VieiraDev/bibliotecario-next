@@ -1,7 +1,7 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { Plus, Pencil, Trash2 } from "lucide-react"
+import React, { useEffect, useState } from "react"
+import { Plus, Pencil, Trash2, BookOpen } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   Table,
@@ -58,109 +58,70 @@ export default function LivrosPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-96">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      <div className="flex h-[calc(100vh-4rem)] items-center justify-center">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
       </div>
     )
   }
 
   return (
-    <div className="container py-6 space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-blue-800">Livros</h1>
-          <p className="text-gray-500 mt-1">Gerencie o acervo da biblioteca</p>
+    <div className="min-h-screen w-full flex flex-col items-center justify-start bg-white dark:bg-transparent py-12">
+      <div className="w-full max-w-6xl flex flex-col gap-8">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4 px-2">
+          <div className="flex items-center gap-3">
+            <BookOpen className="text-blue-600 w-9 h-9 animate-book" />
+            <h1 className="text-4xl font-extrabold text-gray-900 dark:text-gray-100">Livros</h1>
+          </div>
+          <LivroDialog onSuccess={loadLivros} trigger={
+            <Button variant="default" className="px-6 py-2 text-base font-bold flex items-center gap-2 shadow-lg transition-all scale-100 hover:scale-105 animate-bounce-slow">
+              <Plus className="h-5 w-5" />
+              Novo Livro
+            </Button>
+          } />
         </div>
-        <LivroDialog onSuccess={loadLivros} trigger={
-          <Button className="bg-blue-600 hover:bg-blue-700">
-            <Plus className="mr-2 h-4 w-4" />
-            Novo Livro
-          </Button>
-        } />
-      </div>
-
-      <div className="rounded-lg border bg-white dark:bg-zinc-900 shadow-sm">
-        <Table>
-          <TableHeader>
-            <TableRow className="bg-gray-50 dark:bg-zinc-800 hover:bg-gray-50 dark:hover:bg-zinc-800">
-              <TableHead className="font-semibold text-gray-700 dark:text-gray-100">Título</TableHead>
-              <TableHead className="font-semibold text-gray-700 dark:text-gray-100">Autor</TableHead>
-              <TableHead className="font-semibold text-gray-700 dark:text-gray-100">Editora</TableHead>
-              <TableHead className="font-semibold text-gray-700 dark:text-gray-100">Edição</TableHead>
-              <TableHead className="font-semibold text-gray-700 dark:text-gray-100">Quantidade</TableHead>
-              <TableHead className="font-semibold text-gray-700 dark:text-gray-100">Categoria</TableHead>
-              <TableHead className="font-semibold text-gray-700 dark:text-gray-100">Ano/Série</TableHead>
-              <TableHead className="font-semibold text-gray-700 dark:text-gray-100">Etapa</TableHead>
-              <TableHead className="font-semibold text-gray-700 dark:text-gray-100">Tipo</TableHead>
-              <TableHead className="font-semibold text-gray-700 dark:text-gray-100">Vida útil</TableHead>
-              <TableHead className="w-[100px] font-semibold text-gray-700 dark:text-gray-100">Ações</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {livros.map((livro) => (
-              <TableRow key={livro.id} className="hover:bg-gray-50 dark:hover:bg-zinc-800">
-                <TableCell className="font-medium">{livro.titulo}</TableCell>
-                <TableCell>{livro.autor}</TableCell>
-                <TableCell>{livro.editora}</TableCell>
-                <TableCell>{livro.edicao}</TableCell>
-                <TableCell>
-                  <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                    livro.quantidade > 0 
-                      ? "bg-green-100 text-green-800" 
-                      : "bg-red-100 text-red-800"
-                  }`}>
-                    {livro.quantidade}
-                  </span>
-                </TableCell>
-                <TableCell>{livro.categoria}</TableCell>
-                <TableCell>{livro.categoria === "Didático" ? livro.ano_serie : ""}</TableCell>
-                <TableCell>{livro.categoria === "Didático" ? livro.etapa : ""}</TableCell>
-                <TableCell>{livro.categoria === "Didático" ? livro.tipo_didatico : ""}</TableCell>
-                <TableCell>{livro.vida_util ? livro.vida_util : ""}</TableCell>
-                <TableCell>
-                  <div className="flex items-center gap-2">
-                    <LivroDialog
-                      livro={livro}
-                      onSuccess={loadLivros}
-                      trigger={
-                        <Button variant="ghost" size="icon" className="hover:bg-blue-50 hover:text-blue-600">
-                          <span className="sr-only">Editar</span>
-                          <Pencil className="h-4 w-4" />
-                        </Button>
-                      }
-                    />
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <Button variant="ghost" size="icon" className="hover:bg-red-50 hover:text-red-600">
-                          <span className="sr-only">Excluir</span>
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>Excluir Livro</AlertDialogTitle>
-                          <AlertDialogDescription>
-                            Tem certeza que deseja excluir este livro? Esta ação não pode ser desfeita.
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                          <AlertDialogAction 
-                            onClick={() => handleDelete(livro.id)}
-                            className="bg-red-600 hover:bg-red-700"
-                          >
-                            Excluir
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
-                  </div>
-                </TableCell>
+        <div className="overflow-x-auto rounded-2xl shadow border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
+          <Table className="w-full min-w-[950px]">
+            <TableHeader>
+              <TableRow className="bg-gray-100 dark:bg-zinc-800 text-base">
+                <TableHead className="font-bold text-gray-700 dark:text-gray-100 min-w-[180px] px-5">Título</TableHead>
+                <TableHead className="font-bold text-gray-700 dark:text-gray-100 min-w-[120px] px-5 border-l border-zinc-200 dark:border-zinc-800">Autor</TableHead>
+                <TableHead className="font-bold text-gray-700 dark:text-gray-100 min-w-[110px] px-3 border-l border-zinc-200 dark:border-zinc-800">Editora</TableHead>
+                <TableHead className="font-bold text-gray-700 dark:text-gray-100 min-w-[80px] px-3 border-l border-zinc-200 dark:border-zinc-800">Edição</TableHead>
+                <TableHead className="font-bold text-gray-700 dark:text-gray-100 min-w-[80px] px-3 border-l border-zinc-200 dark:border-zinc-800">Quantidade</TableHead>
+                <TableHead className="font-bold text-gray-700 dark:text-gray-100 min-w-[120px] px-3 border-l border-zinc-200 dark:border-zinc-800">Categoria</TableHead>
+                <TableHead className="font-bold text-gray-700 dark:text-gray-100 min-w-[100px] px-3 border-l border-zinc-200 dark:border-zinc-800">Ano/Série</TableHead>
+                <TableHead className="font-bold text-gray-700 dark:text-gray-100 min-w-[100px] px-3 border-l border-zinc-200 dark:border-zinc-800">Etapa</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {livros.map((livro) => (
+                <TableRow key={livro.id} className="hover:bg-blue-50/60 dark:hover:bg-zinc-800/60 transition-all text-base">
+                  <TableCell className="font-semibold whitespace-nowrap px-5 py-3 align-middle">{livro.titulo}</TableCell>
+                  <TableCell className="whitespace-nowrap px-5 py-3 align-middle border-l border-zinc-100 dark:border-zinc-800">{livro.autor}</TableCell>
+                  <TableCell className="whitespace-nowrap px-3 py-3 align-middle border-l border-zinc-100 dark:border-zinc-800">{livro.editora}</TableCell>
+                  <TableCell className="whitespace-nowrap px-3 py-3 align-middle border-l border-zinc-100 dark:border-zinc-800">{livro.edicao}</TableCell>
+                  <TableCell className="whitespace-nowrap px-3 py-3 align-middle border-l border-zinc-100 dark:border-zinc-800">{livro.quantidade}</TableCell>
+                  <TableCell className="whitespace-nowrap px-3 py-3 align-middle border-l border-zinc-100 dark:border-zinc-800">{livro.categoria}</TableCell>
+                  <TableCell className="whitespace-nowrap px-3 py-3 align-middle border-l border-zinc-100 dark:border-zinc-800">{livro.ano_serie || "-"}</TableCell>
+                  <TableCell className="whitespace-nowrap px-3 py-3 align-middle border-l border-zinc-100 dark:border-zinc-800">{livro.etapa || "-"}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
       </div>
+      <style jsx global>{`
+        @keyframes book {
+          0%, 100% { transform: rotate(-8deg); }
+          50% { transform: rotate(8deg); }
+        }
+        .animate-book { animation: book 1.2s infinite alternate; }
+        @keyframes bounce {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-6px); }
+        }
+        .animate-bounce-slow { animation: bounce 2.5s infinite; }
+      `}</style>
     </div>
   )
 } 
