@@ -64,7 +64,7 @@ export default function ProfessoresPage() {
       // Fechar dialog e limpar formulário
       setProfessorDialog({ open: false })
       setProfessorNome("")
-    } catch (error) {
+    } catch {
       toast.error("Erro ao salvar professor")
     }
   }

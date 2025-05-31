@@ -8,7 +8,7 @@ export interface Professor {
 
 async function verificarTabelaProfessores() {
   try {
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from('professores')
       .select('*')
       .limit(1)
@@ -48,7 +48,13 @@ export async function getProfessores() {
       .order("nome")
 
     if (error) throw error
-    return data as Professor[]
+    // Buscar os professores de fato
+    const { data: professores, error: fetchError } = await supabase
+      .from("professores")
+      .select("*")
+      .order("nome")
+    if (fetchError) throw fetchError
+    return professores as Professor[]
   } catch (error) {
     console.error('Erro ao buscar professores:', error)
     return [] // Retorna array vazio em caso de erro

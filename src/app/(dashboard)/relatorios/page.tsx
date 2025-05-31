@@ -282,7 +282,7 @@ export default function RelatoriosPage() {
                   }}
                   labelStyle={{ color: 'var(--card-foreground)', fontWeight: 600 }}
                   itemStyle={{ color: 'var(--card-foreground)' }}
-                  formatter={(value, name) => [`${value} empréstimos`, '']}
+                  formatter={(value) => [`${value} empréstimos`, '']}
                 />
               </PieChart>
             </ResponsiveContainer>

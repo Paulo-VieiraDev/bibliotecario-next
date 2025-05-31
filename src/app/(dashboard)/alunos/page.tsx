@@ -46,7 +46,7 @@ export default function AlunosPage() {
     try {
       const data = await getTurmas()
       setTurmas(data)
-    } catch (error) {
+    } catch {
       toast.error("Erro ao carregar turmas")
     }
   }
