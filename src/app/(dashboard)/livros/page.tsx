@@ -73,7 +73,10 @@ export default function LivrosPage() {
             <h1 className="text-4xl font-extrabold text-gray-900 dark:text-gray-100">Livros</h1>
           </div>
           <LivroDialog onSuccess={loadLivros} trigger={
-            <Button variant="default" className="px-6 py-2 text-base font-bold flex items-center gap-2 shadow-lg transition-all scale-100 hover:scale-105 animate-bounce-slow">
+            <Button
+              variant="default"
+              className="px-6 py-2 text-base font-bold flex items-center gap-2 shadow-lg transition-all scale-100 hover:scale-105"
+            >
               <Plus className="h-5 w-5" />
               Novo Livro
             </Button>

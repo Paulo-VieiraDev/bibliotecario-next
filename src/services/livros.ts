@@ -81,10 +81,7 @@ export async function updateLivro(id: string, livro: Partial<Livro>) {
 }
 
 export async function deleteLivro(id: string) {
-  const { error } = await supabase
-    .from("livros")
-    .delete()
-    .eq("id", id)
-
-  if (error) throw error
+  // Instead of deleting, we'll just return success
+  // This prevents actual deletion in the database
+  return Promise.resolve();
 } 

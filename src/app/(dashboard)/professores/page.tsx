@@ -9,8 +9,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { getProfessores, createProfessor, updateProfessor } from "@/services/professores"
+import { getProfessores, createProfessor, updateProfessor, deleteProfessor } from "@/services/professores"
 import { toast } from "sonner"
+import { AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogCancel, AlertDialogTrigger, AlertDialogAction } from "@/components/ui/alert-dialog"
 
 function getInitial(nome: string) {
   return nome?.trim()?.charAt(0)?.toUpperCase() || "?"
@@ -57,15 +58,25 @@ export default function ProfessoresPage() {
         await createProfessor({ nome: professorNome })
         toast.success("Professor cadastrado com sucesso!")
       }
-      
+
       // Recarregar lista de professores
       await loadProfessores()
-      
+
       // Fechar dialog e limpar formulário
       setProfessorDialog({ open: false })
       setProfessorNome("")
     } catch {
       toast.error("Erro ao salvar professor")
+    }
+  }
+
+  async function handleDeleteProfessor(id: string) {
+    try {
+      await deleteProfessor(id)
+      toast.success("Professor excluído com sucesso!")
+      await loadProfessores()
+    } catch {
+      toast.error("Erro ao excluir professor")
     }
   }
 
@@ -107,16 +118,36 @@ export default function ProfessoresPage() {
                     {getInitial(prof.nome)}
                   </div>
                   <span className="font-semibold text-gray-800 dark:text-zinc-100 truncate flex-1">{prof.nome}</span>
-                  <div className="flex gap-1 opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0 transition-all duration-200">
-                    <Button variant="ghost" size="icon" className="hover:bg-cyan-200 dark:hover:bg-zinc-600 hover:text-cyan-700 dark:hover:text-cyan-200" onClick={() => { setProfessorDialog({ open: true, editId: prof.id }); setProfessorNome(prof.nome); }}>
-                      <span className="sr-only">Editar</span>
-                      <Pencil className="h-4 w-4" />
-                    </Button>
-                    <Button variant="ghost" size="icon" className="hover:bg-red-100 dark:hover:bg-red-900 hover:text-red-600 dark:hover:text-red-300" onClick={() => setProfessores(professores.filter(p => p.id !== prof.id))}>
-                      <span className="sr-only">Excluir</span>
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
+                  <Button variant="ghost" size="icon" className="hover:bg-cyan-200 dark:hover:bg-zinc-600 hover:text-cyan-700 dark:hover:text-cyan-200" onClick={() => { setProfessorDialog({ open: true, editId: prof.id }); setProfessorNome(prof.nome); }}>
+                    <span className="sr-only">Editar</span>
+                    <Pencil className="h-4 w-4" />
+                  </Button>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="hover:bg-red-100 dark:hover:bg-red-900 hover:text-red-600 dark:hover:text-red-300"
+                      >
+                        <span className="sr-only">Excluir</span>
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Confirmar exclusão</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          Tem certeza que deseja excluir o professor <span className="font-semibold">{prof.nome}</span>? Esta ação não poderá ser desfeita.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                        <AlertDialogAction onClick={() => handleDeleteProfessor(prof.id)} className="bg-red-600 hover:bg-red-700">
+                          Excluir
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 </div>
               ))
             )}
