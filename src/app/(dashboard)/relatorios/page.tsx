@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts"
 import { Skeleton } from "@/components/ui/skeleton"
 import { supabase } from "@/lib/supabase"
-import { Medal, Award, Star, Calendar, BarChart2, Trophy } from "lucide-react"
+import { Medal, Award, Star, Calendar, BarChart2, Trophy, BookOpen, Users as UsersIcon, TrendingUp, Clock } from "lucide-react"
 
 const COLORS = [
   "#4E79A7", "#F28E2B", "#E15759", "#76B7B2", "#59A14F",
@@ -155,28 +155,28 @@ export default function RelatoriosPage() {
           <>
             {/* Card: Total de Livros */}
             <div className="flex flex-col items-center justify-center rounded-2xl border shadow p-8 bg-blue-50 dark:bg-blue-900/40 border-blue-100 dark:border-blue-800 transition-all duration-200 hover:shadow-lg hover:scale-[1.03] min-h-[180px] md:min-h-[220px] h-auto flex-1 min-w-0">
-              <svg xmlns="http://www.w3.org/2000/svg" className="w-7 h-7 mb-2" fill="none" viewBox="0 0 24 24" stroke="#2563eb" strokeWidth={2.2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 6V4m0 2v2m0-2h6a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V8a2 2 0 012-2h6z" /></svg>
+              <BookOpen className="w-7 h-7 mb-2 text-blue-600 dark:text-blue-300" strokeWidth={2.2} />
               <div className="text-base font-semibold text-zinc-800 dark:text-zinc-100 mb-1">Total de Livros</div>
               <div className="text-4xl font-extrabold text-zinc-900 dark:text-zinc-100 mb-0.5">{totalLivros}</div>
               <div className="text-xs text-zinc-500 dark:text-zinc-400 mt-2">Livros cadastrados</div>
             </div>
             {/* Card: Total de Alunos */}
             <div className="flex flex-col items-center justify-center rounded-2xl border shadow p-8 bg-green-50 dark:bg-green-900/40 border-green-100 dark:border-green-800 transition-all duration-200 hover:shadow-lg hover:scale-[1.03] min-h-[180px] md:min-h-[220px] h-auto flex-1 min-w-0">
-              <svg xmlns="http://www.w3.org/2000/svg" className="w-7 h-7 mb-2" fill="none" viewBox="0 0 24 24" stroke="#22c55e" strokeWidth={2.2}><path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+              <UsersIcon className="w-7 h-7 mb-2 text-green-500 dark:text-green-300" strokeWidth={2.2} />
               <div className="text-base font-semibold text-zinc-800 dark:text-zinc-100 mb-1">Total de Alunos</div>
               <div className="text-4xl font-extrabold text-zinc-900 dark:text-zinc-100 mb-0.5">{totalAlunos}</div>
               <div className="text-xs text-zinc-500 dark:text-zinc-400 mt-2">Alunos cadastrados</div>
             </div>
             {/* Card: Total de Empréstimos */}
             <div className="flex flex-col items-center justify-center rounded-2xl border shadow p-8 bg-purple-50 dark:bg-purple-900/40 border-purple-100 dark:border-purple-800 transition-all duration-200 hover:shadow-lg hover:scale-[1.03] min-h-[180px] md:min-h-[220px] h-auto flex-1 min-w-0">
-              <svg xmlns="http://www.w3.org/2000/svg" className="w-7 h-7 mb-2" fill="none" viewBox="0 0 24 24" stroke="#a21caf" strokeWidth={2.2}><path strokeLinecap="round" strokeLinejoin="round" d="M8 17l4 4 4-4m-4-5v9" /></svg>
+              <TrendingUp className="w-7 h-7 mb-2 text-purple-700 dark:text-purple-300" strokeWidth={2.2} />
               <div className="text-base font-semibold text-zinc-800 dark:text-zinc-100 mb-1">Total de Empréstimos</div>
               <div className="text-4xl font-extrabold text-zinc-900 dark:text-zinc-100 mb-0.5">{totalEmprestimos}</div>
               <div className="text-xs text-zinc-500 dark:text-zinc-400 mt-2">Empréstimos realizados</div>
             </div>
             {/* Card: Empréstimos em Aberto */}
             <div className="flex flex-col items-center justify-center rounded-2xl border shadow p-8 bg-yellow-50 dark:bg-yellow-900/40 border-yellow-100 dark:border-yellow-800 transition-all duration-200 hover:shadow-lg hover:scale-[1.03] min-h-[180px] md:min-h-[220px] h-auto flex-1 min-w-0">
-              <svg xmlns="http://www.w3.org/2000/svg" className="w-7 h-7 mb-2" fill="none" viewBox="0 0 24 24" stroke="#eab308" strokeWidth={2.2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+              <Clock className="w-7 h-7 mb-2 text-yellow-500 dark:text-yellow-300" strokeWidth={2.2} />
               <div className="text-base font-semibold text-zinc-800 dark:text-zinc-100 mb-1">Empréstimos em Aberto</div>
               <div className="text-4xl font-extrabold text-zinc-900 dark:text-zinc-100 mb-0.5">{emprestimosAbertos}</div>
               <div className="text-xs text-zinc-500 dark:text-zinc-400 mt-2">Livros não devolvidos</div>

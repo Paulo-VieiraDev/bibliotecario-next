@@ -142,8 +142,8 @@ export default function Home() {
               Sistema de gerenciamento de biblioteca desenvolvido para o Colégio Estadual de Arapuã,
               facilitando o controle, empréstimo e organização de livros escolares.
             </h2>
-            <a href="#sobre" className="px-12 py-5 bg-blue-600 text-white font-semibold rounded-xl shadow-lg hover:bg-blue-700 transition transform hover:scale-105 active:scale-95 active:shadow-inner">
-              Saiba mais
+            <a href="/login" className="px-12 py-5 bg-blue-600 text-white font-semibold rounded-xl shadow-lg hover:bg-blue-700 transition transform hover:scale-105 active:scale-95 active:shadow-inner">
+              Login
             </a>
           </div>
           {/* Logo do Colégio - Grande, dentro da janela, um pouco mais ao centro */}
@@ -250,7 +250,7 @@ export default function Home() {
               &copy; {new Date().getFullYear()} Paulo Vieira
             </p>
             <p className="text-sm text-gray-300">
-              Projeto de Conclusão de Curso Análise e Desenvolvimento de Sistemas (Univale)
+              Projeto de Conclusão de Curso - Análise e Desenvolvimento de Sistemas (Univale)
             </p>
           </div>
         </div>

@@ -88,7 +88,7 @@ export default function NotificacoesPage() {
   )
 
   return (
-    <div className="w-full min-h-screen py-10 flex flex-col items-center bg-gradient-to-br from-blue-50/60 via-white to-zinc-100 dark:from-zinc-900 dark:via-zinc-950 dark:to-zinc-900">
+    <div className="w-full min-h-screen py-10 flex flex-col items-center">
       <div className="flex items-center gap-3 mb-8 animate-bounce-slow">
         <Bell className="text-blue-600 w-9 h-9 animate-bell" />
         <h1 className="text-4xl font-extrabold text-gray-900 dark:text-gray-100">Notificações</h1>
@@ -136,7 +136,7 @@ export default function NotificacoesPage() {
                         onClick={async () => {
                           setMarcando(n.id)
                           try {
-                            await marcarNotificacaoComoLida(Number(n.id))
+                            await marcarNotificacaoComoLida(n.id)
                             // Atualize o estado local:
                             setNotificacoes((prev) =>
                               prev.map((noti) =>

@@ -32,7 +32,7 @@ export function useNotificacoes(usuarioId?: string) {
   return { notificacoes, loading };
 }
 
-export async function marcarNotificacaoComoLida(id: number) {
+export async function marcarNotificacaoComoLida(id: string) {
   const { error } = await supabase
     .from("notificacoes")
     .update({ lida: true })
