@@ -26,15 +26,32 @@ import { toast } from "sonner"
 import { getEmprestimos, devolverLivro } from "@/services/emprestimos"
 import type { EmprestimoComDetalhes } from "@/types"
 import { EmprestimoDialog } from "./emprestimo-dialog"
+import { getAlunos } from "@/services/alunos"
+import { getProfessores } from "@/services/professores"
+import { getLivros } from "@/services/livros"
+import type { Aluno } from "@/types"
+import type { Professor } from "@/types"
+import type { Livro } from "@/types"
+import type { Emprestimo } from "@/types"
 
 export default function EmprestimosPage() {
-  const [emprestimos, setEmprestimos] = useState<EmprestimoComDetalhes[]>([])
+  const [emprestimos, setEmprestimos] = useState<Emprestimo[]>([])
+  const [alunos, setAlunos] = useState<Aluno[]>([])
+  const [professores, setProfessores] = useState<Professor[]>([])
+  const [livros, setLivros] = useState<Livro[]>([])
   const [loading, setLoading] = useState(true)
+  const [tipoFiltro, setTipoFiltro] = useState<'aluno' | 'professor'>('aluno');
 
   async function loadEmprestimos() {
     try {
-      const data = await getEmprestimos()
-      setEmprestimos(data)
+      const emprestimosData = await getEmprestimos()
+      const alunosData = await getAlunos()
+      const professoresData = await getProfessores()
+      const livrosData = await getLivros()
+      setEmprestimos(emprestimosData)
+      setAlunos(alunosData)
+      setProfessores(professoresData)
+      setLivros(livrosData)
     } catch {
       toast.error("Erro ao carregar empréstimos")
     } finally {
@@ -55,6 +72,23 @@ export default function EmprestimosPage() {
       toast.error("Erro ao devolver livro")
     }
   }
+
+  const emprestimosComNomes = emprestimos.map(e => {
+    const aluno = alunos.find(a => a.id === e.aluno_id);
+    const professor = professores.find(p => p.id === e.professor_id);
+    const livro = livros.find(l => l.id === e.livro_id);
+    return {
+      ...e,
+      aluno_nome: aluno ? aluno.nome : "",
+      professor_nome: professor ? professor.nome : "",
+      livro_nome: livro ? livro.titulo : "",
+      livro_autor: livro ? livro.autor : "",
+    };
+  });
+
+  const emprestimosFiltrados = emprestimosComNomes.filter(e =>
+    tipoFiltro === 'aluno' ? !!e.aluno_id : !!e.professor_id
+  );
 
   if (loading) {
     return (
@@ -79,71 +113,102 @@ export default function EmprestimosPage() {
             </Button>
           } />
         </div>
-        <div className="overflow-x-auto rounded-2xl shadow border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
-          <Table className="w-full min-w-[950px]">
-            <TableHeader>
-              <TableRow className="bg-gray-100 dark:bg-zinc-800 text-base">
-                <TableHead className="font-bold text-gray-700 dark:text-gray-100 min-w-[180px] px-5">Livro</TableHead>
-                <TableHead className="font-bold text-gray-700 dark:text-gray-100 min-w-[120px] px-5 border-l border-zinc-200 dark:border-zinc-800">Aluno</TableHead>
-                <TableHead className="font-bold text-gray-700 dark:text-gray-100 min-w-[110px] px-3 text-center border-l border-zinc-200 dark:border-zinc-800">Data do Empréstimo</TableHead>
-                <TableHead className="font-bold text-gray-700 dark:text-gray-100 min-w-[120px] px-3 text-center border-l border-zinc-200 dark:border-zinc-800">Data da Devolução</TableHead>
-                <TableHead className="font-bold text-gray-700 dark:text-gray-100 min-w-[100px] px-3 text-center border-l border-zinc-200 dark:border-zinc-800">Status</TableHead>
-                <TableHead className="w-[90px] font-bold text-gray-700 dark:text-gray-100 text-center px-2 border-l border-zinc-200 dark:border-zinc-800">Ações</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {emprestimos.map((emprestimo) => (
-                <TableRow key={emprestimo.id} className="hover:bg-blue-50/60 dark:hover:bg-zinc-800/60 transition-all text-base">
-                  <TableCell className="font-semibold whitespace-nowrap px-5 py-3 align-middle">{emprestimo.livro.titulo}
-                    <span className="block text-xs text-gray-500 dark:text-gray-400 font-normal">{emprestimo.livro.autor}</span>
-                  </TableCell>
-                  <TableCell className="whitespace-nowrap px-5 py-3 align-middle border-l border-zinc-100 dark:border-zinc-800">
-                    {emprestimo.aluno?.nome || emprestimo.professor?.nome || "-"}
-                  </TableCell>
-                  <TableCell className="whitespace-nowrap px-3 py-3 align-middle text-center border-l border-zinc-100 dark:border-zinc-800">{new Date(emprestimo.data_emprestimo).toLocaleDateString()}</TableCell>
-                  <TableCell className="whitespace-nowrap px-3 py-3 align-middle text-center border-l border-zinc-100 dark:border-zinc-800">{emprestimo.data_devolucao ? new Date(emprestimo.data_devolucao).toLocaleDateString() : "-"}</TableCell>
-                  <TableCell className="px-3 py-3 align-middle text-center border-l border-zinc-100 dark:border-zinc-800">
-                    <span className={`inline-flex items-center justify-center rounded-full px-2 py-0.5 text-xs font-bold shadow-sm min-w-[28px] min-h-[28px] ${
-                      emprestimo.status === "emprestado"
-                        ? "bg-yellow-100 text-yellow-800"
-                        : "bg-green-100 text-green-800"
-                    }`} style={{margin: '0 auto'}}>
-                      {emprestimo.status === "emprestado" ? "Emprestado" : "Devolvido"}
-                    </span>
-                  </TableCell>
-                  <TableCell className="text-center px-2 py-3 align-middle border-l border-zinc-100 dark:border-zinc-800">
-                    {emprestimo.status === "emprestado" && (
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-9 w-9 rounded-full hover:bg-blue-100 dark:hover:bg-zinc-700 transition-colors"
-                          >
-                            <ArrowLeftRight className="h-5 w-5 text-blue-600" />
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>Devolver Livro</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              Tem certeza que deseja registrar a devolução deste livro?
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                            <AlertDialogAction onClick={() => handleDevolver(emprestimo.id)}>
-                              Confirmar
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    )}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+        <div className="flex gap-2 mb-4">
+          <button
+            className={`px-4 py-2 rounded ${tipoFiltro === 'aluno' ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}
+            onClick={() => setTipoFiltro('aluno')}
+          >
+            Alunos
+          </button>
+          <button
+            className={`px-4 py-2 rounded ${tipoFiltro === 'professor' ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}
+            onClick={() => setTipoFiltro('professor')}
+          >
+            Professores
+          </button>
+        </div>
+        <div className="overflow-x-auto rounded-2xl shadow">
+          <table className="min-w-full bg-white">
+            <thead>
+              <tr>
+                <th className="px-4 py-3 text-left font-bold">Livro</th>
+                <th className="px-4 py-3 text-left font-bold">
+                  {tipoFiltro === 'aluno' ? 'Aluno' : 'Professor'}
+                </th>
+                <th className="px-4 py-3 text-left font-bold">Data do Empréstimo</th>
+                <th className="px-4 py-3 text-left font-bold">Data da Devolução</th>
+                <th className="px-4 py-3 text-left font-bold">Status</th>
+                <th className="px-4 py-3 text-left font-bold">Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              {emprestimosFiltrados.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="text-center py-8 text-gray-400">
+                    Nenhum empréstimo encontrado.
+                  </td>
+                </tr>
+              ) : (
+                emprestimosFiltrados.map(emp => (
+                  <tr key={emp.id} className="border-t">
+                    <td className="px-4 py-3">
+                      <div className="font-bold">{emp.livro_nome}</div>
+                      <div className="text-xs text-gray-400">{emp.livro_autor}</div>
+                    </td>
+                    <td className="px-4 py-3">
+                      {tipoFiltro === 'aluno' ? emp.aluno_nome : emp.professor_nome}
+                    </td>
+                    <td className="px-4 py-3">
+                      {emp.data_emprestimo
+                        ? new Date(emp.data_emprestimo).toLocaleDateString('pt-BR')
+                        : '-'}
+                    </td>
+                    <td className="px-4 py-3">
+                      {emp.data_devolucao
+                        ? new Date(emp.data_devolucao).toLocaleDateString('pt-BR')
+                        : '-'}
+                    </td>
+                    <td className="px-4 py-3">
+                      {emp.status === 'emprestado' ? (
+                        <span className="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-xs font-bold">Emprestado</span>
+                      ) : (
+                        <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-bold">Devolvido</span>
+                      )}
+                    </td>
+                    <td className="px-4 py-3">
+                      {emp.status === "emprestado" && (
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-9 w-9 rounded-full hover:bg-blue-100 dark:hover:bg-zinc-700 transition-colors"
+                            >
+                              <ArrowLeftRight className="h-5 w-5 text-blue-600" />
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Devolver Livro</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                Tem certeza que deseja registrar a devolução deste livro?
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                              <AlertDialogAction onClick={() => handleDevolver(emp.id)}>
+                                Confirmar
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      )}
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
         </div>
       </div>
       <style jsx global>{`

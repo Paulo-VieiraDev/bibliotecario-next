@@ -72,12 +72,7 @@ export default function NotificacoesPage() {
   const [notificacoesState, setNotificacoes] = useState<Notificacao[]>([])
 
   useEffect(() => {
-    setNotificacoes(
-      notificacoes.map(n => ({
-        ...n,
-        id: String(n.id),
-      }))
-    )
+    setNotificacoes(notificacoes)
   }, [notificacoes])
 
   const notificacoesFiltradas = notificacoesState.filter((n: Notificacao) =>
@@ -88,73 +83,48 @@ export default function NotificacoesPage() {
   )
 
   return (
-    <div className="w-full min-h-screen py-10 flex flex-col items-center">
-      <div className="flex items-center gap-3 mb-8 animate-bounce-slow">
+    <div className="w-full min-h-screen py-6 flex flex-col items-center">
+      <div className="flex items-center gap-3 mb-6 md:mb-8 px-2">
         <Bell className="text-blue-600 w-9 h-9 animate-bell" />
-        <h1 className="text-4xl font-extrabold text-gray-900 dark:text-gray-100">Notificações</h1>
+        <h1 className="text-2xl md:text-4xl font-extrabold text-gray-900 dark:text-gray-100">Notificações</h1>
       </div>
-      <div className="flex gap-2 mb-6">
-        {tipos.map(t => (
-          <Button
-            key={t.value}
-            variant={filtro === t.value ? "default" : "outline"}
-            onClick={() => setFiltro(t.value)}
-            className="rounded-full px-5 py-1 text-base"
-          >
-            {t.label}
-          </Button>
-        ))}
+      <div className="w-full px-2 mb-4 md:mb-6">
+        <div className="flex justify-center gap-1 md:gap-2 w-full">
+          {tipos.map(t => (
+            <Button
+              key={t.value}
+              variant={filtro === t.value ? "default" : "outline"}
+              onClick={() => setFiltro(t.value)}
+              className="rounded-full px-3 py-0.5 text-xs md:px-5 md:py-1 md:text-base"
+            >
+              {t.label}
+            </Button>
+          ))}
+        </div>
       </div>
-      <div className="w-full max-w-3xl space-y-8">
+      <div className="w-full max-w-md md:max-w-3xl space-y-5 md:space-y-8 px-2">
         {loading ? (
-          <div className="p-12 text-center text-gray-400 text-lg">Carregando...</div>
+          <div className="p-8 md:p-12 text-center text-gray-400 text-base md:text-lg">Carregando...</div>
         ) : notificacoesFiltradas.length === 0 ? (
-          <div className="p-12 text-center text-gray-400 text-lg">Nenhuma notificação encontrada.</div>
+          <div className="p-8 md:p-12 text-center text-gray-400 text-base md:text-lg">Nenhuma notificação encontrada.</div>
         ) : (
           Object.entries(grupos).map(([data, notis]) => (
             <div key={data}>
-              <div className="text-lg font-bold text-gray-700 dark:text-gray-300 mb-2 ml-2">{data}</div>
-              <div className="space-y-4">
+              <div className="text-base md:text-lg font-bold text-gray-700 dark:text-gray-300 mb-1 md:mb-2 ml-1 md:ml-2">{data}</div>
+              <div className="space-y-3 md:space-y-4">
                 {notis.map((n) => (
                   <div
                     key={n.id}
-                    className={`relative flex items-center gap-4 px-6 py-5 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-800 bg-white/80 dark:bg-zinc-900/80 transition-all group hover:scale-[1.015] hover:shadow-lg ${!n.lida ? "ring-2 ring-blue-400/40" : "opacity-70"}`}
+                    className={`relative flex items-center gap-3 md:gap-4 px-3 py-3 md:px-6 md:py-5 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-800 bg-white/80 dark:bg-zinc-900/80 transition-all group hover:scale-[1.01] hover:shadow-lg ${!n.lida ? "ring-2 ring-blue-400/40" : "opacity-80"}`}
                   >
                     <div className="flex-shrink-0">{getIcon(n.tipo)}</div>
                     <div className="flex-1 min-w-0">
-                      <div className="font-semibold text-base text-gray-900 dark:text-gray-100 truncate flex items-center gap-2">
+                      <div className="font-semibold text-sm md:text-base text-gray-900 dark:text-gray-100 truncate flex items-center gap-2">
                         {n.mensagem}
                         {!n.lida && <span className="ml-2 bg-blue-500 text-white text-xs px-2 py-0.5 rounded-full animate-pulse">Novo</span>}
                       </div>
                       <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">{formatDate(n.criada_em)}</div>
                     </div>
-                    {!n.lida && (
-                      <Button
-                        size="sm"
-                        variant="secondary"
-                        disabled={marcando === n.id}
-                        onClick={async () => {
-                          setMarcando(n.id)
-                          try {
-                            await marcarNotificacaoComoLida(n.id)
-                            // Atualize o estado local:
-                            setNotificacoes((prev) =>
-                              prev.map((noti) =>
-                                noti.id === n.id ? { ...noti, lida: true } : noti
-                              )
-                            )
-                          } catch (error) {
-                            const msg = error instanceof Error ? error.message : JSON.stringify(error)
-                            toast.error(msg || "Erro ao marcar como lida")
-                          } finally {
-                            setMarcando(null)
-                          }
-                        }}
-                        className="ml-2"
-                      >
-                        {marcando === n.id ? "Marcando..." : "Marcar como lida"}
-                      </Button>
-                    )}
                   </div>
                 ))}
               </div>
@@ -169,6 +139,8 @@ export default function NotificacoesPage() {
         }
         .animate-bell { animation: bell 1.2s infinite alternate; }
         .animate-bounce-slow { animation: bounce 2.5s infinite; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
       `}</style>
     </div>
   )

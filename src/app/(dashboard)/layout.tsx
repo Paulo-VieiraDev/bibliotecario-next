@@ -17,6 +17,7 @@ import {
   DropdownMenuContent,
 } from "@/components/ui/dropdown-menu"
 import { useNotificacoes } from "@/hooks/use-notificacoes"
+import { MobileNotifications } from "@/components/mobile-notifications"
 
 const routes = [
   {
@@ -98,24 +99,25 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <AuthGuard>
       <div className="min-h-screen bg-background">
-        {/* Topbar fixa no topo */}
-        <header className="fixed top-0 left-0 w-full bg-white dark:bg-[#18181b] shadow-[0_2px_12px_0_rgba(0,0,0,0.06)] flex items-center h-20 px-10 z-30 border-b border-zinc-200 dark:border-zinc-800 transition-all duration-300">
+        {/* Cabeçalho fixo no topo */}
+        <header className="fixed top-0 left-0 w-full bg-white dark:bg-[#18181b] shadow-[0_2px_12px_0_rgba(0,0,0,0.06)] flex items-center h-20 px-4 md:px-10 z-30 border-b border-zinc-200 dark:border-zinc-800 transition-all duration-300">
           <div className="flex items-center gap-4">
-            <span className="inline-flex items-center justify-center w-12 h-12 bg-blue-100 dark:bg-cyan-900 rounded-xl shadow-sm mr-2">
-              <School size={32} strokeWidth={2.2} className="text-blue-600 dark:text-cyan-300" />
+            <span className="inline-flex items-center justify-center w-10 h-10 md:w-12 md:h-12 bg-blue-100 dark:bg-cyan-900 rounded-xl shadow-sm mr-2">
+              <School size={28} strokeWidth={2.2} className="text-blue-600 dark:text-cyan-300" />
             </span>
-            <h2 className="text-3xl font-extrabold text-blue-900 dark:text-cyan-200 tracking-tight select-none leading-tight">Biblioteca Escolar</h2>
+            <h2 className="text-2xl md:text-3xl font-extrabold text-blue-900 dark:text-cyan-200 tracking-tight select-none leading-tight">Biblioteca Escolar</h2>
           </div>
-          <div className="ml-auto flex items-center space-x-6">
-            <div className="w-11 h-11 flex items-center justify-center rounded-full border transition-all duration-200 shadow-sm focus:outline-none
+          <div className="ml-auto flex items-center space-x-4 md:space-x-6">
+            <div className="w-10 h-10 md:w-11 md:h-11 flex items-center justify-center rounded-full border transition-all duration-200 shadow-sm focus:outline-none
               bg-white border-blue-200 text-blue-600 hover:bg-blue-50 hover:border-blue-400
               dark:bg-zinc-800 dark:border-zinc-700 dark:text-cyan-200 dark:hover:bg-zinc-700 dark:hover:border-cyan-400">
               <ModeToggle />
             </div>
-            {/* Notificações na topbar */}
-            <div className="relative group" ref={notificacoesRef}>
+
+            {/* Notificações Desktop (original) */}
+            <div className="hidden md:block relative group" ref={notificacoesRef}>
               <button
-                className="w-11 h-11 flex items-center justify-center rounded-full border transition-all duration-200 shadow-sm focus:outline-none
+                className="w-10 h-10 md:w-11 md:h-11 flex items-center justify-center rounded-full border transition-all duration-200 shadow-sm focus:outline-none
                   bg-white border-blue-200 text-blue-600 hover:bg-blue-50 hover:border-blue-400
                   dark:bg-zinc-800 dark:border-zinc-700 dark:text-cyan-200 dark:hover:bg-zinc-700 dark:hover:border-cyan-400"
                 onClick={() => setNotificacoesOpen(v => !v)}
@@ -155,13 +157,20 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 </div>
               )}
             </div>
+
+            <div className="md:hidden">
+              <MobileNotifications 
+                notificacoes={notificacoes} 
+                notificacoesNaoLidas={notificacoesNaoLidas} 
+              />
+            </div>
           </div>
         </header>
 
         {/* Layout principal */}
-        <div className="flex h-screen pt-16">
-          {/* Sidebar começa abaixo da topbar */}
-          <aside className="w-64 bg-white dark:bg-[#18181b] border-r border-zinc-200 dark:border-zinc-800 flex flex-col shadow-xl transition-all duration-300">
+        <div className="flex h-screen pt-20">
+          {/* Sidebar lateral em desktop */}
+          <aside className="hidden md:flex bg-white dark:bg-[#18181b] border-r border-zinc-200 dark:border-zinc-800 flex-col shadow-xl transition-all duration-300 w-64">
             <div className="p-6 pb-4 flex items-center gap-4 bg-white dark:bg-[#23232a] border-b border-zinc-200 dark:border-zinc-800 mb-2 shadow-none rounded-bl-none">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -203,14 +212,30 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 </Link>
               ))}
             </nav>
-            {/* Perfil e sign out no rodapé da sidebar */}
-            <div className="p-6 pt-4 mt-auto text-xs text-gray-500 dark:text-zinc-400 text-center border-t border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#23232a] shadow-none">
-              <div className="font-semibold">© 2025 Paulo Vieira</div>
-            </div>
           </aside>
 
+          {/* Barra de navegação superior para mobile */}
+          <nav className="md:hidden fixed top-20 left-0 w-full bg-white dark:bg-[#18181b] border-b border-zinc-200 dark:border-zinc-800 z-20">
+            <div className="flex justify-around w-full py-3">
+              {routes.map((route) => (
+                <Link 
+                  key={route.href} 
+                  href={route.href}
+                  className={`flex flex-col items-center gap-1 ${
+                    pathname === route.href 
+                      ? "text-blue-600 dark:text-cyan-300" 
+                      : "text-zinc-500 dark:text-zinc-300"
+                  }`}
+                >
+                  <route.icon className="w-6 h-6" />
+                  <span className="text-xs font-medium">{route.label}</span>
+                </Link>
+              ))}
+            </div>
+          </nav>
+
           {/* Conteúdo principal */}
-          <main className="flex-1 p-4 md:p-8 bg-background overflow-y-auto">{children}</main>
+          <main className="flex-1 p-4 md:p-8 bg-background overflow-y-auto pt-24 md:pt-8">{children}</main>
         </div>
       </div>
     </AuthGuard>

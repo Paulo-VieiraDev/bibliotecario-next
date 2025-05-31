@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Pencil, Trash2, Plus, User } from "lucide-react"
+import { Pencil, Trash, Plus, User } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -12,6 +12,7 @@ import {
 import { getProfessores, createProfessor, updateProfessor, deleteProfessor } from "@/services/professores"
 import { toast } from "sonner"
 import { AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogCancel, AlertDialogTrigger, AlertDialogAction } from "@/components/ui/alert-dialog"
+import { Users } from "lucide-react"
 
 function getInitial(nome: string) {
   return nome?.trim()?.charAt(0)?.toUpperCase() || "?"
@@ -83,74 +84,69 @@ export default function ProfessoresPage() {
   return (
     <div className="w-full min-h-screen flex flex-col items-center justify-start bg-white dark:bg-transparent py-12 px-2">
       <div className="w-full max-w-2xl flex flex-col gap-8">
-        <div className="flex items-center justify-between mb-2">
-          <div className="flex items-center gap-3">
-            <User className="w-9 h-9 text-cyan-600 drop-shadow" />
-            <h1 className="text-4xl font-extrabold text-gray-900 dark:text-gray-100 tracking-tight">Professores</h1>
+        <div className="w-full flex flex-col items-center">
+          {/* Cabeçalho */}
+          <div className="flex items-center gap-2 mb-4 px-2 w-full justify-center relative">
+            <User className="w-7 h-7 md:w-9 md:h-9 text-blue-600 dark:text-blue-400" />
+            <h1 className="text-2xl md:text-4xl font-extrabold text-gray-900 dark:text-blue-400">Professores</h1>
+            <div className="flex-1" />
+            <Button variant="default"
+              className="px-6 py-2 text-base font-bold flex items-center gap-2 shadow-lg transition-all scale-100 hover:scale-105"
+              onClick={() => setProfessorDialog({ open: true })}
+            >
+              + Novo Professor
+            </Button>
           </div>
-          <Button
-            onClick={() => { setProfessorDialog({ open: true }); setProfessorNome(""); }}
-            variant="default"
-            className="px-6 py-2 text-base font-bold flex items-center gap-2 shadow-lg transition-all scale-100 hover:scale-105"
-          >
-            <Plus className="h-5 w-5" />
-            Novo Professor
-          </Button>
-        </div>
-        <div className="rounded-3xl border border-cyan-200 dark:border-cyan-700 shadow-xl bg-white/90 dark:bg-zinc-900/90 p-0 flex flex-col transition-all min-h-[220px]"
-          style={{ boxShadow: '0 4px 24px 0 rgba(0,0,0,0.08), 0 1.5px 0 0 rgba(255,255,255,0.04)' }}
-        >
-          <div className="flex flex-col gap-3 px-8 pb-8 pt-6">
-            {loading ? (
-              <div className="flex justify-center py-12">
-                <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-              </div>
-            ) : professores.length === 0 ? (
-              <div className="text-center text-gray-400 dark:text-zinc-300 py-12 text-lg">Nenhum professor cadastrado.</div>
-            ) : (
-              professores.map((prof) => (
-                <div
-                  key={prof.id}
-                  className="group flex items-center gap-3 bg-cyan-50 dark:bg-zinc-800/80 hover:bg-cyan-100 dark:hover:bg-zinc-700/80 rounded-full px-5 py-3 shadow-md transition-all relative min-w-[180px] max-w-full border border-transparent dark:border-cyan-700"
-                  style={{ boxShadow: '0 2px 12px 0 rgba(0,180,216,0.08)' }}
-                >
-                  <div className="w-10 h-10 rounded-full bg-cyan-200 dark:bg-zinc-700 flex items-center justify-center text-cyan-700 dark:text-cyan-200 font-bold text-xl shadow-inner border-2 border-cyan-300 dark:border-cyan-500">
-                    {getInitial(prof.nome)}
-                  </div>
-                  <span className="font-semibold text-gray-800 dark:text-zinc-100 truncate flex-1">{prof.nome}</span>
-                  <Button variant="ghost" size="icon" className="hover:bg-cyan-200 dark:hover:bg-zinc-600 hover:text-cyan-700 dark:hover:text-cyan-200" onClick={() => { setProfessorDialog({ open: true, editId: prof.id }); setProfessorNome(prof.nome); }}>
-                    <span className="sr-only">Editar</span>
-                    <Pencil className="h-4 w-4" />
-                  </Button>
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="hover:bg-red-100 dark:hover:bg-red-900 hover:text-red-600 dark:hover:text-red-300"
-                      >
-                        <span className="sr-only">Excluir</span>
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>Confirmar exclusão</AlertDialogTitle>
-                        <AlertDialogDescription>
-                          Tem certeza que deseja excluir o professor <span className="font-semibold">{prof.nome}</span>? Esta ação não poderá ser desfeita.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                        <AlertDialogAction onClick={() => handleDeleteProfessor(prof.id)} className="bg-red-600 hover:bg-red-700">
-                          Excluir
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
+
+          {/* Lista de professores */}
+          <div className="w-full max-w-md md:max-w-2xl bg-blue-50 dark:bg-[#18181b] rounded-2xl border border-blue-200 dark:border-blue-900 p-2 md:p-6 flex flex-col gap-2 md:gap-4">
+            {professores.map((prof) => (
+              <div
+                key={prof.id}
+                className="flex items-center gap-2 md:gap-4 bg-white/70 dark:bg-blue-950/60 rounded-xl px-2 py-2 md:px-4 md:py-3 shadow-sm"
+              >
+                <div className="flex-shrink-0 w-8 h-8 md:w-12 md:h-12 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center font-bold text-blue-700 dark:text-blue-300 text-base md:text-xl">
+                  {prof.nome.charAt(0).toUpperCase()}
                 </div>
-              ))
-            )}
+                <span className="flex-1 text-sm md:text-lg font-semibold text-gray-800 dark:text-gray-100 truncate">{prof.nome}</span>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="p-1 md:p-2 text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300"
+                  onClick={() => setProfessorDialog({ open: true, editId: prof.id })}
+                >
+                  <Pencil className="w-4 h-4" />
+                </Button>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="p-1 md:p-2 text-blue-600 dark:text-red-400 hover:text-red-600 dark:hover:text-red-300"
+                    >
+                      <Trash className="w-4 h-4" />
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Tem certeza que deseja excluir?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Esta ação não poderá ser desfeita. O professor será removido do sistema.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                      <AlertDialogAction
+                        className="bg-red-600 hover:bg-red-700"
+                        onClick={() => handleDeleteProfessor(prof.id)}
+                      >
+                        Excluir
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </div>
+            ))}
           </div>
         </div>
         <Dialog open={professorDialog.open} onOpenChange={open => setProfessorDialog(v => ({ ...v, open }))}>

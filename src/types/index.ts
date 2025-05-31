@@ -51,9 +51,10 @@ export interface Professor {
 }
 
 export interface Notificacao {
-  id: string
+  id: number
   mensagem: string
   tipo: string
   criada_em: string
   lida: boolean
+  usuario_id: string
 } 
