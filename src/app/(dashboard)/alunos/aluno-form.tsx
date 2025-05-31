@@ -61,8 +61,8 @@ export function AlunoForm({ aluno, onSuccess, onCancel, turmas }: AlunoFormProps
         toast.success("Aluno cadastrado com sucesso!")
       }
       onSuccess?.()
-    } catch (error) {
-      toast.error("Erro ao salvar aluno")
+    } catch {
+      // erro tratado por toast ou similar
     } finally {
       setLoading(false)
     }

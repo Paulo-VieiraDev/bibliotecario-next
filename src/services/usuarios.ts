@@ -11,7 +11,7 @@ export interface Usuario {
 
 async function verificarTabelaUsuarios() {
   try {
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from('usuarios')
       .select('*')
       .limit(1)

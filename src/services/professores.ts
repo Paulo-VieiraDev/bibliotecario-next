@@ -42,7 +42,7 @@ export async function getProfessores() {
 
     await supabase.from("professores").select("*")
 
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from("professores")
       .select("*")
       .order("nome")

@@ -8,7 +8,6 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog"
 import { getProfessores, createProfessor, updateProfessor } from "@/services/professores"
 import { toast } from "sonner"
@@ -33,7 +32,7 @@ export default function ProfessoresPage() {
     try {
       const data = await getProfessores()
       setProfessores(data)
-    } catch (error) {
+    } catch {
       toast.error("Erro ao carregar professores")
     } finally {
       setLoading(false)

@@ -9,18 +9,6 @@ import { getTurmas } from "@/services/turmas"
 import type { Aluno } from "@/types"
 import { toast } from "sonner"
 import { AlunoDialog } from "./aluno-dialog"
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
-import clsx from "clsx"
 
 const TURMA_COLORS = [
   "#4E79A7", "#F28E2B", "#E15759", "#76B7B2", "#59A14F",
@@ -48,7 +36,7 @@ export default function AlunosPage() {
       const data = await getAlunos()
       setAlunos(data)
       setLoading(false)
-    } catch (error) {
+    } catch {
       toast.error("Erro ao carregar alunos")
       setLoading(false)
     }
@@ -68,7 +56,7 @@ export default function AlunosPage() {
       await deleteAluno(id)
       toast.success("Aluno excluído com sucesso!")
       loadAlunos()
-    } catch (error) {
+    } catch {
       toast.error("Erro ao excluir aluno")
     }
   }

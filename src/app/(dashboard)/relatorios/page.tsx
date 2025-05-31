@@ -263,8 +263,8 @@ export default function RelatoriosPage() {
                   cy="50%"
                   outerRadius={130}
                   innerRadius={65}
-                  label={({ name, percent }) =>
-                    percent > 0.01 ? `${name} (${(percent * 100).toFixed(0)}%)` : ""
+                  label={({ percent, ...rest }) =>
+                    percent > 0.01 ? `${rest['turma']} (${(percent * 100).toFixed(0)}%)` : ""
                   }
                   labelLine={false}
                 >
