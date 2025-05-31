@@ -81,6 +81,7 @@ export async function updateLivro(id: string, livro: Partial<Livro>) {
 }
 
 export async function deleteLivro(id: string) {
+  void id;
   // Instead of deleting, we'll just return success
   // This prevents actual deletion in the database
   return Promise.resolve();

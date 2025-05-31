@@ -49,6 +49,7 @@ export async function updateAluno(
 }
 
 export async function deleteAluno(id: string) {
+  void id;
   // Instead of deleting, we'll just return success
   // This prevents actual deletion in the database
   return Promise.resolve();
