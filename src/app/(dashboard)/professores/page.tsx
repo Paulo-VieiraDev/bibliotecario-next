@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Pencil, Trash, Plus, User } from "lucide-react"
+import { Pencil, Trash, User } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -12,11 +12,6 @@ import {
 import { getProfessores, createProfessor, updateProfessor, deleteProfessor } from "@/services/professores"
 import { toast } from "sonner"
 import { AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogCancel, AlertDialogTrigger, AlertDialogAction } from "@/components/ui/alert-dialog"
-import { Users } from "lucide-react"
-
-function getInitial(nome: string) {
-  return nome?.trim()?.charAt(0)?.toUpperCase() || "?"
-}
 
 export default function ProfessoresPage() {
   const [professores, setProfessores] = useState<{ id: string; nome: string }[]>([])

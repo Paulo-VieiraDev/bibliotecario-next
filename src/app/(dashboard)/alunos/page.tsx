@@ -97,7 +97,7 @@ export default function AlunosPage() {
       {/* Turmas */}
       <div className="space-y-6">
         {turmasComAlunos.map((turma, idx) => (
-          <div className="bg-gray-50 dark:bg-zinc-900 rounded-xl shadow-md p-6 mb-6">
+          <div key={turma.id} className="bg-gray-50 dark:bg-zinc-900 rounded-xl shadow-md p-6 mb-6">
             <div className="flex items-center gap-3 mb-4">
               <span
                 className="flex items-center gap-2 px-3 py-1 rounded-lg font-bold text-white text-sm"

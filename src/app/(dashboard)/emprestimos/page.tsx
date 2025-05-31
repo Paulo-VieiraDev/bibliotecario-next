@@ -3,28 +3,9 @@
 import { useEffect, useState } from "react"
 import { ArrowLeftRight, Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
 import { toast } from "sonner"
 import { getEmprestimos, devolverLivro } from "@/services/emprestimos"
-import type { EmprestimoComDetalhes } from "@/types"
 import { EmprestimoDialog } from "./emprestimo-dialog"
 import { getAlunos } from "@/services/alunos"
 import { getProfessores } from "@/services/professores"

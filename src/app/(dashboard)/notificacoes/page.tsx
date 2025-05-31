@@ -5,7 +5,6 @@ import { useNotificacoes } from "@/hooks/use-notificacoes"
 import { Bell, Info, AlertTriangle, Award } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useState, useEffect } from "react"
-import { toast } from "sonner"
 import type { Notificacao } from "@/types"
 
 
@@ -67,7 +66,6 @@ export default function NotificacoesPage() {
   const { user } = useAuth()
   const { notificacoes, loading } = useNotificacoes(user?.id)
   const [filtro, setFiltro] = useState("todos")
-  const [marcando, setMarcando] = useState<string | null>(null)
   const [notificacoesState, setNotificacoes] = useState<Notificacao[]>([])
 
   useEffect(() => {
