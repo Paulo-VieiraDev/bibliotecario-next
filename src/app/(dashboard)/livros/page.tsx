@@ -39,7 +39,7 @@ export default function LivrosPage() {
     try {
       const data = await getLivros()
       setLivros(data)
-    } catch (error) {
+    } catch {
       toast.error("Erro ao carregar livros")
     } finally {
       setLoading(false)
@@ -51,8 +51,8 @@ export default function LivrosPage() {
       await deleteLivro(id);
       toast.success("Livro excluído com sucesso!");
       loadLivros();
-    } catch (error) {
-      toast.error("Erro ao excluir livro");
+    } catch {
+      toast.error("Erro ao excluir livro")
     }
   }
 

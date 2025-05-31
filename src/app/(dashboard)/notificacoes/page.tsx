@@ -41,8 +41,8 @@ const tipos = [
   { label: "Parabéns", value: "parabens" },
 ]
 
-function agruparPorData(notificacoes: any[]) {
-  const grupos: Record<string, any[]> = {}
+function agruparPorData(notificacoes: Notificacao[]) {
+  const grupos: Record<string, Notificacao[]> = {}
   notificacoes.forEach((n) => {
     const data = formatDateGroup(n.criada_em)
     if (!grupos[data]) grupos[data] = []
@@ -68,9 +68,8 @@ export default function NotificacoesPage() {
   const { user } = useAuth()
   const { notificacoes, loading } = useNotificacoes(user?.id)
   const [filtro, setFiltro] = useState("todos")
-  const [marcando, setMarcando] = useState<number | null>(null)
+  const [marcando, setMarcando] = useState<string | null>(null)
   const [notificacoesState, setNotificacoes] = useState<Notificacao[]>([])
-  const notificacoesNaoLidas = notificacoesState.filter((n: { lida: boolean }) => !n.lida).length
 
   useEffect(() => {
     setNotificacoes(
@@ -137,7 +136,7 @@ export default function NotificacoesPage() {
                         onClick={async () => {
                           setMarcando(n.id)
                           try {
-                            await marcarNotificacaoComoLida(n.id)
+                            await marcarNotificacaoComoLida(Number(n.id))
                             // Atualize o estado local:
                             setNotificacoes((prev) =>
                               prev.map((noti) =>

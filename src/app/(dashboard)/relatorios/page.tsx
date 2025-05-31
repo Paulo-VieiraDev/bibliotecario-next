@@ -89,12 +89,6 @@ export default function RelatoriosPage() {
     fetchData()
   }, [])
 
-  const renderEmptyState = (message: string) => (
-    <div className="flex flex-col items-center justify-center h-[300px] text-muted-foreground">
-      <p>{message}</p>
-    </div>
-  )
-
   function ResumoEmprestimosMes({ meses }: { meses: { mes: string; quantidade: number }[] }) {
     if (!meses || meses.length === 0) return null;
     const atual = meses[meses.length - 1];
@@ -198,7 +192,9 @@ export default function RelatoriosPage() {
           {isLoading ? (
             <Skeleton className="h-[340px] w-full" />
           ) : livrosMaisEmprestados.length === 0 ? (
-            renderEmptyState("Nenhum livro emprestado encontrado")
+            <div className="flex flex-col items-center justify-center h-[300px] text-muted-foreground">
+              <p>Nenhum livro emprestado encontrado</p>
+            </div>
           ) : (
             <ResponsiveContainer width="100%" height={340}>
               <BarChart
@@ -253,7 +249,9 @@ export default function RelatoriosPage() {
           {isLoading ? (
             <Skeleton className="h-[380px] w-full" />
           ) : emprestimosPorTurma.length === 0 ? (
-            renderEmptyState("Nenhum empréstimo por turma encontrado")
+            <div className="flex flex-col items-center justify-center h-[300px] text-muted-foreground">
+              <p>Nenhum empréstimo por turma encontrado</p>
+            </div>
           ) : (
             <ResponsiveContainer width="100%" height={380}>
               <PieChart>
@@ -306,7 +304,9 @@ export default function RelatoriosPage() {
           {isLoading ? (
             <Skeleton className="h-[380px] w-full" />
           ) : alunosMaisEmprestimos.length === 0 ? (
-            renderEmptyState("Nenhum aluno com empréstimos encontrado")
+            <div className="flex flex-col items-center justify-center h-[300px] text-muted-foreground">
+              <p>Nenhum aluno com empréstimos encontrado</p>
+            </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="min-w-full text-sm">
