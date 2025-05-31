@@ -28,11 +28,6 @@ const categorias = [
   { value: "Paradidático", label: "Paradidático" },
 ]
 
-const etapas = [
-  { value: "Fundamental", label: "Fundamental" },
-  { value: "Médio", label: "Ensino Médio" },
-]
-
 const tiposDidatico = [
   { value: "Aluno", label: "Aluno" },
   { value: "Professor", label: "Professor" },

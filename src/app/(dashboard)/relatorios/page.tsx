@@ -1,11 +1,11 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend, LineChart, Line, LabelList } from "recharts"
+import { Card, CardContent, CardHeader } from "@/components/ui/card"
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts"
 import { Skeleton } from "@/components/ui/skeleton"
 import { supabase } from "@/lib/supabase"
-import { Medal, Award, Star, TrendingUp, TrendingDown, MinusCircle, Trophy, Calendar, BarChart2 } from "lucide-react"
+import { Medal, Award, Star, Calendar, BarChart2, Trophy } from "lucide-react"
 
 const COLORS = [
   "#4E79A7", "#F28E2B", "#E15759", "#76B7B2", "#59A14F",
@@ -94,36 +94,6 @@ export default function RelatoriosPage() {
       <p>{message}</p>
     </div>
   )
-
-  // Funções auxiliares para os cards de resumo
-  function getPercentChange(meses: { mes: string; quantidade: number }[]) {
-    if (!meses || meses.length < 2) return 0;
-    const atual = meses[meses.length - 1].quantidade;
-    const anterior = meses[meses.length - 2].quantidade;
-    if (anterior === 0) return 100;
-    return Math.round(((atual - anterior) / anterior) * 100);
-  }
-
-  function getMesRecordeObj(meses: { mes: string; quantidade: number }[]) {
-    if (!meses || meses.length === 0) return undefined;
-    return meses.reduce((max, m) => m.quantidade > max.quantidade ? m : max, meses[0]);
-  }
-
-  function getMaiorValor(meses: { mes: string; quantidade: number }[]) {
-    if (!meses || meses.length === 0) return 0;
-    return Math.max(...meses.map(m => m.quantidade));
-  }
-
-  function formatMesAno(obj?: { mes: string; quantidade: number }) {
-    if (!obj || !obj.mes) return '-';
-    const [ano, mes] = obj.mes.split('-');
-    const meses = [
-      'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
-      'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
-    ];
-    const mesNum = parseInt(mes, 10);
-    return `${meses[mesNum - 1]}/${ano}`;
-  }
 
   function ResumoEmprestimosMes({ meses }: { meses: { mes: string; quantidade: number }[] }) {
     if (!meses || meses.length === 0) return null;
@@ -314,7 +284,7 @@ export default function RelatoriosPage() {
                   }}
                   labelStyle={{ color: 'var(--card-foreground)', fontWeight: 600 }}
                   itemStyle={{ color: 'var(--card-foreground)' }}
-                  formatter={(value, name, props) => [`${value} empréstimos`, '']}
+                  formatter={(value, name) => [`${value} empréstimos`, '']}
                 />
               </PieChart>
             </ResponsiveContainer>

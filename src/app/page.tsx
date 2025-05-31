@@ -250,7 +250,7 @@ export default function Home() {
               &copy; {new Date().getFullYear()} Paulo Vieira
             </p>
             <p className="text-sm text-gray-300">
-              Projeto de Conclusão de Curso - Análise e Desenvolvimento de Sistemas (Univale)
+              Projeto de Conclusão de Curso Análise e Desenvolvimento de Sistemas (Univale)
             </p>
           </div>
         </div>

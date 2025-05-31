@@ -96,7 +96,7 @@ export default function LoginPage() {
                   placeholder="seu.email@exemplo.com"
                   value={email}
                   onChange={e => setEmail(e.target.value)}
-                  className="pl-10 bg-white/50"
+                  className="pl-10 bg-white/50 text-gray-900"
                   required
                   disabled={isLoading}
                 />
@@ -115,7 +115,7 @@ export default function LoginPage() {
                   placeholder="••••••••"
                   value={password}
                   onChange={e => setPassword(e.target.value)}
-                  className="pl-10 bg-white/50"
+                  className="pl-10 bg-white/50 text-gray-900"
                   required
                   disabled={isLoading}
                 />

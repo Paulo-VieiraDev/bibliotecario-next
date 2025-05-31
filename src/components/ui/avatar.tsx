@@ -2,6 +2,8 @@
 
 import * as React from "react"
 import { cn } from "@/lib/utils"
+import Image from "next/image"
+import { User } from "lucide-react"
 
 interface AvatarProps extends React.HTMLAttributes<HTMLDivElement> {
   src?: string
@@ -22,11 +24,13 @@ const Avatar = React.forwardRef<HTMLDivElement, AvatarProps>(
         )}
         {...props}
       >
-        {src && !error ? (
-          <img
-            src={src}
-            alt={alt}
-            className="aspect-square h-full w-full object-cover"
+        {!error ? (
+          <Image
+            src={src || ""}
+            alt={alt || ""}
+            className={cn("h-full w-full object-cover", className)}
+            width={100}
+            height={100}
             onError={() => setError(true)}
           />
         ) : (

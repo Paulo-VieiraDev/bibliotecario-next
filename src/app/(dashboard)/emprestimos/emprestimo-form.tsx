@@ -27,7 +27,6 @@ import { getAlunos } from "@/services/alunos"
 import { getProfessores } from "@/services/professores"
 import type { Livro } from "@/types"
 import type { Aluno } from "@/types"
-import { BookOpen, User as UserIcon } from "lucide-react"
 
 const emprestimoSchema = z.object({
   livro_id: z.string().min(1, "Selecione o livro"),

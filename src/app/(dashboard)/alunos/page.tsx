@@ -4,14 +4,6 @@ import React from "react"
 import { useEffect, useState } from "react"
 import { Pencil, Trash2, Plus, Users } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
 import { getAlunos, deleteAluno } from "@/services/alunos"
 import { getTurmas } from "@/services/turmas"
 import type { Aluno } from "@/types"
@@ -30,25 +22,6 @@ import {
 } from "@/components/ui/alert-dialog"
 import clsx from "clsx"
 
-const TURMA_GRADIENTS = [
-  "from-blue-400 via-blue-200 to-blue-100",
-  "from-orange-400 via-orange-200 to-orange-100",
-  "from-pink-400 via-pink-200 to-pink-100",
-  "from-teal-400 via-teal-200 to-teal-100",
-  "from-green-400 via-green-200 to-green-100",
-  "from-purple-400 via-purple-200 to-purple-100",
-]
-const TURMA_BADGES = [
-  "bg-blue-600",
-  "bg-orange-500",
-  "bg-pink-500",
-  "bg-teal-500",
-  "bg-green-500",
-  "bg-purple-500",
-]
-const PROFESSOR_GRADIENT = "from-cyan-400 via-cyan-200 to-cyan-100"
-const PROFESSOR_BADGE = "bg-cyan-600"
-
 const TURMA_COLORS = [
   "#4E79A7", "#F28E2B", "#E15759", "#76B7B2", "#59A14F",
   "#EDC948", "#B07AA1", "#FF9DA7", "#9C755F", "#BAB0AC",
@@ -64,11 +37,6 @@ export default function AlunosPage() {
   const [alunos, setAlunos] = useState<Aluno[]>([])
   const [turmas, setTurmas] = useState<{ id: string; nome: string }[]>([])
   const [loading, setLoading] = useState(true)
-  const [novoOpen, setNovoOpen] = useState(false)
-  // Professores (local state)
-  const [professores, setProfessores] = useState<{ id: string; nome: string }[]>([])
-  const [professorDialog, setProfessorDialog] = useState<{ open: boolean; editId?: string }>({ open: false })
-  const [professorNome, setProfessorNome] = useState("")
 
   useEffect(() => {
     loadAlunos()

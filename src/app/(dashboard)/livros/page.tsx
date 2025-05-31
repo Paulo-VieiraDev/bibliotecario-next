@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useEffect, useState } from "react"
-import { Plus, Pencil, Trash2, BookOpen } from "lucide-react"
+import { Plus, BookOpen, Pencil, Trash } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   Table,
@@ -17,14 +17,14 @@ import { toast } from "sonner"
 import { LivroDialog } from "./livro-dialog"
 import {
   AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
+  AlertDialogTrigger,
   AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogCancel,
+  AlertDialogAction,
 } from "@/components/ui/alert-dialog"
 
 export default function LivrosPage() {
@@ -48,11 +48,11 @@ export default function LivrosPage() {
 
   async function handleDelete(id: string) {
     try {
-      await deleteLivro(id)
-      toast.success("Livro excluído com sucesso!")
-      loadLivros()
+      await deleteLivro(id);
+      toast.success("Livro excluído com sucesso!");
+      loadLivros();
     } catch (error) {
-      toast.error("Erro ao excluir livro")
+      toast.error("Erro ao excluir livro");
     }
   }
 
@@ -91,6 +91,7 @@ export default function LivrosPage() {
                 <TableHead className="font-bold text-gray-700 dark:text-gray-100 min-w-[120px] px-3 border-l border-zinc-200 dark:border-zinc-800">Categoria</TableHead>
                 <TableHead className="font-bold text-gray-700 dark:text-gray-100 min-w-[100px] px-3 border-l border-zinc-200 dark:border-zinc-800">Ano/Série</TableHead>
                 <TableHead className="font-bold text-gray-700 dark:text-gray-100 min-w-[100px] px-3 border-l border-zinc-200 dark:border-zinc-800">Etapa</TableHead>
+                <TableHead className="font-bold text-gray-700 dark:text-gray-100 min-w-[120px] px-3 border-l border-zinc-200 dark:border-zinc-800">Ações</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -104,6 +105,40 @@ export default function LivrosPage() {
                   <TableCell className="whitespace-nowrap px-3 py-3 align-middle border-l border-zinc-100 dark:border-zinc-800">{livro.categoria}</TableCell>
                   <TableCell className="whitespace-nowrap px-3 py-3 align-middle border-l border-zinc-100 dark:border-zinc-800">{livro.ano_serie || "-"}</TableCell>
                   <TableCell className="whitespace-nowrap px-3 py-3 align-middle border-l border-zinc-100 dark:border-zinc-800">{livro.etapa || "-"}</TableCell>
+                  <TableCell className="whitespace-nowrap px-3 py-3 align-middle border-l border-zinc-100 dark:border-zinc-800">
+                    <div className="flex gap-2">
+                      <LivroDialog
+                        livro={livro}
+                        onSuccess={loadLivros}
+                        trigger={
+                          <Button size="icon" variant="ghost" className="text-blue-600 hover:bg-blue-50 dark:hover:bg-zinc-800" title="Editar">
+                            <Pencil className="w-5 h-5" />
+                          </Button>
+                        }
+                      />
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button size="icon" variant="ghost" className="text-red-600 hover:bg-red-50 dark:hover:bg-zinc-800" title="Excluir">
+                            <Trash className="w-5 h-5" />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Confirmar exclusão</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Tem certeza que deseja excluir o livro <span className="font-semibold">{livro.titulo}</span>? Esta ação não poderá ser desfeita.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                            <AlertDialogAction onClick={() => handleDelete(livro.id)} className="bg-red-600 hover:bg-red-700">
+                              Excluir
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </div>
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>

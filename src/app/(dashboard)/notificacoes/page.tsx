@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { useState, useEffect } from "react"
 import { marcarNotificacaoComoLida } from "@/hooks/use-notificacoes"
 import { toast } from "sonner"
+import type { Notificacao } from "@/types"
 
 
 function getIcon(tipo: string) {
@@ -68,14 +69,19 @@ export default function NotificacoesPage() {
   const { notificacoes, loading } = useNotificacoes(user?.id)
   const [filtro, setFiltro] = useState("todos")
   const [marcando, setMarcando] = useState<number | null>(null)
-  const [notificacoesState, setNotificacoes] = useState<any[]>([])
-  const notificacoesNaoLidas = notificacoesState.filter((n: any) => !n.lida).length
+  const [notificacoesState, setNotificacoes] = useState<Notificacao[]>([])
+  const notificacoesNaoLidas = notificacoesState.filter((n: { lida: boolean }) => !n.lida).length
 
   useEffect(() => {
-    setNotificacoes(notificacoes)
+    setNotificacoes(
+      notificacoes.map(n => ({
+        ...n,
+        id: String(n.id),
+      }))
+    )
   }, [notificacoes])
 
-  const notificacoesFiltradas = notificacoesState.filter(n =>
+  const notificacoesFiltradas = notificacoesState.filter((n: Notificacao) =>
     filtro === "todos" ? true : n.tipo === filtro
   )
   const grupos = agruparPorData(

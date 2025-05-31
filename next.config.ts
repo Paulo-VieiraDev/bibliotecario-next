@@ -1,7 +1,12 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  images: {
+    domains: [
+      "avatars.githubusercontent.com",
+      // adicione outros domínios se necessário
+    ],
+  },
 };
 
 export default nextConfig;

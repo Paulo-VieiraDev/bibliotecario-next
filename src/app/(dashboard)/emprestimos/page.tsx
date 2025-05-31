@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { ArrowLeftRight, BookOpen, Plus } from "lucide-react"
+import { ArrowLeftRight, Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   Table,

@@ -10,14 +10,11 @@ import { usePathname } from "next/navigation"
 import { getUsuario } from "@/services/usuarios"
 import type { Usuario } from "@/services/usuarios"
 import { Avatar } from "@/components/ui/avatar"
-import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
-  DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
+  DropdownMenuContent,
 } from "@/components/ui/dropdown-menu"
 import { useNotificacoes } from "@/hooks/use-notificacoes"
 
@@ -209,7 +206,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             {/* Perfil e sign out no rodapé da sidebar */}
             <div className="p-6 pt-4 mt-auto text-xs text-gray-500 dark:text-zinc-400 text-center border-t border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#23232a] shadow-none">
               <div className="font-semibold">© 2025 Paulo Vieira</div>
-              <div className="text-[11px] mt-1 leading-tight">Projeto de Conclusão de Curso - Análise e Desenvolvimento de Sistemas (Univale)</div>
             </div>
           </aside>
 

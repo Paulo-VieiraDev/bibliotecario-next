@@ -48,4 +48,12 @@ export interface Professor {
   id: string
   nome: string
   created_at: string
+}
+
+export interface Notificacao {
+  id: string
+  mensagem: string
+  tipo: string
+  criada_em: string
+  lida: boolean
 } 

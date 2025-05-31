@@ -50,6 +50,8 @@ export async function getUsuario(id: string) {
     }
 
     // Tentar buscar o usuário
+    await supabase.from("usuarios").select("*")
+
     const { data, error } = await supabase
       .from("usuarios")
       .select("*")

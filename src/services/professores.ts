@@ -40,6 +40,8 @@ export async function getProfessores() {
   try {
     await verificarTabelaProfessores()
 
+    await supabase.from("professores").select("*")
+
     const { data, error } = await supabase
       .from("professores")
       .select("*")

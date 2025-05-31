@@ -24,7 +24,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { getTurmas } from "@/services/turmas"
 
 const alunoSchema = z.object({
   nome: z.string().min(1, "Nome é obrigatório"),
