@@ -124,7 +124,7 @@ export default function AlunosPage() {
                     }}
                   >
                     <span
-                      className="w-10 h-10 flex items-center justify-center rounded-full font-bold text-lg shadow"
+                      className="hidden md:flex w-10 h-10 items-center justify-center rounded-full font-bold text-lg shadow"
                       style={{
                         background: TURMA_COLORS[idx % TURMA_COLORS.length],
                         color: "#fff",
@@ -137,44 +137,12 @@ export default function AlunosPage() {
                         {aluno.nome}
                       </div>
                     </div>
-                    <div className="flex gap-1 opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0 transition-all duration-200">
-                      <AlunoDialog
-                        aluno={aluno}
-                        onSuccess={loadAlunos}
-                        turmas={turmas}
-                        trigger={
-                          <Button variant="ghost" size="icon" className="hover:bg-blue-200 dark:hover:bg-zinc-600 hover:text-blue-700 dark:hover:text-blue-200">
-                            <span className="sr-only">Editar</span>
-                            <Pencil className="h-4 w-4" />
-                          </Button>
-                        }
-                      />
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="hover:bg-red-100 dark:hover:bg-red-900 hover:text-red-600 dark:hover:text-red-300"
-                          >
-                            <span className="sr-only">Excluir</span>
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>Confirmar exclusão</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              Tem certeza que deseja excluir o aluno <span className="font-semibold">{aluno.nome}</span>? Esta ação não poderá ser desfeita.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                            <AlertDialogAction onClick={() => handleDeleteAluno(aluno.id)} className="bg-red-600 hover:bg-red-700">
-                              Excluir
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
+                    <div className="flex items-center justify-between">
+                      <span> {/* info do aluno */} </span>
+                      <div className="flex gap-2">
+                        <Button variant="ghost" size="icon" onClick={() => {}}><Pencil className="h-4 w-4" /></Button>
+                        <Button variant="ghost" size="icon" onClick={() => handleDeleteAluno(aluno.id)}><Trash2 className="h-4 w-4" /></Button>
+                      </div>
                     </div>
                   </div>
                 ))

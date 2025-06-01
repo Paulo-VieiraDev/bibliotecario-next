@@ -87,106 +87,122 @@ export default function EmprestimosPage() {
             <ArrowLeftRight className="text-blue-600 w-9 h-9 animate-arrow" />
             <h1 className="text-4xl font-extrabold text-gray-900 dark:text-gray-100">Empréstimos</h1>
           </div>
-          <EmprestimoDialog onSuccess={loadEmprestimos} trigger={
-            <Button variant="default" className="px-6 py-2 text-base font-bold flex items-center gap-2 shadow-lg transition-all scale-100 hover:scale-105">
-              <Plus className="h-5 w-5" />
-              Novo Empréstimo
+        </div>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4 px-2">
+          <div className="flex justify-center sm:justify-start gap-2 mb-2 sm:mb-0">
+            <Button
+              variant={tipoFiltro === 'aluno' ? 'default' : 'ghost'}
+              className={`px-4 py-2 font-bold transition-all scale-100 hover:scale-105 ${tipoFiltro !== 'aluno' ? 'bg-zinc-100 dark:bg-zinc-800' : ''}`}
+              onClick={() => setTipoFiltro('aluno')}
+            >
+              Alunos
             </Button>
-          } />
+            <Button
+              variant={tipoFiltro === 'professor' ? 'default' : 'ghost'}
+              className={`px-4 py-2 font-bold transition-all scale-100 hover:scale-105 ${tipoFiltro !== 'professor' ? 'bg-zinc-100 dark:bg-zinc-800' : ''}`}
+              onClick={() => setTipoFiltro('professor')}
+            >
+              Professores
+            </Button>
+          </div>
+          <div className="flex justify-center sm:justify-end">
+            <EmprestimoDialog onSuccess={loadEmprestimos} trigger={
+              <Button variant="default" className="px-6 py-2 text-base font-bold flex items-center gap-2 shadow-lg transition-all scale-100 hover:scale-105">
+                <Plus className="h-5 w-5" />
+                Novo Empréstimo
+              </Button>
+            } />
+          </div>
         </div>
-        <div className="flex gap-2 mb-4">
-          <button
-            className={`px-4 py-2 rounded ${tipoFiltro === 'aluno' ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}
-            onClick={() => setTipoFiltro('aluno')}
-          >
-            Alunos
-          </button>
-          <button
-            className={`px-4 py-2 rounded ${tipoFiltro === 'professor' ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}
-            onClick={() => setTipoFiltro('professor')}
-          >
-            Professores
-          </button>
-        </div>
-        <div className="overflow-x-auto rounded-2xl shadow">
-          <table className="min-w-full bg-white">
+        <div className="overflow-x-auto rounded-2xl shadow-lg">
+          <table className="min-w-full rounded-2xl overflow-hidden border-separate border-spacing-0 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
             <thead>
-              <tr>
-                <th className="px-4 py-3 text-left font-bold">Livro</th>
-                <th className="px-4 py-3 text-left font-bold">
+              <tr className="bg-zinc-100 dark:bg-zinc-800">
+                <th className="px-4 py-3 text-left font-bold text-zinc-700 dark:text-zinc-100 border-r border-zinc-200 dark:border-zinc-800">Livro</th>
+                <th className="px-4 py-3 text-left font-bold text-zinc-700 dark:text-zinc-100 border-r border-zinc-200 dark:border-zinc-800">
                   {tipoFiltro === 'aluno' ? 'Aluno' : 'Professor'}
                 </th>
-                <th className="px-4 py-3 text-left font-bold">Data do Empréstimo</th>
-                <th className="px-4 py-3 text-left font-bold">Data da Devolução</th>
-                <th className="px-4 py-3 text-left font-bold">Status</th>
-                <th className="px-4 py-3 text-left font-bold">Ações</th>
+                <th className="px-4 py-3 text-center font-bold text-zinc-700 dark:text-zinc-100 border-r border-zinc-200 dark:border-zinc-800">Data do Empréstimo</th>
+                <th className="px-4 py-3 text-center font-bold text-zinc-700 dark:text-zinc-100 border-r border-zinc-200 dark:border-zinc-800">Data da Devolução</th>
+                <th className="px-4 py-3 text-center font-bold text-zinc-700 dark:text-zinc-100 border-r border-zinc-200 dark:border-zinc-800">Status</th>
+                <th className="px-4 py-3 text-center font-bold text-zinc-700 dark:text-zinc-100">Ações</th>
               </tr>
             </thead>
             <tbody>
               {emprestimosFiltrados.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="text-center py-8 text-gray-400">
+                  <td colSpan={6} className="text-center py-8 text-zinc-400 dark:text-zinc-500 bg-white dark:bg-zinc-900">
                     Nenhum empréstimo encontrado.
                   </td>
                 </tr>
               ) : (
-                emprestimosFiltrados.map(emp => (
-                  <tr key={emp.id} className="border-t">
-                    <td className="px-4 py-3">
-                      <div className="font-bold">{emp.livro_nome}</div>
-                      <div className="text-xs text-gray-400">{emp.livro_autor}</div>
-                    </td>
-                    <td className="px-4 py-3">
-                      {tipoFiltro === 'aluno' ? emp.aluno_nome : emp.professor_nome}
-                    </td>
-                    <td className="px-4 py-3">
-                      {emp.data_emprestimo
-                        ? new Date(emp.data_emprestimo).toLocaleDateString('pt-BR')
-                        : '-'}
-                    </td>
-                    <td className="px-4 py-3">
-                      {emp.data_devolucao
-                        ? new Date(emp.data_devolucao).toLocaleDateString('pt-BR')
-                        : '-'}
-                    </td>
-                    <td className="px-4 py-3">
-                      {emp.status === 'emprestado' ? (
-                        <span className="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-xs font-bold">Emprestado</span>
-                      ) : (
-                        <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-bold">Devolvido</span>
-                      )}
-                    </td>
-                    <td className="px-4 py-3">
-                      {emp.status === "emprestado" && (
-                        <AlertDialog>
-                          <AlertDialogTrigger asChild>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="h-9 w-9 rounded-full hover:bg-blue-100 dark:hover:bg-zinc-700 transition-colors"
-                            >
-                              <ArrowLeftRight className="h-5 w-5 text-blue-600" />
-                            </Button>
-                          </AlertDialogTrigger>
-                          <AlertDialogContent>
-                            <AlertDialogHeader>
-                              <AlertDialogTitle>Devolver Livro</AlertDialogTitle>
-                              <AlertDialogDescription>
-                                Tem certeza que deseja registrar a devolução deste livro?
-                              </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                              <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                              <AlertDialogAction onClick={() => handleDevolver(emp.id)}>
-                                Confirmar
-                              </AlertDialogAction>
-                            </AlertDialogFooter>
-                          </AlertDialogContent>
-                        </AlertDialog>
-                      )}
-                    </td>
-                  </tr>
-                ))
+                emprestimosFiltrados.map((emp, idx) => {
+                  const isLast = idx === emprestimosFiltrados.length - 1;
+                  return (
+                    <tr
+                      key={emp.id}
+                      className={
+                        `border-t border-zinc-200 dark:border-zinc-800 ` +
+                        (isLast ? '' : 'border-b-2 border-zinc-300 dark:border-b-2 dark:border-zinc-700 ') +
+                        (idx % 2 === 0 ? 'bg-white dark:bg-zinc-900' : 'bg-zinc-50 dark:bg-zinc-950')
+                      }
+                    >
+                      <td className="px-4 py-3 align-top border-r border-zinc-200 dark:border-zinc-800">
+                        <div className="font-bold text-zinc-800 dark:text-zinc-100">{emp.livro_nome}</div>
+                        <div className="text-xs text-zinc-400 dark:text-zinc-500">{emp.livro_autor}</div>
+                      </td>
+                      <td className="px-4 py-3 align-top text-zinc-700 dark:text-zinc-200 border-r border-zinc-200 dark:border-zinc-800">
+                        {tipoFiltro === 'aluno' ? emp.aluno_nome : emp.professor_nome}
+                      </td>
+                      <td className="px-4 py-3 align-top text-center text-zinc-700 dark:text-zinc-200 border-r border-zinc-200 dark:border-zinc-800">
+                        {emp.data_emprestimo
+                          ? new Date(emp.data_emprestimo).toLocaleDateString('pt-BR')
+                          : '-'}
+                      </td>
+                      <td className="px-4 py-3 align-top text-center text-zinc-700 dark:text-zinc-200 border-r border-zinc-200 dark:border-zinc-800">
+                        {emp.data_devolucao
+                          ? new Date(emp.data_devolucao).toLocaleDateString('pt-BR')
+                          : '-'}
+                      </td>
+                      <td className="px-4 py-3 align-top text-center border-r border-zinc-200 dark:border-zinc-800">
+                        {emp.status === 'emprestado' ? (
+                          <span className="bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 px-3 py-1 rounded-full text-xs font-bold">Emprestado</span>
+                        ) : (
+                          <span className="bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 px-3 py-1 rounded-full text-xs font-bold">Devolvido</span>
+                        )}
+                      </td>
+                      <td className="px-4 py-3 align-top text-center">
+                        {emp.status === "emprestado" && (
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-9 w-9 rounded-full hover:bg-blue-100 dark:hover:bg-zinc-700 transition-colors"
+                              >
+                                <ArrowLeftRight className="h-5 w-5 text-blue-600" />
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>Devolver Livro</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  Tem certeza que deseja registrar a devolução deste livro?
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                                <AlertDialogAction onClick={() => handleDevolver(emp.id)}>
+                                  Confirmar
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })
               )}
             </tbody>
           </table>

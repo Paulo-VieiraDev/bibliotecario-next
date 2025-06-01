@@ -34,6 +34,20 @@ interface AlunoEmprestimo {
   quantidade: number
 }
 
+// Hook para detectar mobile
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    function handleResize() {
+      setIsMobile(window.innerWidth < 640);
+    }
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+  return isMobile;
+}
+
 export default function RelatoriosPage() {
   // States para os cards
   const [totalLivros, setTotalLivros] = useState(0)
@@ -49,6 +63,8 @@ export default function RelatoriosPage() {
 
   // Loading states
   const [isLoading, setIsLoading] = useState(true)
+
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -104,8 +120,10 @@ export default function RelatoriosPage() {
     return (
       <div className="flex flex-col md:flex-row gap-6 items-stretch justify-center w-full">
         {/* Card: Mês anterior */}
-        <div className="flex flex-col items-center justify-center rounded-xl border bg-green-50 dark:bg-green-900/40 p-6 flex-1 min-w-[160px] min-h-[160px] max-w-xs mx-auto transition-transform duration-200 hover:scale-105">
-          <Calendar className="w-7 h-7 mb-2 text-green-600 dark:text-green-300" strokeWidth={2.2} />
+        <div className={`flex flex-col items-center justify-center rounded-xl border p-6 flex-1 min-w-[160px] min-h-[160px] max-w-xs mx-auto transition-transform duration-200 hover:scale-105
+          ${percentChange > 0 ? 'bg-green-200/80 dark:bg-green-700/60 border-green-300 dark:border-green-800' : percentChange < 0 ? 'bg-red-200/80 dark:bg-red-700/60 border-red-300 dark:border-red-800' : 'bg-blue-200/80 dark:bg-blue-700/60 border-blue-300 dark:border-blue-800'}
+        `}>
+          <Calendar className={`w-7 h-7 mb-2 hidden sm:block ${percentChange > 0 ? 'text-green-600 dark:text-green-200' : percentChange < 0 ? 'text-red-600 dark:text-red-200' : 'text-blue-600 dark:text-blue-200'}`} strokeWidth={2.2} />
           <div className="font-semibold text-zinc-800 dark:text-zinc-100 mb-1 text-center">Mês anterior</div>
           <div className="text-xs text-zinc-500 dark:text-zinc-400 mb-1 text-center">{formatMesAno(anterior.mes)}</div>
           <div className="text-2xl font-extrabold text-zinc-900 dark:text-zinc-100 mb-0.5 text-center">{anterior.quantidade}</div>
@@ -253,39 +271,41 @@ export default function RelatoriosPage() {
               <p>Nenhum empréstimo por turma encontrado</p>
             </div>
           ) : (
-            <ResponsiveContainer width="100%" height={380}>
-              <PieChart>
-                <Pie
-                  data={emprestimosPorTurma.filter(t => t.turma).sort((a, b) => (a.turma || '').localeCompare(b.turma || ''))}
-                  dataKey="quantidade"
-                  nameKey="turma"
-                  cx="50%"
-                  cy="50%"
-                  outerRadius={130}
-                  innerRadius={65}
-                  label={({ percent, ...rest }) =>
-                    percent > 0.01 ? `${rest['turma']} (${(percent * 100).toFixed(0)}%)` : ""
-                  }
-                  labelLine={false}
-                >
-                  {emprestimosPorTurma.filter(t => t.turma).sort((a, b) => (a.turma || '').localeCompare(b.turma || '')).map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: 'var(--card)',
-                    color: 'var(--card-foreground)',
-                    border: '1px solid #333',
-                    borderRadius: '0.5rem',
-                    boxShadow: '0 1px 3px 0 rgb(0 0 0 / 0.3)'
-                  }}
-                  labelStyle={{ color: 'var(--card-foreground)', fontWeight: 600 }}
-                  itemStyle={{ color: 'var(--card-foreground)' }}
-                  formatter={(value) => [`${value} empréstimos`, '']}
-                />
-              </PieChart>
-            </ResponsiveContainer>
+            <div className="w-full h-[320px] sm:h-[380px] flex items-center justify-center">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={emprestimosPorTurma.filter(t => t.turma).sort((a, b) => (a.turma || '').localeCompare(b.turma || ''))}
+                    dataKey="quantidade"
+                    nameKey="turma"
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={isMobile ? 80 : 130}
+                    innerRadius={isMobile ? 40 : 65}
+                    label={({ percent, ...rest }) =>
+                      percent > 0.01 ? `${rest['turma']} (${(percent * 100).toFixed(0)}%)` : ""
+                    }
+                    labelLine={false}
+                  >
+                    {emprestimosPorTurma.filter(t => t.turma).sort((a, b) => (a.turma || '').localeCompare(b.turma || '')).map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: 'var(--card)',
+                      color: 'var(--card-foreground)',
+                      border: '1px solid #333',
+                      borderRadius: '0.5rem',
+                      boxShadow: '0 1px 3px 0 rgb(0 0 0 / 0.3)'
+                    }}
+                    labelStyle={{ color: 'var(--card-foreground)', fontWeight: 600 }}
+                    itemStyle={{ color: 'var(--card-foreground)' }}
+                    formatter={(value) => [`${value} empréstimos`, '']}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
           )}
         </Card>
 

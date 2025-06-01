@@ -1,12 +1,18 @@
 "use client"
 
 import { useAuth } from "@/hooks/use-auth"
-import { useNotificacoes } from "@/hooks/use-notificacoes"
+import { useNotificacoes, marcarNotificacaoComoLida } from "@/hooks/use-notificacoes"
 import { Bell, Info, AlertTriangle, Award } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useState, useEffect } from "react"
 import type { Notificacao } from "@/types"
+import { cn } from "@/lib/utils"
 
+const tabs = [
+  { label: "Todos", value: "todos" },
+  { label: "Não lidas", value: "nao-lidas" },
+  { label: "Lidas", value: "lidas" },
+]
 
 function getIcon(tipo: string) {
   switch (tipo) {
@@ -31,13 +37,6 @@ function formatDate(dateStr?: string) {
   if (isYesterday) return `Ontem, ${time}`;
   return date.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" }) + ", " + time;
 }
-
-const tipos = [
-  { label: "Todos", value: "todos" },
-  { label: "Alertas", value: "atraso" },
-  { label: "Lembretes", value: "lembrete" },
-  { label: "Parabéns", value: "parabens" },
-]
 
 function agruparPorData(notificacoes: Notificacao[]) {
   const grupos: Record<string, Notificacao[]> = {}
@@ -65,16 +64,26 @@ function formatDateGroup(dateStr?: string) {
 export default function NotificacoesPage() {
   const { user } = useAuth()
   const { notificacoes, loading } = useNotificacoes(user?.id)
-  const [filtro, setFiltro] = useState("todos")
-  const [notificacoesState, setNotificacoes] = useState<Notificacao[]>([])
+  const [tab, setTab] = useState("todos")
+  const [notificacoesState, setNotificacoesState] = useState<Notificacao[]>([])
 
   useEffect(() => {
-    setNotificacoes(notificacoes)
+    setNotificacoesState(notificacoes)
   }, [notificacoes])
 
-  const notificacoesFiltradas = notificacoesState.filter((n: Notificacao) =>
-    filtro === "todos" ? true : n.tipo === filtro
-  )
+  const notificacoesFiltradas = notificacoesState.filter(n => {
+    if (tab === "lidas") return n.lida
+    if (tab === "nao-lidas") return !n.lida
+    return true
+  })
+
+  async function handleMarcarComoLida(id: number | string) {
+    await marcarNotificacaoComoLida(String(id))
+    setNotificacoesState(prev =>
+      prev.map(n => String(n.id) === String(id) ? { ...n, lida: true } : n)
+    )
+  }
+
   const grupos = agruparPorData(
     notificacoesFiltradas.slice().sort((a, b) => new Date(b.criada_em).getTime() - new Date(a.criada_em).getTime())
   )
@@ -86,13 +95,12 @@ export default function NotificacoesPage() {
         <h1 className="text-2xl md:text-4xl font-extrabold text-gray-900 dark:text-gray-100">Notificações</h1>
       </div>
       <div className="w-full px-2 mb-4 md:mb-6">
-        <div className="flex justify-center gap-1 md:gap-2 w-full">
-          {tipos.map(t => (
+        <div className="flex gap-2 justify-center mb-6">
+          {tabs.map(t => (
             <Button
               key={t.value}
-              variant={filtro === t.value ? "default" : "outline"}
-              onClick={() => setFiltro(t.value)}
-              className="rounded-full px-3 py-0.5 text-xs md:px-5 md:py-1 md:text-base"
+              variant={tab === t.value ? "default" : "ghost"}
+              onClick={() => setTab(t.value)}
             >
               {t.label}
             </Button>
@@ -112,16 +120,37 @@ export default function NotificacoesPage() {
                 {notis.map((n) => (
                   <div
                     key={n.id}
-                    className={`relative flex items-center gap-3 md:gap-4 px-3 py-3 md:px-6 md:py-5 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-800 bg-white/80 dark:bg-zinc-900/80 transition-all group hover:scale-[1.01] hover:shadow-lg ${!n.lida ? "ring-2 ring-blue-400/40" : "opacity-80"}`}
+                    className={cn(
+                      "flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 px-3 py-3 rounded-xl shadow-sm border transition-all",
+                      !n.lida
+                        ? "border-2 bg-white ring-2 ring-blue-200"
+                        : "border border-zinc-200 bg-white/80 opacity-80",
+                      n.tipo === "atraso" && !n.lida && "border-red-400 bg-red-50/60",
+                      n.tipo === "lembrete" && !n.lida && "border-yellow-400 bg-yellow-50/60",
+                      n.tipo === "parabens" && !n.lida && "border-blue-400 bg-blue-50/60"
+                    )}
                   >
                     <div className="flex-shrink-0">{getIcon(n.tipo)}</div>
                     <div className="flex-1 min-w-0">
-                      <div className="font-semibold text-sm md:text-base text-gray-900 dark:text-gray-100 truncate flex items-center gap-2">
+                      <div className="font-semibold text-base text-gray-900 flex items-center gap-2">
                         {n.mensagem}
-                        {!n.lida && <span className="ml-2 bg-blue-500 text-white text-xs px-2 py-0.5 rounded-full animate-pulse">Novo</span>}
+                        {!n.lida && (
+                          <span className="ml-2 bg-blue-500/10 text-blue-700 text-xs px-2 py-0.5 rounded-full">Novo</span>
+                        )}
                       </div>
-                      <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">{formatDate(n.criada_em)}</div>
+                      <div className="text-xs text-gray-500 mt-1">{formatDate(n.criada_em)}</div>
                     </div>
+                    {/* Botão responsivo para marcar como lida */}
+                    {!n.lida && (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="rounded-full border-blue-300 text-blue-700 hover:bg-blue-100 transition w-full sm:w-auto mt-2 sm:mt-0 sm:ml-4"
+                        onClick={() => handleMarcarComoLida(n.id)}
+                      >
+                        Marcar como lida
+                      </Button>
+                    )}
                   </div>
                 ))}
               </div>

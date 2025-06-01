@@ -126,68 +126,20 @@ export function LivroForm({ livro, onSuccess, onCancel }: LivroFormProps) {
   }
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="w-full max-w-2xl flex flex-col gap-6">
-        <FormField
-          control={form.control}
-          name="titulo"
-          render={({ field }) => (
-            <FormItem>
-              <div className="flex items-center mb-1">
-                <span className="px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 text-xs font-semibold mr-2">Título</span>
-                <FormLabel className="text-gray-700 font-semibold">Título do livro</FormLabel>
-              </div>
-              <FormControl>
-                <Input {...field} placeholder="Digite o título" />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="autor"
-          render={({ field }) => (
-            <FormItem>
-              <div className="flex items-center mb-1">
-                <span className="px-2 py-0.5 rounded-full bg-green-100 text-green-700 text-xs font-semibold mr-2">Autor</span>
-                <FormLabel className="text-gray-700 font-semibold">Autor</FormLabel>
-              </div>
-              <FormControl>
-                <Input {...field} placeholder="Digite o autor" />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="editora"
-          render={({ field }) => (
-            <FormItem>
-              <div className="flex items-center mb-1">
-                <span className="px-2 py-0.5 rounded-full bg-purple-100 text-purple-700 text-xs font-semibold mr-2">Editora</span>
-                <FormLabel className="text-gray-700 font-semibold">Editora</FormLabel>
-              </div>
-              <FormControl>
-                <Input {...field} placeholder="Digite a editora" />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <div className="flex flex-col md:flex-row gap-4">
+    <div className="max-h-[90vh] overflow-y-auto">
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="w-full max-w-xs sm:max-w-2xl mx-auto flex flex-col gap-4 sm:gap-6 px-2">
           <FormField
             control={form.control}
-            name="edicao"
+            name="titulo"
             render={({ field }) => (
-              <FormItem className="flex-1">
+              <FormItem>
                 <div className="flex items-center mb-1">
-                  <span className="px-2 py-0.5 rounded-full bg-yellow-100 text-yellow-700 text-xs font-semibold mr-2">Edição</span>
-                  <FormLabel className="text-gray-700 font-semibold">Edição</FormLabel>
+                  <span className="px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 text-xs font-semibold mr-2">Título</span>
+                  <FormLabel className="text-gray-700 font-semibold">Título do livro</FormLabel>
                 </div>
                 <FormControl>
-                  <Input {...field} placeholder="Ex: 1ª edição, 4ª edição" />
+                  <Input {...field} placeholder="Digite o título" className="w-full min-h-[44px]" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -195,91 +147,174 @@ export function LivroForm({ livro, onSuccess, onCancel }: LivroFormProps) {
           />
           <FormField
             control={form.control}
-            name="quantidade"
+            name="autor"
             render={({ field }) => (
-              <FormItem className="flex-1">
+              <FormItem>
                 <div className="flex items-center mb-1">
-                  <span className="px-2 py-0.5 rounded-full bg-pink-100 text-pink-700 text-xs font-semibold mr-2">Quantidade</span>
-                  <FormLabel className="text-gray-700 font-semibold">Quantidade</FormLabel>
+                  <span className="px-2 py-0.5 rounded-full bg-green-100 text-green-700 text-xs font-semibold mr-2">Autor</span>
+                  <FormLabel className="text-gray-700 font-semibold">Autor</FormLabel>
                 </div>
                 <FormControl>
-                  <Input type="number" min={1} {...field} />
+                  <Input {...field} placeholder="Digite o autor" className="w-full min-h-[44px]" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-        </div>
-        <FormField
-          control={form.control}
-          name="vida_util"
-          render={({ field }) => (
-            <FormItem>
-              <div className="flex items-center mb-1">
-                <span className="px-2 py-0.5 rounded-full bg-gray-200 text-gray-700 text-xs font-semibold mr-2">Vida útil</span>
-                <FormLabel className="text-gray-700 font-semibold">Vida útil (anos) <span className='text-gray-400'>(opcional)</span></FormLabel>
+          <FormField
+            control={form.control}
+            name="editora"
+            render={({ field }) => (
+              <FormItem>
+                <div className="flex items-center mb-1">
+                  <span className="px-2 py-0.5 rounded-full bg-purple-100 text-purple-700 text-xs font-semibold mr-2">Editora</span>
+                  <FormLabel className="text-gray-700 font-semibold">Editora</FormLabel>
+                </div>
+                <FormControl>
+                  <Input {...field} placeholder="Digite a editora" className="w-full min-h-[44px]" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <div className="flex flex-col md:flex-row gap-4 w-full">
+            <FormField
+              control={form.control}
+              name="edicao"
+              render={({ field }) => (
+                <FormItem className="flex-1">
+                  <div className="flex items-center mb-1">
+                    <span className="px-2 py-0.5 rounded-full bg-yellow-100 text-yellow-700 text-xs font-semibold mr-2">Edição</span>
+                    <FormLabel className="text-gray-700 font-semibold">Edição</FormLabel>
+                  </div>
+                  <FormControl>
+                    <Input {...field} placeholder="Ex: 1ª edição, 4ª edição" className="w-full min-h-[44px]" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="quantidade"
+              render={({ field }) => (
+                <FormItem className="flex-1">
+                  <div className="flex items-center mb-1">
+                    <span className="px-2 py-0.5 rounded-full bg-pink-100 text-pink-700 text-xs font-semibold mr-2">Quantidade</span>
+                    <FormLabel className="text-gray-700 font-semibold">Quantidade</FormLabel>
+                  </div>
+                  <FormControl>
+                    <Input type="number" min={1} {...field} className="w-full min-h-[44px]" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+          <FormField
+            control={form.control}
+            name="vida_util"
+            render={({ field }) => (
+              <FormItem>
+                <div className="flex items-center mb-1">
+                  <span className="px-2 py-0.5 rounded-full bg-gray-200 text-gray-700 text-xs font-semibold mr-2">Vida útil</span>
+                  <FormLabel className="text-gray-700 font-semibold">Vida útil (anos) <span className='text-gray-400'>(opcional)</span></FormLabel>
+                </div>
+                <FormControl>
+                  <Input type="number" min={1} {...field} placeholder="Ex: 3" className="w-full min-h-[44px]" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="categoria"
+            render={({ field }) => (
+              <FormItem>
+                <div className="flex items-center mb-1">
+                  <span className="px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-700 text-xs font-semibold mr-2">Categoria</span>
+                  <FormLabel className="text-gray-700 font-semibold">Categoria</FormLabel>
+                </div>
+                <FormControl>
+                  <select
+                    {...field}
+                    className="w-full min-h-[44px] border-gray-300 rounded-md focus:ring-1 focus:ring-pink-400"
+                    onChange={e => {
+                      field.onChange(e)
+                      setCategoria(e.target.value)
+                    }}
+                  >
+                    <option value="">Selecione...</option>
+                    {categorias.map(cat => (
+                      <option key={cat.value} value={cat.value}>{cat.label}</option>
+                    ))}
+                  </select>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          {/* Campos extras para Didático */}
+          {categoria === "Didático" && (
+            <div className="flex flex-col gap-4 w-full md:max-h-[60vh] md:overflow-y-auto">
+              <div className="flex flex-col md:flex-row gap-4 w-full">
+                <FormField
+                  control={form.control}
+                  name="ano_serie"
+                  render={({ field }) => (
+                    <FormItem className="flex-1">
+                      <div className="flex items-center mb-1">
+                        <span className="px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 text-xs font-semibold mr-2">Ano/Série</span>
+                        <FormLabel className="text-gray-700 font-semibold">Ano/Série</FormLabel>
+                      </div>
+                      <FormControl>
+                        <select
+                          {...field}
+                          className="w-full min-h-[44px] border-gray-300 rounded-md focus:ring-1 focus:ring-blue-400"
+                          value={field.value}
+                          onChange={e => {
+                            field.onChange(e)
+                            setAnoSerieSelecionado(e.target.value)
+                          }}
+                        >
+                          <option value="">Selecione...</option>
+                          {anosSerie.map(ano => (
+                            <option key={ano.value} value={ano.value}>{ano.label}</option>
+                          ))}
+                        </select>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <div className="flex-1">
+                  <div className="flex items-center mb-1">
+                    <span className="px-2 py-0.5 rounded-full bg-green-100 text-green-700 text-xs font-semibold mr-2">Etapa</span>
+                    <FormLabel className="text-gray-700 font-semibold">Etapa do ensino</FormLabel>
+                  </div>
+                  <div className="w-full text-base text-gray-700 font-medium border border-indigo-200 rounded-md py-2 bg-indigo-50 px-3 min-h-[44px] flex items-center">
+                    {etapaDoEnsino(anoSerieSelecionado) || "Selecione o ano/série"}
+                  </div>
+                </div>
               </div>
-              <FormControl>
-                <Input type="number" min={1} {...field} placeholder="Ex: 3" />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="categoria"
-          render={({ field }) => (
-            <FormItem>
-              <div className="flex items-center mb-1">
-                <span className="px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-700 text-xs font-semibold mr-2">Categoria</span>
-                <FormLabel className="text-gray-700 font-semibold">Categoria</FormLabel>
-              </div>
-              <FormControl>
-                <select
-                  {...field}
-                  className="w-full border-gray-300 rounded-md focus:ring-1 focus:ring-pink-400"
-                  onChange={e => {
-                    field.onChange(e)
-                    setCategoria(e.target.value)
-                  }}
-                >
-                  <option value="">Selecione...</option>
-                  {categorias.map(cat => (
-                    <option key={cat.value} value={cat.value}>{cat.label}</option>
-                  ))}
-                </select>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        {/* Campos extras para Didático */}
-        {categoria === "Didático" && (
-          <div className="flex flex-col gap-6 w-full md:max-h-[60vh] md:overflow-y-auto">
-            <div className="flex flex-col md:flex-row gap-4">
               <FormField
                 control={form.control}
-                name="ano_serie"
+                name="tipo_didatico"
                 render={({ field }) => (
-                  <FormItem className="flex-1">
+                  <FormItem>
                     <div className="flex items-center mb-1">
-                      <span className="px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 text-xs font-semibold mr-2">Ano/Série</span>
-                      <FormLabel className="text-gray-700 font-semibold">Ano/Série</FormLabel>
+                      <span className="px-2 py-0.5 rounded-full bg-pink-100 text-pink-700 text-xs font-semibold mr-2">Tipo</span>
+                      <FormLabel className="text-gray-700 font-semibold">Professor ou Aluno?</FormLabel>
                     </div>
                     <FormControl>
                       <select
                         {...field}
-                        className="w-full border-gray-300 rounded-md focus:ring-1 focus:ring-blue-400"
-                        value={field.value}
-                        onChange={e => {
-                          field.onChange(e)
-                          setAnoSerieSelecionado(e.target.value)
-                        }}
+                        className="w-full min-h-[44px] border-gray-300 rounded-md focus:ring-1 focus:ring-green-400"
                       >
                         <option value="">Selecione...</option>
-                        {anosSerie.map(ano => (
-                          <option key={ano.value} value={ano.value}>{ano.label}</option>
+                        {tiposDidatico.map(tp => (
+                          <option key={tp.value} value={tp.value}>{tp.label}</option>
                         ))}
                       </select>
                     </FormControl>
@@ -287,51 +322,18 @@ export function LivroForm({ livro, onSuccess, onCancel }: LivroFormProps) {
                   </FormItem>
                 )}
               />
-              <div className="flex-1">
-                <div className="flex items-center mb-1">
-                  <span className="px-2 py-0.5 rounded-full bg-green-100 text-green-700 text-xs font-semibold mr-2">Etapa</span>
-                  <FormLabel className="text-gray-700 font-semibold">Etapa do ensino</FormLabel>
-                </div>
-                <div className="w-full text-base text-gray-700 font-medium border border-indigo-200 rounded-md py-2 bg-indigo-50 px-3">
-                  {etapaDoEnsino(anoSerieSelecionado) || "Selecione o ano/série"}
-                </div>
-              </div>
             </div>
-            <FormField
-              control={form.control}
-              name="tipo_didatico"
-              render={({ field }) => (
-                <FormItem>
-                  <div className="flex items-center mb-1">
-                    <span className="px-2 py-0.5 rounded-full bg-pink-100 text-pink-700 text-xs font-semibold mr-2">Tipo</span>
-                    <FormLabel className="text-gray-700 font-semibold">Professor ou Aluno?</FormLabel>
-                  </div>
-                  <FormControl>
-                    <select
-                      {...field}
-                      className="w-full border-gray-300 rounded-md focus:ring-1 focus:ring-green-400"
-                    >
-                      <option value="">Selecione...</option>
-                      {tiposDidatico.map(tp => (
-                        <option key={tp.value} value={tp.value}>{tp.label}</option>
-                      ))}
-                    </select>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+          )}
+          <div className="flex flex-col sm:flex-row gap-2 justify-center w-full pt-2">
+            <Button type="button" variant="outline" onClick={onCancel} className="rounded-md w-full sm:w-1/2 min-h-[44px]">
+              Cancelar
+            </Button>
+            <Button type="submit" disabled={loading} className="rounded-md w-full sm:w-1/2 min-h-[44px]">
+              {loading ? "Salvando..." : livro ? "Atualizar" : "Cadastrar"}
+            </Button>
           </div>
-        )}
-        <div className="flex justify-center gap-4 w-full pt-2">
-          <Button type="button" variant="outline" onClick={onCancel} className="rounded-md flex-1">
-            Cancelar
-          </Button>
-          <Button type="submit" disabled={loading} className="rounded-md flex-1">
-            {loading ? "Salvando..." : livro ? "Atualizar" : "Cadastrar"}
-          </Button>
-        </div>
-      </form>
-    </Form>
+        </form>
+      </Form>
+    </div>
   )
 } 
