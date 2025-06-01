@@ -3,14 +3,6 @@
 import React, { useEffect, useState } from "react"
 import { Plus, BookOpen, Pencil, Trash } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
 import { getLivros, deleteLivro } from "@/services/livros"
 import type { Livro } from "@/types"
 import { toast } from "sonner"

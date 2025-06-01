@@ -9,7 +9,6 @@ import { getTurmas } from "@/services/turmas"
 import type { Aluno } from "@/types"
 import { toast } from "sonner"
 import { AlunoDialog } from "./aluno-dialog"
-import { AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogCancel, AlertDialogTrigger, AlertDialogAction } from "@/components/ui/alert-dialog"
 
 const TURMA_COLORS = [
   "#4E79A7", "#F28E2B", "#E15759", "#76B7B2", "#59A14F",
