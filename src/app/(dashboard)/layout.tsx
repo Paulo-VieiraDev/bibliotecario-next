@@ -102,10 +102,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         {/* Cabeçalho fixo no topo */}
         <header className="fixed top-0 left-0 w-full bg-white dark:bg-[#18181b] shadow-[0_2px_12px_0_rgba(0,0,0,0.06)] flex items-center h-20 px-4 md:px-10 z-30 border-b border-zinc-200 dark:border-zinc-800 transition-all duration-300">
           <div className="flex items-center gap-4">
-            <span className="inline-flex items-center justify-center w-10 h-10 md:w-12 md:h-12 bg-blue-100 dark:bg-cyan-900 rounded-xl shadow-sm mr-2">
-              <School size={28} strokeWidth={2.2} className="text-blue-600 dark:text-cyan-300" />
-            </span>
-            <h2 className="text-2xl md:text-3xl font-extrabold text-blue-900 dark:text-cyan-200 tracking-tight select-none leading-tight">Biblioteca Escolar</h2>
+            <Link href="/relatorios" className="flex items-center gap-2 group focus:outline-none">
+              <span className="inline-flex items-center justify-center w-10 h-10 md:w-12 md:h-12 bg-blue-100 dark:bg-cyan-900 rounded-xl shadow-sm mr-2 group-hover:bg-blue-200 dark:group-hover:bg-cyan-800 transition">
+                <School size={28} strokeWidth={2.2} className="text-blue-600 dark:text-cyan-300" />
+              </span>
+              <h2 className="text-2xl md:text-3xl font-extrabold text-blue-900 dark:text-cyan-200 tracking-tight select-none leading-tight group-hover:underline">Biblioteca Escolar</h2>
+            </Link>
           </div>
           <div className="ml-auto flex items-center space-x-4 md:space-x-6">
             <div className="w-10 h-10 md:w-11 md:h-11 flex items-center justify-center rounded-full border transition-all duration-200 shadow-sm focus:outline-none

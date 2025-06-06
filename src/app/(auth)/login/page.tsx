@@ -124,7 +124,7 @@ export default function LoginPage() {
 
             <Button
               type="submit"
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white py-6 rounded-xl transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98]"
+              className="w-full py-3 rounded-lg font-bold bg-blue-600 text-white hover:bg-blue-700 transition disabled:bg-blue-200 disabled:text-white"
               disabled={isLoading}
             >
               {isLoading ? (

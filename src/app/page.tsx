@@ -133,12 +133,12 @@ export default function Home() {
       <section className="relative flex items-center justify-center min-h-screen text-white px-4 py-16 overflow-hidden bg-gradient-to-br from-blue-300 via-blue-700 to-blue-900">
         {/* Janela Flutuante - Ocupa grande parte da área */}
         <div className="relative z-20 w-[95%] md:w-[90%] h-[90vh] rounded-3xl shadow-2xl bg-gray-900 p-8 md:p-12 lg:p-16 flex items-center justify-between ring-2 ring-blue-500/50">
-          {/* Conteúdo Principal (Alinhado à Esquerda) */}
-          <div className="relative flex flex-col items-start text-left max-w-3xl lg:max-w-4xl">
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-white mb-4 leading-tight drop-shadow-lg">
+          {/* Conteúdo Principal (Centralizado no mobile, à esquerda no desktop) */}
+          <div className="relative flex flex-col items-center text-center lg:items-start lg:text-left max-w-3xl lg:max-w-4xl">
+            <h1 className="text-2xl md:text-3xl lg:text-7xl font-extrabold text-white mb-3 lg:mb-4 leading-tight drop-shadow-lg">
               Bibliotecário Digital
             </h1>
-            <h2 className="text-lg md:text-xl lg:text-2xl text-blue-100 mb-8 max-w-3xl drop-shadow">
+            <h2 className="text-sm md:text-base lg:text-2xl text-blue-100 mb-6 lg:mb-8 max-w-3xl drop-shadow">
               Sistema de gerenciamento de biblioteca desenvolvido para o Colégio Estadual de Arapuã,
               facilitando o controle, empréstimo e organização de livros escolares.
             </h2>

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -20,17 +20,18 @@ interface AlunoDialogProps {
 }
 
 export function AlunoDialog({ aluno, onSuccess, trigger, turmas }: AlunoDialogProps) {
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(trigger ? false : true)
+  useEffect(() => {
+    if (!trigger && aluno) setOpen(true)
+  }, [aluno, trigger])
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        {trigger ?? (
-          <Button>
-            {aluno ? "Editar Aluno" : "Novo Aluno"}
-          </Button>
-        )}
-      </DialogTrigger>
+      {trigger && (
+        <DialogTrigger asChild>
+          {trigger}
+        </DialogTrigger>
+      )}
       <DialogContent>
         <DialogHeader>
           <DialogTitle>

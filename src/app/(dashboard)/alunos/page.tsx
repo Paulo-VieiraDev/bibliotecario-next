@@ -9,6 +9,7 @@ import { getTurmas } from "@/services/turmas"
 import type { Aluno } from "@/types"
 import { toast } from "sonner"
 import { AlunoDialog } from "./aluno-dialog"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 
 const TURMA_COLORS = [
   "#4E79A7", "#F28E2B", "#E15759", "#76B7B2", "#59A14F",
@@ -21,6 +22,9 @@ export default function AlunosPage() {
   const [alunos, setAlunos] = useState<Aluno[]>([])
   const [turmas, setTurmas] = useState<{ id: string; nome: string }[]>([])
   const [loading, setLoading] = useState(true)
+  const [alunoEdit, setAlunoEdit] = useState<Aluno | null>(null)
+  const [alunoDelete, setAlunoDelete] = useState<Aluno | null>(null)
+  const [deleteLoading, setDeleteLoading] = useState(false)
 
   useEffect(() => {
     loadAlunos()
@@ -47,13 +51,17 @@ export default function AlunosPage() {
     }
   }
 
-  async function handleDeleteAluno(id: string) {
+  async function handleDeleteAlunoConfirmado(id: string) {
     try {
+      setDeleteLoading(true)
       await deleteAluno(id)
       toast.success("Aluno excluído com sucesso!")
       loadAlunos()
     } catch {
       toast.error("Erro ao excluir aluno")
+    } finally {
+      setDeleteLoading(false)
+      setAlunoDelete(null)
     }
   }
 
@@ -92,7 +100,31 @@ export default function AlunosPage() {
           }
         />
       </div>
-
+      {alunoEdit && (
+        <AlunoDialog
+          aluno={alunoEdit}
+          turmas={turmas}
+          onSuccess={() => {
+            setAlunoEdit(null)
+            loadAlunos()
+          }}
+          trigger={null}
+        />
+      )}
+      <Dialog open={!!alunoDelete} onOpenChange={open => !open && setAlunoDelete(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Confirmar exclusão</DialogTitle>
+          </DialogHeader>
+          <div className="py-2">Deseja realmente excluir o aluno <b>{alunoDelete?.nome}</b>?</div>
+          <div className="flex gap-3 justify-end">
+            <Button variant="outline" onClick={() => setAlunoDelete(null)} disabled={deleteLoading}>Cancelar</Button>
+            <Button variant="destructive" onClick={() => alunoDelete && handleDeleteAlunoConfirmado(alunoDelete.id)} disabled={deleteLoading}>
+              {deleteLoading ? "Excluindo..." : "Excluir"}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
       {/* Turmas */}
       <div className="space-y-6">
         {turmasComAlunos.map((turma, idx) => (
@@ -139,8 +171,8 @@ export default function AlunosPage() {
                     <div className="flex items-center justify-between">
                       <span> {/* info do aluno */} </span>
                       <div className="flex gap-2">
-                        <Button variant="ghost" size="icon" onClick={() => {}}><Pencil className="h-4 w-4" /></Button>
-                        <Button variant="ghost" size="icon" onClick={() => handleDeleteAluno(aluno.id)}><Trash2 className="h-4 w-4" /></Button>
+                        <Button variant="ghost" size="icon" onClick={() => setAlunoEdit(aluno)}><Pencil className="h-4 w-4" /></Button>
+                        <Button variant="ghost" size="icon" onClick={() => setAlunoDelete(aluno)}><Trash2 className="h-4 w-4" /></Button>
                       </div>
                     </div>
                   </div>

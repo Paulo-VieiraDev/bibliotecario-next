@@ -15,6 +15,11 @@ interface ComboBoxProps<T> {
   disabled?: boolean;
 }
 
+// Função para remover acentos
+function normalize(str: string) {
+  return str.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase();
+}
+
 export function ComboBox<T extends { id: string }>({
   items,
   value,
@@ -24,7 +29,19 @@ export function ComboBox<T extends { id: string }>({
   disabled,
 }: ComboBoxProps<T>) {
   const [open, setOpen] = React.useState(false);
+  const [search, setSearch] = React.useState("");
   const selected = items.find((item) => item.id === value);
+
+  // Filtro manual dos itens conforme o termo de busca
+  const filteredItems = search
+    ? items.filter((item) => {
+        const itemText = normalize(displayValue(item));
+        return search
+          .split(/\s+/)
+          .every((word) => itemText.includes(normalize(word)));
+      })
+    : items;
+  const itemsToShow = filteredItems.slice(0, 3);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -42,11 +59,15 @@ export function ComboBox<T extends { id: string }>({
       </PopoverTrigger>
       <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0">
         <Command>
-          <CommandInput placeholder={placeholder || "Buscar..."} />
+          <CommandInput
+            placeholder={placeholder || "Buscar..."}
+            value={search}
+            onValueChange={setSearch}
+          />
           <CommandList>
             <CommandEmpty>Nenhum resultado encontrado.</CommandEmpty>
             <CommandGroup>
-              {items.map((item) => (
+              {itemsToShow.map((item) => (
                 <CommandItem
                   key={item.id}
                   value={displayValue(item)}

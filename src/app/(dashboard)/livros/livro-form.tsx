@@ -136,10 +136,10 @@ export function LivroForm({ livro, onSuccess, onCancel }: LivroFormProps) {
               <FormItem>
                 <div className="flex items-center mb-1">
                   <span className="px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 text-xs font-semibold mr-2">Título</span>
-                  <FormLabel className="text-gray-700 font-semibold">Título do livro</FormLabel>
+                  <FormLabel className="text-gray-700 font-semibold text-xs sm:text-sm mb-0.5 sm:mb-1">Título do livro</FormLabel>
                 </div>
                 <FormControl>
-                  <Input {...field} placeholder="Digite o título" className="w-full min-h-[44px]" />
+                  <Input {...field} placeholder="Digite o título" className="w-full min-h-[28px] sm:min-h-[36px] px-1 sm:px-2 py-1 sm:py-2 text-xs sm:text-sm rounded sm:rounded-md" value={field.value ?? ""} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -152,10 +152,10 @@ export function LivroForm({ livro, onSuccess, onCancel }: LivroFormProps) {
               <FormItem>
                 <div className="flex items-center mb-1">
                   <span className="px-2 py-0.5 rounded-full bg-green-100 text-green-700 text-xs font-semibold mr-2">Autor</span>
-                  <FormLabel className="text-gray-700 font-semibold">Autor</FormLabel>
+                  <FormLabel className="text-gray-700 font-semibold text-xs sm:text-sm mb-0.5 sm:mb-1">Autor</FormLabel>
                 </div>
                 <FormControl>
-                  <Input {...field} placeholder="Digite o autor" className="w-full min-h-[44px]" />
+                  <Input {...field} placeholder="Digite o autor" className="w-full min-h-[28px] sm:min-h-[36px] px-1 sm:px-2 py-1 sm:py-2 text-xs sm:text-sm rounded sm:rounded-md" value={field.value ?? ""} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -168,10 +168,10 @@ export function LivroForm({ livro, onSuccess, onCancel }: LivroFormProps) {
               <FormItem>
                 <div className="flex items-center mb-1">
                   <span className="px-2 py-0.5 rounded-full bg-purple-100 text-purple-700 text-xs font-semibold mr-2">Editora</span>
-                  <FormLabel className="text-gray-700 font-semibold">Editora</FormLabel>
+                  <FormLabel className="text-gray-700 font-semibold text-xs sm:text-sm mb-0.5 sm:mb-1">Editora</FormLabel>
                 </div>
                 <FormControl>
-                  <Input {...field} placeholder="Digite a editora" className="w-full min-h-[44px]" />
+                  <Input {...field} placeholder="Digite a editora" className="w-full min-h-[28px] sm:min-h-[36px] px-1 sm:px-2 py-1 sm:py-2 text-xs sm:text-sm rounded sm:rounded-md" value={field.value ?? ""} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -185,10 +185,10 @@ export function LivroForm({ livro, onSuccess, onCancel }: LivroFormProps) {
                 <FormItem className="flex-1">
                   <div className="flex items-center mb-1">
                     <span className="px-2 py-0.5 rounded-full bg-yellow-100 text-yellow-700 text-xs font-semibold mr-2">Edição</span>
-                    <FormLabel className="text-gray-700 font-semibold">Edição</FormLabel>
+                    <FormLabel className="text-gray-700 font-semibold text-xs sm:text-sm mb-0.5 sm:mb-1">Edição</FormLabel>
                   </div>
                   <FormControl>
-                    <Input {...field} placeholder="Ex: 1ª edição, 4ª edição" className="w-full min-h-[44px]" />
+                    <Input {...field} placeholder="Ex: 1ª edição, 4ª edição" className="w-full min-h-[28px] sm:min-h-[36px] px-1 sm:px-2 py-1 sm:py-2 text-xs sm:text-sm rounded sm:rounded-md" value={field.value ?? ""} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -201,10 +201,10 @@ export function LivroForm({ livro, onSuccess, onCancel }: LivroFormProps) {
                 <FormItem className="flex-1">
                   <div className="flex items-center mb-1">
                     <span className="px-2 py-0.5 rounded-full bg-pink-100 text-pink-700 text-xs font-semibold mr-2">Quantidade</span>
-                    <FormLabel className="text-gray-700 font-semibold">Quantidade</FormLabel>
+                    <FormLabel className="text-gray-700 font-semibold text-xs sm:text-sm mb-0.5 sm:mb-1">Quantidade</FormLabel>
                   </div>
                   <FormControl>
-                    <Input type="number" min={1} {...field} className="w-full min-h-[44px]" />
+                    <Input type="number" min={1} {...field} className="w-full min-h-[28px] sm:min-h-[36px] px-1 sm:px-2 py-1 sm:py-2 text-xs sm:text-sm rounded sm:rounded-md" value={field.value ?? ""} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -218,10 +218,10 @@ export function LivroForm({ livro, onSuccess, onCancel }: LivroFormProps) {
               <FormItem>
                 <div className="flex items-center mb-1">
                   <span className="px-2 py-0.5 rounded-full bg-gray-200 text-gray-700 text-xs font-semibold mr-2">Vida útil</span>
-                  <FormLabel className="text-gray-700 font-semibold">Vida útil (anos) <span className='text-gray-400'>(opcional)</span></FormLabel>
+                  <FormLabel className="text-gray-700 font-semibold text-xs sm:text-sm mb-0.5 sm:mb-1">Vida útil (anos) <span className='text-gray-400'>(opcional)</span></FormLabel>
                 </div>
                 <FormControl>
-                  <Input type="number" min={1} {...field} placeholder="Ex: 3" className="w-full min-h-[44px]" />
+                  <Input type="number" min={1} {...field} placeholder="Ex: 3" className="w-full min-h-[28px] sm:min-h-[36px] px-1 sm:px-2 py-1 sm:py-2 text-xs sm:text-sm rounded sm:rounded-md" value={field.value ?? ""} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -234,12 +234,12 @@ export function LivroForm({ livro, onSuccess, onCancel }: LivroFormProps) {
               <FormItem>
                 <div className="flex items-center mb-1">
                   <span className="px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-700 text-xs font-semibold mr-2">Categoria</span>
-                  <FormLabel className="text-gray-700 font-semibold">Categoria</FormLabel>
+                  <FormLabel className="text-gray-700 font-semibold text-xs sm:text-sm mb-0.5 sm:mb-1">Categoria</FormLabel>
                 </div>
                 <FormControl>
                   <select
                     {...field}
-                    className="w-full min-h-[44px] border-gray-300 rounded-md focus:ring-1 focus:ring-pink-400"
+                    className="w-full min-h-[28px] sm:min-h-[36px] border-gray-300 rounded-md focus:ring-1 focus:ring-pink-400 text-xs sm:text-sm"
                     onChange={e => {
                       field.onChange(e)
                       setCategoria(e.target.value)
@@ -266,12 +266,12 @@ export function LivroForm({ livro, onSuccess, onCancel }: LivroFormProps) {
                     <FormItem className="flex-1">
                       <div className="flex items-center mb-1">
                         <span className="px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 text-xs font-semibold mr-2">Ano/Série</span>
-                        <FormLabel className="text-gray-700 font-semibold">Ano/Série</FormLabel>
+                        <FormLabel className="text-gray-700 font-semibold text-xs sm:text-sm mb-0.5 sm:mb-1">Ano/Série</FormLabel>
                       </div>
                       <FormControl>
                         <select
                           {...field}
-                          className="w-full min-h-[44px] border-gray-300 rounded-md focus:ring-1 focus:ring-blue-400"
+                          className="w-full min-h-[28px] sm:min-h-[36px] border-gray-300 rounded-md focus:ring-1 focus:ring-blue-400 text-xs sm:text-sm"
                           value={field.value}
                           onChange={e => {
                             field.onChange(e)
@@ -291,9 +291,9 @@ export function LivroForm({ livro, onSuccess, onCancel }: LivroFormProps) {
                 <div className="flex-1">
                   <div className="flex items-center mb-1">
                     <span className="px-2 py-0.5 rounded-full bg-green-100 text-green-700 text-xs font-semibold mr-2">Etapa</span>
-                    <FormLabel className="text-gray-700 font-semibold">Etapa do ensino</FormLabel>
+                    <FormLabel className="text-gray-700 font-semibold text-xs sm:text-sm mb-0.5 sm:mb-1">Etapa do ensino</FormLabel>
                   </div>
-                  <div className="w-full text-base text-gray-700 font-medium border border-indigo-200 rounded-md py-2 bg-indigo-50 px-3 min-h-[44px] flex items-center">
+                  <div className="w-full text-xs sm:text-sm text-gray-700 font-medium border border-indigo-200 rounded-md py-2 bg-indigo-50 px-3 min-h-[28px] sm:min-h-[36px] flex items-center">
                     {etapaDoEnsino(anoSerieSelecionado) || "Selecione o ano/série"}
                   </div>
                 </div>
@@ -305,12 +305,12 @@ export function LivroForm({ livro, onSuccess, onCancel }: LivroFormProps) {
                   <FormItem>
                     <div className="flex items-center mb-1">
                       <span className="px-2 py-0.5 rounded-full bg-pink-100 text-pink-700 text-xs font-semibold mr-2">Tipo</span>
-                      <FormLabel className="text-gray-700 font-semibold">Professor ou Aluno?</FormLabel>
+                      <FormLabel className="text-gray-700 font-semibold text-xs sm:text-sm mb-0.5 sm:mb-1">Professor ou Aluno?</FormLabel>
                     </div>
                     <FormControl>
                       <select
                         {...field}
-                        className="w-full min-h-[44px] border-gray-300 rounded-md focus:ring-1 focus:ring-green-400"
+                        className="w-full min-h-[28px] sm:min-h-[36px] border-gray-300 rounded-md focus:ring-1 focus:ring-green-400 text-xs sm:text-sm"
                       >
                         <option value="">Selecione...</option>
                         {tiposDidatico.map(tp => (
@@ -325,10 +325,10 @@ export function LivroForm({ livro, onSuccess, onCancel }: LivroFormProps) {
             </div>
           )}
           <div className="flex flex-col sm:flex-row gap-2 justify-center w-full pt-2">
-            <Button type="button" variant="outline" onClick={onCancel} className="rounded-md w-full sm:w-1/2 min-h-[44px]">
+            <Button type="button" variant="outline" onClick={onCancel} className="rounded-md w-full sm:w-1/2 min-h-[28px] sm:min-h-[36px] text-xs sm:text-sm">
               Cancelar
             </Button>
-            <Button type="submit" disabled={loading} className="rounded-md w-full sm:w-1/2 min-h-[44px]">
+            <Button type="submit" disabled={loading} className="rounded-md w-full sm:w-1/2 min-h-[28px] sm:min-h-[36px] text-xs sm:text-sm">
               {loading ? "Salvando..." : livro ? "Atualizar" : "Cadastrar"}
             </Button>
           </div>
