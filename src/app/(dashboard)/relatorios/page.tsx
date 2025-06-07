@@ -6,7 +6,6 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pi
 import { Skeleton } from "@/components/ui/skeleton"
 import { supabase } from "@/lib/supabase"
 import { Medal, Award, Star, Calendar, BarChart2, Trophy, BookOpen, Users as UsersIcon, TrendingUp, Clock } from "lucide-react"
-import Link from "next/link"
 
 const COLORS = [
   "#4E79A7", "#F28E2B", "#E15759", "#76B7B2", "#59A14F",
