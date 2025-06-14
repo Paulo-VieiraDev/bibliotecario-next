@@ -17,6 +17,7 @@ import { Input } from "@/components/ui/input"
 import { toast } from "sonner"
 import type { Livro } from "@/types"
 import { createLivro, updateLivro } from "@/services/livros"
+import { etapaDoEnsino } from "@/lib/utils"
 
 const categorias = [
   { value: "Didático", label: "Didático" },
@@ -26,6 +27,7 @@ const categorias = [
   { value: "Adulto", label: "Adulto" },
   { value: "Técnico", label: "Técnico" },
   { value: "Paradidático", label: "Paradidático" },
+  { value: "3º ano", label: "3º ano" },
 ]
 
 const tiposDidatico = [
@@ -38,16 +40,10 @@ const anosSerie = [
   { value: "7º ano", label: "7º ano" },
   { value: "8º ano", label: "8º ano" },
   { value: "9º ano", label: "9º ano" },
-  { value: "1º EM", label: "1º EM" },
-  { value: "2º EM", label: "2º EM" },
-  { value: "3º EM", label: "3º EM" },
+  { value: "1º ano", label: "1º ano" },
+  { value: "2º ano", label: "2º ano" },
+  { value: "3º ano", label: "3º ano" },
 ]
-
-function etapaDoEnsino(anoSerie: string) {
-  if (["6º ano", "7º ano", "8º ano", "9º ano"].includes(anoSerie)) return "Fundamental"
-  if (["1º EM", "2º EM", "3º EM"].includes(anoSerie)) return "Médio"
-  return ""
-}
 
 const livroSchema = z.object({
   titulo: z.string().min(1, "Título é obrigatório"),

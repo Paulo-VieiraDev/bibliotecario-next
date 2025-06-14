@@ -10,6 +10,7 @@ import type { Aluno } from "@/types"
 import { toast } from "sonner"
 import { AlunoDialog } from "./aluno-dialog"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { etapaDoEnsino } from "@/lib/utils"
 
 const TURMA_COLORS = [
   "#4E79A7", "#F28E2B", "#E15759", "#76B7B2", "#59A14F",
@@ -136,7 +137,7 @@ export default function AlunosPage() {
               >
                 <School className="w-4 h-4" /> {turma.nome}
               </span>
-              <div className="text-xs text-gray-400 dark:text-gray-300">Fundamental</div>
+              <div className="text-xs text-gray-400 dark:text-gray-300">{etapaDoEnsino(turma.nome.split(' ')[0] + ' ano')}</div>
             </div>
             <div className="space-y-2">
               {turma.alunos.length === 0 ? (
