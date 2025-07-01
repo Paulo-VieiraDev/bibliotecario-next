@@ -19,6 +19,7 @@ import {
   AlertDialogAction,
 } from "@/components/ui/alert-dialog"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
+import { supabase } from "@/lib/supabase"
 
 export default function LivrosPage() {
   const [livros, setLivros] = useState<Livro[]>([])
@@ -47,9 +48,13 @@ export default function LivrosPage() {
 
   async function handleDelete(id: string) {
     try {
-      await deleteLivro(id);
-      toast.success("Livro excluído com sucesso!");
-      loadLivros();
+      const { error } = await supabase.from('livros').delete().eq('id', id)
+      if (error) {
+        toast.error("Erro ao excluir livro")
+      } else {
+        toast.success("Livro excluído com sucesso!")
+        loadLivros()
+      }
     } catch {
       toast.error("Erro ao excluir livro")
     }

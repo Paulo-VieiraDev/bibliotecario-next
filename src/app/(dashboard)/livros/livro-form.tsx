@@ -53,16 +53,12 @@ const livroSchema = z.object({
   quantidade_disponivel: z.coerce.number().min(0),
   vida_util: z.coerce.number().optional(),
   categoria: z.string().min(1, "Categoria é obrigatória"),
-  ano_serie: z.string().optional(),
-  etapa: z.string().optional(),
-  tipo_didatico: z.string().optional(),
+  ano_serie: z.string().min(1).optional(),
+  etapa: z.string().min(1).optional(),
+  tipo_didatico: z.string().min(1).optional(),
 }).refine((data) => {
   if (data.categoria === "Didático") {
-    return (
-      !!data.ano_serie && data.ano_serie.trim() !== "" &&
-      !!data.etapa && data.etapa.trim() !== "" &&
-      !!data.tipo_didatico && data.tipo_didatico.trim() !== ""
-    );
+    return data.ano_serie && data.etapa && data.tipo_didatico;
   }
   return true;
 }, {
@@ -82,6 +78,7 @@ export function LivroForm({ livro, onSuccess, onCancel }: LivroFormProps) {
   const [loading, setLoading] = useState(false)
   const [categoria, setCategoria] = useState(livro?.categoria ?? "")
   const [anoSerieSelecionado, setAnoSerieSelecionado] = useState(livro?.ano_serie ?? "")
+  const [tipoDidaticoSelecionado, setTipoDidaticoSelecionado] = useState(livro?.tipo_didatico ?? (livro?.categoria === "Didático" ? "Aluno" : ""))
 
   const form = useForm<LivroFormValues>({
     resolver: zodResolver(livroSchema),
@@ -102,10 +99,22 @@ export function LivroForm({ livro, onSuccess, onCancel }: LivroFormProps) {
 
   useEffect(() => {
     form.setValue("etapa", etapaDoEnsino(anoSerieSelecionado) || "");
-  }, [form]);
+  }, [anoSerieSelecionado, form]);
+
+  useEffect(() => {
+    if (categoria === "Didático" && !form.getValues("tipo_didatico")) {
+      form.setValue("tipo_didatico", "Aluno");
+      setTipoDidaticoSelecionado("Aluno");
+    }
+  }, [categoria, form]);
 
   async function onSubmit(data: LivroFormValues) {
     console.log("Dados enviados:", data);
+    if (data.categoria === "Didático") {
+      if (!data.ano_serie) data.ano_serie = anoSerieSelecionado || "";
+      if (!data.etapa) data.etapa = etapaDoEnsino(anoSerieSelecionado) || "";
+      if (!data.tipo_didatico) data.tipo_didatico = tipoDidaticoSelecionado || "Aluno";
+    }
     try {
       setLoading(true)
       if (livro) {
