@@ -102,7 +102,7 @@ export function LivroForm({ livro, onSuccess, onCancel }: LivroFormProps) {
 
   useEffect(() => {
     form.setValue("etapa", etapaDoEnsino(anoSerieSelecionado) || "");
-  }, [anoSerieSelecionado]);
+  }, [form]);
 
   async function onSubmit(data: LivroFormValues) {
     console.log("Dados enviados:", data);

@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useEffect, useState } from "react"
-import { Plus, BookOpen, Pencil, Trash, Eye } from "lucide-react"
+import { BookOpen, Pencil, Trash, Eye } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { getLivros, deleteLivro } from "@/services/livros"
 import type { Livro } from "@/types"
@@ -18,7 +18,6 @@ import {
   AlertDialogCancel,
   AlertDialogAction,
 } from "@/components/ui/alert-dialog"
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
 
 export default function LivrosPage() {

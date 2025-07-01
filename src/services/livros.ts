@@ -70,7 +70,7 @@ export async function createLivro(livro: Omit<Livro, "id" | "created_at">) {
 
 export async function updateLivro(id: string, livro: Partial<Livro>) {
   // Se a quantidade for alterada, recalcule quantidade_disponivel
-  let livroAtualizado = { ...livro };
+  const livroAtualizado = { ...livro };
   if (livro.quantidade !== undefined) {
     // Buscar quantos empréstimos ativos existem para esse livro
     const { count: emprestados, error: errorEmprestimos } = await supabase
