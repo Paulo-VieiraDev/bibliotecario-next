@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
@@ -27,7 +27,6 @@ const categorias = [
   { value: "Adulto", label: "Adulto" },
   { value: "Técnico", label: "Técnico" },
   { value: "Paradidático", label: "Paradidático" },
-  { value: "3º ano", label: "3º ano" },
 ]
 
 const tiposDidatico = [
@@ -58,11 +57,14 @@ const livroSchema = z.object({
   etapa: z.string().optional(),
   tipo_didatico: z.string().optional(),
 }).refine((data) => {
-  // Se for livro didático, os campos específicos são obrigatórios
   if (data.categoria === "Didático") {
-    return !!data.ano_serie && !!data.etapa && !!data.tipo_didatico
+    return (
+      !!data.ano_serie && data.ano_serie.trim() !== "" &&
+      !!data.etapa && data.etapa.trim() !== "" &&
+      !!data.tipo_didatico && data.tipo_didatico.trim() !== ""
+    );
   }
-  return true
+  return true;
 }, {
   message: "Livros didáticos precisam ter ano/série, etapa e tipo (aluno/professor)",
   path: ["categoria"]
@@ -98,7 +100,12 @@ export function LivroForm({ livro, onSuccess, onCancel }: LivroFormProps) {
     },
   })
 
+  useEffect(() => {
+    form.setValue("etapa", etapaDoEnsino(anoSerieSelecionado) || "");
+  }, [anoSerieSelecionado]);
+
   async function onSubmit(data: LivroFormValues) {
+    console.log("Dados enviados:", data);
     try {
       setLoading(true)
       if (livro) {
@@ -294,6 +301,11 @@ export function LivroForm({ livro, onSuccess, onCancel }: LivroFormProps) {
                   </div>
                 </div>
               </div>
+              <input
+                type="hidden"
+                {...form.register("etapa")}
+                value={etapaDoEnsino(anoSerieSelecionado) || ""}
+              />
               <FormField
                 control={form.control}
                 name="tipo_didatico"

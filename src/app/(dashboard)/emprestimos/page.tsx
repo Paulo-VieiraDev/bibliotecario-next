@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { ArrowLeftRight, Plus } from "lucide-react"
+import { ArrowLeftRight, Plus, RotateCcw } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
 import { toast } from "sonner"
@@ -21,7 +21,7 @@ export default function EmprestimosPage() {
   const [professores, setProfessores] = useState<Professor[]>([])
   const [livros, setLivros] = useState<Livro[]>([])
   const [loading, setLoading] = useState(true)
-  const [tipoFiltro, setTipoFiltro] = useState<'aluno' | 'professor'>('aluno');
+  const [tab, setTab] = useState<'todos' | 'atrasados' | 'devolvidos'>('todos')
 
   async function loadEmprestimos() {
     try {
@@ -54,6 +54,19 @@ export default function EmprestimosPage() {
     }
   }
 
+  async function handleRenovar(emp: Emprestimo) {
+    try {
+      const novaData = new Date();
+      novaData.setDate(novaData.getDate() + 14);
+      // Atualize no Supabase
+      await fetch(`/api/renovar-emprestimo?id=${emp.id}&novaData=${novaData.toISOString()}`, { method: 'POST' });
+      toast.success("Empréstimo renovado por mais 2 semanas!");
+      loadEmprestimos();
+    } catch {
+      toast.error("Erro ao renovar empréstimo");
+    }
+  }
+
   const emprestimosComNomes = emprestimos.map(e => {
     const aluno = alunos.find(a => a.id === e.aluno_id);
     const professor = professores.find(p => p.id === e.professor_id);
@@ -67,9 +80,12 @@ export default function EmprestimosPage() {
     };
   });
 
-  const emprestimosFiltrados = emprestimosComNomes.filter(e =>
-    tipoFiltro === 'aluno' ? !!e.aluno_id : !!e.professor_id
-  );
+  const emprestimosFiltrados = emprestimosComNomes.filter(e => {
+    if (tab === 'todos') return true;
+    if (tab === 'atrasados') return e.status === 'emprestado' && e.data_devolucao && new Date(e.data_devolucao) < new Date();
+    if (tab === 'devolvidos') return e.status === 'devolvido';
+    return true;
+  });
 
   if (loading) {
     return (
@@ -91,18 +107,25 @@ export default function EmprestimosPage() {
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4 px-2">
           <div className="flex justify-center sm:justify-start gap-2 mb-2 sm:mb-0">
             <Button
-              variant={tipoFiltro === 'aluno' ? 'default' : 'ghost'}
-              className={`px-4 py-2 font-bold transition-all scale-100 hover:scale-105 ${tipoFiltro !== 'aluno' ? 'bg-zinc-100 dark:bg-zinc-800' : ''}`}
-              onClick={() => setTipoFiltro('aluno')}
+              variant={tab === 'todos' ? 'default' : 'ghost'}
+              className={`px-4 py-2 font-bold transition-all scale-100 hover:scale-105 ${tab !== 'todos' ? 'bg-zinc-100 dark:bg-zinc-800' : ''}`}
+              onClick={() => setTab('todos')}
             >
-              Alunos
+              Empréstimos
             </Button>
             <Button
-              variant={tipoFiltro === 'professor' ? 'default' : 'ghost'}
-              className={`px-4 py-2 font-bold transition-all scale-100 hover:scale-105 ${tipoFiltro !== 'professor' ? 'bg-zinc-100 dark:bg-zinc-800' : ''}`}
-              onClick={() => setTipoFiltro('professor')}
+              variant={tab === 'atrasados' ? 'default' : 'ghost'}
+              className={`px-4 py-2 font-bold transition-all scale-100 hover:scale-105 ${tab !== 'atrasados' ? 'bg-zinc-100 dark:bg-zinc-800' : ''}`}
+              onClick={() => setTab('atrasados')}
             >
-              Professores
+              Atrasados
+            </Button>
+            <Button
+              variant={tab === 'devolvidos' ? 'default' : 'ghost'}
+              className={`px-4 py-2 font-bold transition-all scale-100 hover:scale-105 ${tab !== 'devolvidos' ? 'bg-zinc-100 dark:bg-zinc-800' : ''}`}
+              onClick={() => setTab('devolvidos')}
+            >
+              Devolvidos
             </Button>
           </div>
           <div className="flex justify-center sm:justify-end">
@@ -120,7 +143,7 @@ export default function EmprestimosPage() {
               <tr className="bg-zinc-100 dark:bg-zinc-800">
                 <th className="px-4 py-3 text-left font-bold text-zinc-700 dark:text-zinc-100 border-r border-zinc-200 dark:border-zinc-800">Livro</th>
                 <th className="px-4 py-3 text-left font-bold text-zinc-700 dark:text-zinc-100 border-r border-zinc-200 dark:border-zinc-800">
-                  {tipoFiltro === 'aluno' ? 'Aluno' : 'Professor'}
+                  Usuário
                 </th>
                 <th className="px-4 py-3 text-center font-bold text-zinc-700 dark:text-zinc-100 border-r border-zinc-200 dark:border-zinc-800">Data do Empréstimo</th>
                 <th className="px-4 py-3 text-center font-bold text-zinc-700 dark:text-zinc-100 border-r border-zinc-200 dark:border-zinc-800">Data da Devolução</th>
@@ -138,6 +161,10 @@ export default function EmprestimosPage() {
               ) : (
                 emprestimosFiltrados.map((emp, idx) => {
                   const isLast = idx === emprestimosFiltrados.length - 1;
+                  const podeRenovar = emp.status === 'emprestado' && emp.data_devolucao && (
+                    (new Date(emp.data_devolucao) < new Date()) ||
+                    ((new Date(emp.data_devolucao).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24) <= 3)
+                  );
                   return (
                     <tr
                       key={emp.id}
@@ -152,20 +179,27 @@ export default function EmprestimosPage() {
                         <div className="text-xs text-zinc-400 dark:text-zinc-500">{emp.livro_autor}</div>
                       </td>
                       <td className="px-4 py-3 align-top text-zinc-700 dark:text-zinc-200 border-r border-zinc-200 dark:border-zinc-800">
-                        {tipoFiltro === 'aluno' ? emp.aluno_nome : emp.professor_nome}
+                        <div className="font-bold text-zinc-800 dark:text-zinc-100">{emp.aluno_nome || emp.professor_nome}</div>
+                        <div className="text-xs text-zinc-400 dark:text-zinc-500 mt-1">
+                          {emp.aluno_nome ? "Aluno" : "Professor"}
+                        </div>
                       </td>
                       <td className="px-4 py-3 align-top text-center text-zinc-700 dark:text-zinc-200 border-r border-zinc-200 dark:border-zinc-800">
                         {emp.data_emprestimo
                           ? new Date(emp.data_emprestimo).toLocaleDateString('pt-BR')
                           : '-'}
                       </td>
-                      <td className="px-4 py-3 align-top text-center text-zinc-700 dark:text-zinc-200 border-r border-zinc-200 dark:border-zinc-800">
-                        {emp.data_devolucao
-                          ? new Date(emp.data_devolucao).toLocaleDateString('pt-BR')
-                          : '-'}
+                      <td className="px-4 py-3 align-top text-center border-r border-zinc-200 dark:border-zinc-800">
+                        {emp.data_devolucao ? (
+                          <span className={emp.status === 'emprestado' && new Date(emp.data_devolucao) < new Date() ? 'text-red-800 dark:text-red-200 font-bold' : 'text-zinc-700 dark:text-zinc-200'}>
+                            {new Date(emp.data_devolucao).toLocaleDateString('pt-BR')}
+                          </span>
+                        ) : '-'}
                       </td>
                       <td className="px-4 py-3 align-top text-center border-r border-zinc-200 dark:border-zinc-800">
-                        {emp.status === 'emprestado' ? (
+                        {emp.status === 'emprestado' && emp.data_devolucao && new Date(emp.data_devolucao) < new Date() ? (
+                          <span className="bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 px-3 py-1 rounded-full text-xs font-bold">Atrasado</span>
+                        ) : emp.status === 'emprestado' ? (
                           <span className="bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 px-3 py-1 rounded-full text-xs font-bold">Emprestado</span>
                         ) : (
                           <span className="bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 px-3 py-1 rounded-full text-xs font-bold">Devolvido</span>
@@ -173,31 +207,61 @@ export default function EmprestimosPage() {
                       </td>
                       <td className="px-4 py-3 align-top text-center">
                         {emp.status === "emprestado" && (
-                          <AlertDialog>
-                            <AlertDialogTrigger asChild>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="h-9 w-9 rounded-full hover:bg-blue-100 dark:hover:bg-zinc-700 transition-colors"
-                              >
-                                <ArrowLeftRight className="h-5 w-5 text-blue-600" />
-                              </Button>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent>
-                              <AlertDialogHeader>
-                                <AlertDialogTitle>Devolver Livro</AlertDialogTitle>
-                                <AlertDialogDescription>
-                                  Tem certeza que deseja registrar a devolução deste livro?
-                                </AlertDialogDescription>
-                              </AlertDialogHeader>
-                              <AlertDialogFooter>
-                                <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                                <AlertDialogAction onClick={() => handleDevolver(emp.id)}>
-                                  Confirmar
-                                </AlertDialogAction>
-                              </AlertDialogFooter>
-                            </AlertDialogContent>
-                          </AlertDialog>
+                          <div className="flex gap-2 justify-center">
+                            <AlertDialog>
+                              <AlertDialogTrigger asChild>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-9 w-9 rounded-full hover:bg-blue-100 dark:hover:bg-zinc-700 transition-colors"
+                                >
+                                  <ArrowLeftRight className="h-5 w-5 text-blue-600" />
+                                </Button>
+                              </AlertDialogTrigger>
+                              <AlertDialogContent>
+                                <AlertDialogHeader>
+                                  <AlertDialogTitle>Devolver Livro</AlertDialogTitle>
+                                  <AlertDialogDescription>
+                                    Tem certeza que deseja registrar a devolução deste livro?
+                                  </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                  <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                                  <AlertDialogAction onClick={() => handleDevolver(emp.id)}>
+                                    Confirmar
+                                  </AlertDialogAction>
+                                </AlertDialogFooter>
+                              </AlertDialogContent>
+                            </AlertDialog>
+                            {podeRenovar && (
+                              <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="h-9 w-9 rounded-full hover:bg-green-100 dark:hover:bg-green-900 transition-colors"
+                                    title="Renovar empréstimo"
+                                  >
+                                    <RotateCcw className="h-5 w-5 text-green-600" />
+                                  </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                  <AlertDialogHeader>
+                                    <AlertDialogTitle>Renovar Empréstimo</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                      Deseja renovar este empréstimo por mais 2 semanas?
+                                    </AlertDialogDescription>
+                                  </AlertDialogHeader>
+                                  <AlertDialogFooter>
+                                    <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                                    <AlertDialogAction onClick={() => handleRenovar(emp)}>
+                                      Confirmar Renovação
+                                    </AlertDialogAction>
+                                  </AlertDialogFooter>
+                                </AlertDialogContent>
+                              </AlertDialog>
+                            )}
+                          </div>
                         )}
                       </td>
                     </tr>

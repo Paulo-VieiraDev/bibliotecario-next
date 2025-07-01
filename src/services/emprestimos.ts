@@ -60,7 +60,7 @@ async function verificarDisponibilidadeLivro(livroId: string) {
 }
 
 export async function createEmprestimo(
-  emprestimo: Omit<Emprestimo, "id" | "created_at" | "data_devolucao">
+  emprestimo: Omit<Emprestimo, "id" | "created_at">
 ) {
   try {
     // Verificar disponibilidade do livro
@@ -74,6 +74,22 @@ export async function createEmprestimo(
       .single()
 
     if (error) throw error
+
+    // Buscar o valor atual de quantidade_disponivel
+    const { data: livroAtual, error: livroError } = await supabase
+      .from("livros")
+      .select("quantidade_disponivel")
+      .eq("id", emprestimo.livro_id)
+      .single();
+
+    if (livroError) throw livroError;
+    if (livroAtual && typeof livroAtual.quantidade_disponivel === 'number') {
+      await supabase
+        .from("livros")
+        .update({ quantidade_disponivel: livroAtual.quantidade_disponivel - 1 })
+        .eq("id", emprestimo.livro_id);
+    }
+
     return data as Emprestimo
   } catch (error) {
     if (error instanceof Error) {

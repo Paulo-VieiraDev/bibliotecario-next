@@ -148,7 +148,7 @@ export default function LoginPage() {
             </p>
           </div>
           <p className="text-sm text-gray-500">
-            Sistema de Biblioteca Escolar &copy; {new Date().getFullYear()}
+            Sistema Bibliotecário Escolar &copy; {new Date().getFullYear()}
           </p>
         </div>
       </div>

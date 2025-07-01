@@ -4,7 +4,7 @@ const nextConfig: NextConfig = {
   images: {
     domains: [
       "avatars.githubusercontent.com",
-      // adicione outros domínios se necessário
+      "servicosweb.cnpq.br",
     ],
   },
 };

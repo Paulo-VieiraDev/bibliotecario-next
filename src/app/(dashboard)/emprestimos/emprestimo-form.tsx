@@ -76,11 +76,15 @@ export function EmprestimoForm({ onSuccess, onCancel }: EmprestimoFormProps) {
     try {
       setLoading(true)
       const { tipo_usuario, usuario_id, ...rest } = data;
+      const dataEmprestimo = new Date();
+      const dataDevolucao = new Date(dataEmprestimo);
+      dataDevolucao.setDate(dataDevolucao.getDate() + 14);
       await createEmprestimo({
         ...rest,
         aluno_id: tipo_usuario === "aluno" ? usuario_id : null,
         professor_id: tipo_usuario === "professor" ? usuario_id : null,
-        data_emprestimo: new Date().toISOString(),
+        data_emprestimo: dataEmprestimo.toISOString(),
+        data_devolucao: dataDevolucao.toISOString(),
         status: "emprestado",
       })
       toast.success("Empréstimo registrado com sucesso!")

@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { getAlunos, deleteAluno } from "@/services/alunos"
 import { getTurmas } from "@/services/turmas"
 import type { Aluno } from "@/types"
+import type { Turma } from "@/types"
 import { toast } from "sonner"
 import { AlunoDialog } from "./aluno-dialog"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
@@ -18,6 +19,31 @@ const TURMA_COLORS = [
   "#86BCB6", "#D37295", "#FABFD2", "#B6992D", "#499894",
   "#E17C05", "#F1CE63", "#D4A6C8", "#7A7A7A", "#A0CBE8"
 ]
+
+function ordenarTurmas(turmas: { id: string; nome: string }[]): { id: string; nome: string }[] {
+  // Extrai ano e letra (ex: "6º A", "7º B", "1º A", etc)
+  return [...turmas].sort((a, b) => {
+    // Remove acentos, espaços e símbolos, pega só o número e a letra
+    const normalizar = (nome: string) => {
+      const match = nome.normalize("NFD").replace(/[\u0300-\u036f]/g, "") // remove acentos
+        .replace(/[^0-9a-zA-Z]/g, " ") // troca símbolos por espaço
+        .trim()
+        .split(" ");
+      return {
+        ano: parseInt(match[0]),
+        letra: match[1] || ""
+      };
+    };
+    const ordemAno = [6, 7, 8, 9, 1, 2, 3];
+    const aNorm = normalizar(a.nome);
+    const bNorm = normalizar(b.nome);
+    const idxA = ordemAno.indexOf(aNorm.ano);
+    const idxB = ordemAno.indexOf(bNorm.ano);
+
+    if (idxA !== idxB) return idxA - idxB;
+    return aNorm.letra.localeCompare(bNorm.letra);
+  });
+}
 
 export default function AlunosPage() {
   const [alunos, setAlunos] = useState<Aluno[]>([])
@@ -66,8 +92,9 @@ export default function AlunosPage() {
     }
   }
 
-  // Agrupar alunos por turma
-  const turmasComAlunos = turmas.map((turma) => ({
+  // Troque o agrupamento das turmas para usar a ordenação
+  const turmasOrdenadas = ordenarTurmas(turmas);
+  const turmasComAlunos = turmasOrdenadas.map((turma) => ({
     ...turma,
     alunos: alunos.filter((a) => a.turma_id === turma.id),
   }))
@@ -146,7 +173,7 @@ export default function AlunosPage() {
                   Nenhum aluno nesta turma.
                 </div>
               ) : (
-                turma.alunos.map((aluno) => (
+                turma.alunos.map((aluno: Aluno) => (
                   <div
                     key={aluno.id}
                     className="flex items-center gap-4 bg-blue-50 hover:bg-blue-100 transition rounded-lg px-4 py-3 mb-2 shadow-sm group"

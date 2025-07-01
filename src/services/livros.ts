@@ -69,9 +69,21 @@ export async function createLivro(livro: Omit<Livro, "id" | "created_at">) {
 }
 
 export async function updateLivro(id: string, livro: Partial<Livro>) {
+  // Se a quantidade for alterada, recalcule quantidade_disponivel
+  let livroAtualizado = { ...livro };
+  if (livro.quantidade !== undefined) {
+    // Buscar quantos empréstimos ativos existem para esse livro
+    const { count: emprestados, error: errorEmprestimos } = await supabase
+      .from('emprestimos')
+      .select('*', { count: 'exact', head: true })
+      .eq('livro_id', id)
+      .eq('status', 'emprestado');
+    if (errorEmprestimos) throw errorEmprestimos;
+    livroAtualizado.quantidade_disponivel = (livro.quantidade as number) - (emprestados || 0);
+  }
   const { data, error } = await supabase
     .from("livros")
-    .update(livro)
+    .update(livroAtualizado)
     .eq("id", id)
     .select()
     .single()
