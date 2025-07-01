@@ -251,7 +251,7 @@ export function LivroForm({ livro, onSuccess, onCancel }: LivroFormProps) {
                 <FormControl>
                   <select
                     {...field}
-                    className="w-full min-h-[28px] sm:min-h-[36px] border-gray-300 rounded-md focus:ring-1 focus:ring-pink-400 text-xs sm:text-sm"
+                    className="border border-zinc-300 dark:border-zinc-700 rounded-md px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white text-zinc-900 dark:bg-zinc-900 dark:text-zinc-100 dark:placeholder-zinc-400 transition-colors"
                     onChange={e => {
                       field.onChange(e)
                       setCategoria(e.target.value)
@@ -283,8 +283,7 @@ export function LivroForm({ livro, onSuccess, onCancel }: LivroFormProps) {
                       <FormControl>
                         <select
                           {...field}
-                          className="w-full min-h-[28px] sm:min-h-[36px] border-gray-300 rounded-md focus:ring-1 focus:ring-blue-400 text-xs sm:text-sm"
-                          value={field.value}
+                          className="border border-zinc-300 dark:border-zinc-700 rounded-md px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white text-zinc-900 dark:bg-zinc-900 dark:text-zinc-100 dark:placeholder-zinc-400 transition-colors"
                           onChange={e => {
                             field.onChange(e)
                             setAnoSerieSelecionado(e.target.value)
@@ -319,7 +318,7 @@ export function LivroForm({ livro, onSuccess, onCancel }: LivroFormProps) {
                 control={form.control}
                 name="tipo_didatico"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex-1">
                     <div className="flex items-center mb-1">
                       <span className="px-2 py-0.5 rounded-full bg-pink-100 text-pink-700 text-xs font-semibold mr-2">Tipo</span>
                       <FormLabel className="text-gray-700 font-semibold text-xs sm:text-sm mb-0.5 sm:mb-1">Professor ou Aluno?</FormLabel>
@@ -327,11 +326,15 @@ export function LivroForm({ livro, onSuccess, onCancel }: LivroFormProps) {
                     <FormControl>
                       <select
                         {...field}
-                        className="w-full min-h-[28px] sm:min-h-[36px] border-gray-300 rounded-md focus:ring-1 focus:ring-green-400 text-xs sm:text-sm"
+                        className="border border-zinc-300 dark:border-zinc-700 rounded-md px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white text-zinc-900 dark:bg-zinc-900 dark:text-zinc-100 dark:placeholder-zinc-400 transition-colors"
+                        onChange={e => {
+                          field.onChange(e)
+                          setTipoDidaticoSelecionado(e.target.value)
+                        }}
                       >
                         <option value="">Selecione...</option>
-                        {tiposDidatico.map(tp => (
-                          <option key={tp.value} value={tp.value}>{tp.label}</option>
+                        {tiposDidatico.map(tipo => (
+                          <option key={tipo.value} value={tipo.value}>{tipo.label}</option>
                         ))}
                       </select>
                     </FormControl>
