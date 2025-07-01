@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react"
 import { BookOpen, Pencil, Trash, Eye } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { getLivros, deleteLivro } from "@/services/livros"
+import { getLivros } from "@/services/livros"
 import type { Livro } from "@/types"
 import { toast } from "sonner"
 import { LivroDialog } from "./livro-dialog"
