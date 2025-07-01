@@ -91,7 +91,7 @@ export default function LivrosPage() {
             <select
               value={categoriaFiltro}
               onChange={e => setCategoriaFiltro(e.target.value)}
-              className="border border-zinc-300 dark:border-zinc-700 rounded-md px-3 py-2 w-1/2 sm:w-auto focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="border border-zinc-300 dark:border-zinc-700 rounded-md px-3 py-2 w-1/2 sm:w-auto focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white text-zinc-900 dark:bg-zinc-900 dark:text-zinc-100 dark:placeholder-zinc-400 transition-colors"
             >
               <option value="">Todas as categorias</option>
               {categorias.map(cat => (
