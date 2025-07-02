@@ -21,8 +21,6 @@ import {
   SheetHeader,
   SheetTitle,
   SheetDescription,
-  SheetFooter,
-  SheetClose,
 } from "@/components/ui/sheet";
 import { ComboBox } from "@/components/ui/combobox";
 import { Calendar } from "@/components/ui/calendar";
@@ -130,9 +128,9 @@ export default function EmprestimosPage() {
     const livro = livros.find(l => l.id === e.livro_id);
     return {
       ...e,
-      aluno_nome: (e as any).aluno_nome || (aluno ? aluno.nome : ""),
-      professor_nome: (e as any).professor_nome || (professor ? professor.nome : ""),
-      livro_nome: (e as any).livro_nome || (livro ? livro.titulo : ""),
+      aluno_nome: (e as unknown as any).aluno_nome || (aluno ? aluno.nome : ""),
+      professor_nome: (e as unknown as any).professor_nome || (professor ? professor.nome : ""),
+      livro_nome: (e as unknown as any).livro_nome || (livro ? livro.titulo : ""),
       livro_autor: livro ? livro.autor : "",
     };
   });

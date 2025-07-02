@@ -27,8 +27,6 @@ import {
   SheetHeader,
   SheetTitle,
   SheetDescription,
-  SheetFooter,
-  SheetClose,
 } from "@/components/ui/sheet"
 import { ComboBox } from "@/components/ui/combobox"
 import { YearPicker } from "@/components/ui/year-picker"
@@ -36,14 +34,7 @@ import { YearPicker } from "@/components/ui/year-picker"
 export default function LivrosPage() {
   const [livros, setLivros] = useState<Livro[]>([])
   const [loading, setLoading] = useState(true)
-  const [categoriaFiltro, setCategoriaFiltro] = useState<string>('')
-  const [livroSelecionado, setLivroSelecionado] = useState<Livro | null>(null)
   const [search, setSearch] = useState("")
-  const [autorFiltro, setAutorFiltro] = useState<string>('')
-  const [editoraFiltro, setEditoraFiltro] = useState<string>('')
-  const [anoMinFiltro, setAnoMinFiltro] = useState<number | null>(null)
-  const [anoMaxFiltro, setAnoMaxFiltro] = useState<number | null>(null)
-  const [disponivelFiltro, setDisponivelFiltro] = useState<boolean>(false)
   const [filtros, setFiltros] = useState({
     anoMin: "",
     anoMax: "",
@@ -55,6 +46,7 @@ export default function LivrosPage() {
     vidaUtilMax: "",
   })
   const [sheetOpen, setSheetOpen] = useState(false)
+  const [livroSelecionado, setLivroSelecionado] = useState<Livro | null>(null)
 
   // Extrai categorias únicas dos livros
   const categorias = Array.from(new Set(livros.map(l => l.categoria).filter(Boolean)))
@@ -105,7 +97,6 @@ export default function LivrosPage() {
 
   // Filtrar livros por categoria, autor, editora, ano e disponibilidade
   const livrosFiltrados = livros
-    .filter(livro => !categoriaFiltro || livro.categoria === categoriaFiltro)
     .filter(livro => !filtros.anoMin || (livro.ano && livro.ano >= Number(filtros.anoMin)))
     .filter(livro => !filtros.anoMax || (livro.ano && livro.ano <= Number(filtros.anoMax)))
     .filter(livro => !filtros.autor || livro.autor.toLowerCase().includes(filtros.autor.toLowerCase()))
