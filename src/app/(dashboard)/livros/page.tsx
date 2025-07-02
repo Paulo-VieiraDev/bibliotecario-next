@@ -1,9 +1,9 @@
 "use client"
 
 import React, { useEffect, useState } from "react"
-import { BookOpen, Pencil, Trash, Eye } from "lucide-react"
+import { BookOpen, Pencil, Trash, Eye, Search } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { getLivros } from "@/services/livros"
+import { getLivros, deleteLivro } from "@/services/livros"
 import type { Livro } from "@/types"
 import { toast } from "sonner"
 import { LivroDialog } from "./livro-dialog"
@@ -20,6 +20,18 @@ import {
 } from "@/components/ui/alert-dialog"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
 import { supabase } from "@/lib/supabase"
+import {
+  Sheet,
+  SheetTrigger,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetDescription,
+  SheetFooter,
+  SheetClose,
+} from "@/components/ui/sheet"
+import { ComboBox } from "@/components/ui/combobox"
+import { YearPicker } from "@/components/ui/year-picker"
 
 export default function LivrosPage() {
   const [livros, setLivros] = useState<Livro[]>([])
@@ -27,9 +39,29 @@ export default function LivrosPage() {
   const [categoriaFiltro, setCategoriaFiltro] = useState<string>('')
   const [livroSelecionado, setLivroSelecionado] = useState<Livro | null>(null)
   const [search, setSearch] = useState("")
+  const [autorFiltro, setAutorFiltro] = useState<string>('')
+  const [editoraFiltro, setEditoraFiltro] = useState<string>('')
+  const [anoMinFiltro, setAnoMinFiltro] = useState<number | null>(null)
+  const [anoMaxFiltro, setAnoMaxFiltro] = useState<number | null>(null)
+  const [disponivelFiltro, setDisponivelFiltro] = useState<boolean>(false)
+  const [filtros, setFiltros] = useState({
+    anoMin: "",
+    anoMax: "",
+    autor: "",
+    editora: "",
+    categorias: [] as string[],
+    disponivel: false,
+    vidaUtilMin: "",
+    vidaUtilMax: "",
+  })
+  const [sheetOpen, setSheetOpen] = useState(false)
 
   // Extrai categorias únicas dos livros
   const categorias = Array.from(new Set(livros.map(l => l.categoria).filter(Boolean)))
+
+  // Antes do return, extraia autores e editoras únicos dos livros:
+  const autoresUnicos = Array.from(new Set(livros.map(l => l.autor).filter(Boolean))).map(a => ({ id: a, nome: a }))
+  const editorasUnicas = Array.from(new Set(livros.map(l => l.editora).filter(Boolean))).map(e => ({ id: e, nome: e }))
 
   useEffect(() => {
     loadLivros()
@@ -48,21 +80,38 @@ export default function LivrosPage() {
 
   async function handleDelete(id: string) {
     try {
-      const { error } = await supabase.from('livros').delete().eq('id', id)
-      if (error) {
-        toast.error("Erro ao excluir livro")
-      } else {
-        toast.success("Livro excluído com sucesso!")
-        loadLivros()
+      // Verificar se há empréstimos ativos para o livro
+      const { count, error: countError } = await supabase
+        .from('emprestimos')
+        .select('*', { count: 'exact', head: true })
+        .eq('livro_id', id)
+        .eq('status', 'emprestado');
+      if (countError) {
+        toast.error('Erro ao verificar empréstimos ativos');
+        return;
       }
+      if ((count ?? 0) > 0) {
+        toast.error('Não é possível excluir: este livro possui empréstimos ativos!');
+        return;
+      }
+      // Prosseguir com o soft delete
+      await deleteLivro(id);
+      toast.success('Livro excluído com sucesso!');
+      loadLivros();
     } catch {
-      toast.error("Erro ao excluir livro")
+      toast.error('Erro ao excluir livro');
     }
   }
 
-  // Filtrar livros por categoria e nome
+  // Filtrar livros por categoria, autor, editora, ano e disponibilidade
   const livrosFiltrados = livros
     .filter(livro => !categoriaFiltro || livro.categoria === categoriaFiltro)
+    .filter(livro => !filtros.anoMin || (livro.ano && livro.ano >= Number(filtros.anoMin)))
+    .filter(livro => !filtros.anoMax || (livro.ano && livro.ano <= Number(filtros.anoMax)))
+    .filter(livro => !filtros.autor || livro.autor.toLowerCase().includes(filtros.autor.toLowerCase()))
+    .filter(livro => !filtros.editora || livro.editora.toLowerCase().includes(filtros.editora.toLowerCase()))
+    .filter(livro => filtros.categorias.length === 0 || filtros.categorias.includes(livro.categoria))
+    .filter(livro => !filtros.disponivel || livro.quantidade_disponivel > 0)
     .filter(livro => livro.titulo.toLowerCase().includes(search.toLowerCase()));
 
   if (loading) {
@@ -82,37 +131,98 @@ export default function LivrosPage() {
             <h1 className="text-4xl font-extrabold text-gray-900 dark:text-gray-100">Livros</h1>
           </div>
         </div>
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4 mb-4 w-full">
-          {/* Barra de pesquisa */}
-          <input
-            type="text"
-            placeholder="Pesquisar livro pelo nome..."
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-            className="border border-zinc-300 dark:border-zinc-700 rounded-md px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-400"
-          />
-          <div className="flex gap-2 w-full sm:w-auto">
-            {/* Filtro de categoria */}
-            <select
-              value={categoriaFiltro}
-              onChange={e => setCategoriaFiltro(e.target.value)}
-              className="border border-zinc-300 dark:border-zinc-700 rounded-md px-3 py-2 w-1/2 sm:w-auto focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white text-zinc-900 dark:bg-zinc-900 dark:text-zinc-100 dark:placeholder-zinc-400 transition-colors"
-            >
-              <option value="">Todas as categorias</option>
-              {categorias.map(cat => (
-                <option key={cat} value={cat}>{cat}</option>
-              ))}
-            </select>
-            {/* Botão Novo Livro */}
-            <LivroDialog onSuccess={loadLivros} trigger={
-              <Button
-                variant="default"
-                className="px-6 py-2 text-base font-bold flex items-center gap-2 shadow-lg transition-all scale-100 hover:scale-105 whitespace-nowrap w-1/2 sm:w-auto"
-              >
-                + Novo Livro
-              </Button>
-            } />
+        <div className="flex flex-col sm:flex-row gap-2 w-full items-stretch sm:items-center">
+          <div className="relative flex-1">
+            <Search className="absolute left-2 top-1/2 -translate-y-1/2 text-zinc-400 w-4 h-4" />
+            <input
+              type="text"
+              placeholder="Pesquisar livro pelo nome..."
+              className="pl-8 pr-2 py-1 sm:py-2 min-h-[28px] sm:min-h-[36px] text-xs sm:text-sm rounded sm:rounded-md border border-zinc-300 dark:border-zinc-700 focus:outline-none focus:ring-2 focus:ring-blue-400 w-full bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100"
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+            />
           </div>
+          <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
+            <SheetTrigger asChild>
+              <Button variant="outline" className="min-h-[28px] sm:min-h-[36px] text-xs sm:text-sm">Filtros Avançados</Button>
+            </SheetTrigger>
+            <SheetContent side="right" className="max-w-md w-full bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100">
+              <SheetHeader>
+                <SheetTitle className="text-2xl font-bold mb-2">Filtros Avançados</SheetTitle>
+                <SheetDescription className="mb-4 text-base">Refine sua busca de livros usando múltiplos critérios.</SheetDescription>
+              </SheetHeader>
+              <form className="flex flex-col gap-6 mt-2">
+                <div className="grid grid-cols-2 gap-2 mb-2">
+                  <div>
+                    <label className="block text-sm font-semibold mb-1">Ano (mínimo)</label>
+                    <YearPicker
+                      value={filtros.anoMin ? Number(filtros.anoMin) : null}
+                      onChange={ano => setFiltros(f => ({ ...f, anoMin: ano ? String(ano) : "" }))}
+                      minYear={1980}
+                      maxYear={new Date().getFullYear()}
+                      placeholder="Ano mínimo"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold mb-1">Ano (máximo)</label>
+                    <YearPicker
+                      value={filtros.anoMax ? Number(filtros.anoMax) : null}
+                      onChange={ano => setFiltros(f => ({ ...f, anoMax: ano ? String(ano) : "" }))}
+                      minYear={1980}
+                      maxYear={new Date().getFullYear()}
+                      placeholder="Ano máximo"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold mb-1">Autor</label>
+                  <ComboBox
+                    items={autoresUnicos}
+                    value={filtros.autor}
+                    onChange={val => setFiltros(f => ({ ...f, autor: val }))}
+                    placeholder="Selecione ou busque um autor"
+                    displayValue={item => item.nome}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold mb-1">Editora</label>
+                  <ComboBox
+                    items={editorasUnicas}
+                    value={filtros.editora}
+                    onChange={val => setFiltros(f => ({ ...f, editora: val }))}
+                    placeholder="Selecione ou busque uma editora"
+                    displayValue={item => item.nome}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold mb-1">Categoria</label>
+                  <select className="w-full rounded-md border border-zinc-300 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400" value={filtros.categorias[0] || ""} onChange={e => setFiltros(f => ({ ...f, categorias: e.target.value ? [e.target.value] : [] }))}>
+                    <option value="">Todas</option>
+                    {categorias.map(cat => (
+                      <option key={cat} value={cat}>{cat}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="flex items-center gap-2">
+                  <input type="checkbox" id="disponivel" checked={filtros.disponivel} onChange={e => setFiltros(f => ({ ...f, disponivel: e.target.checked }))} className="accent-blue-600 w-4 h-4" />
+                  <label htmlFor="disponivel" className="text-sm">Apenas com disponibilidade</label>
+                </div>
+                <div className="flex flex-row gap-2 items-center mt-4 justify-center">
+                  <Button type="button" variant="ghost" className="flex-1 max-w-xs py-2 text-base font-semibold border border-zinc-300 dark:border-zinc-700" onClick={() => setFiltros({ anoMin: "", anoMax: "", autor: "", editora: "", categorias: [], disponivel: false, vidaUtilMin: "", vidaUtilMax: "" })}>
+                    Resetar
+                  </Button>
+                  <Button type="button" className="flex-1 max-w-xs py-2 text-base font-semibold" onClick={() => setSheetOpen(false)}>
+                    Aplicar
+                  </Button>
+                </div>
+              </form>
+            </SheetContent>
+          </Sheet>
+          <LivroDialog onSuccess={loadLivros} trigger={
+            <Button className="min-h-[28px] sm:min-h-[36px] px-4 sm:px-6 text-xs sm:text-sm font-bold rounded sm:rounded-md w-full sm:w-auto">
+              + Novo Livro
+            </Button>
+          } />
         </div>
         <div className="overflow-x-auto rounded-2xl shadow-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
           <table className="min-w-full rounded-2xl overflow-hidden border-separate border-spacing-0 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
@@ -145,7 +255,7 @@ export default function LivrosPage() {
                       }
                     >
                       <td className="px-2 py-3 text-center align-middle border-r border-zinc-200 dark:border-zinc-800">
-                        <button onClick={() => setLivroSelecionado(livro)} className="transition-transform duration-200 hover:scale-125 focus:outline-none">
+                        <button onClick={() => setLivroSelecionado(livro)} className="transition-transform duration-200 hover:scale-12F5 focus:outline-none">
                           <Eye className="w-5 h-5 text-zinc-600 hover:text-zinc-900" />
                         </button>
                       </td>
@@ -227,6 +337,7 @@ export default function LivrosPage() {
                   <span><b>Autor</b>: {livroSelecionado.autor}</span>
                   <span><b>Editora</b>: {livroSelecionado.editora}</span>
                   <span><b>Edição</b>: {livroSelecionado.edicao}</span>
+                  <span><b>Ano</b>: {livroSelecionado.ano}</span>
                 </div>
               </div>
               <hr />

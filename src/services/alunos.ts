@@ -1,14 +1,14 @@
 import { supabase } from "@/lib/supabase"
-import type { Aluno } from "@/types"
+import type { Aluno, EmprestimoComDetalhes } from "@/types"
 
 export async function getAlunos() {
   const { data, error } = await supabase
-    .from("alunos")
-    .select("*")
-    .order("nome")
-
-  if (error) throw error
-  return data as Aluno[]
+    .from('alunos')
+    .select('*')
+    .eq('deletado', false)
+    .order('nome');
+  if (error) throw error;
+  return data as Aluno[];
 }
 
 export async function getAluno(id: string) {
@@ -50,9 +50,24 @@ export async function updateAluno(
 
 export async function deleteAluno(id: string) {
   const { error } = await supabase
-    .from("alunos")
-    .delete()
-    .eq("id", id);
-
+    .from('alunos')
+    .update({ deletado: true })
+    .eq('id', id);
   if (error) throw error;
+  return Promise.resolve();
+}
+
+export async function getEmprestimos() {
+  const { data, error } = await supabase
+    .from("emprestimos")
+    .select(`
+      *,
+      livro:livros(*),
+      aluno:alunos(*),
+      professor:professores(*)
+    `)
+    .order("data_emprestimo", { ascending: false })
+
+  if (error) throw error
+  return data as EmprestimoComDetalhes[]
 } 

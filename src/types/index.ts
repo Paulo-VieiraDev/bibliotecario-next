@@ -22,6 +22,7 @@ export interface Livro {
   quantidade_disponivel: number
   vida_util?: number
   categoria: string
+  ano?: number
   ano_serie?: string
   etapa?: string
   tipo_didatico?: string

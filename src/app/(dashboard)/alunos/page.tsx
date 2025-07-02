@@ -9,7 +9,7 @@ import { getTurmas } from "@/services/turmas"
 import type { Aluno } from "@/types"
 import { toast } from "sonner"
 import { AlunoDialog } from "./aluno-dialog"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
 import { etapaDoEnsino } from "@/lib/utils"
 
 const TURMA_COLORS = [
@@ -143,6 +143,7 @@ export default function AlunosPage() {
           <DialogHeader>
             <DialogTitle>Confirmar exclusão</DialogTitle>
           </DialogHeader>
+          <DialogDescription className="sr-only">Confirmação de exclusão de aluno</DialogDescription>
           <div className="py-2">Deseja realmente excluir o aluno <b>{alunoDelete?.nome}</b>?</div>
           <div className="flex gap-3 justify-end">
             <Button variant="outline" onClick={() => setAlunoDelete(null)} disabled={deleteLoading}>Cancelar</Button>

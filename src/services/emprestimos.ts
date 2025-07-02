@@ -63,13 +63,51 @@ export async function createEmprestimo(
   emprestimo: Omit<Emprestimo, "id" | "created_at">
 ) {
   try {
+    // Buscar nome do livro
+    let livro_nome = null;
+    if (emprestimo.livro_id) {
+      const { data: livro } = await supabase
+        .from("livros")
+        .select("titulo")
+        .eq("id", emprestimo.livro_id)
+        .single();
+      livro_nome = livro?.titulo ?? null;
+    }
+
+    // Buscar nome do aluno
+    let aluno_nome = null;
+    if (emprestimo.aluno_id) {
+      const { data: aluno } = await supabase
+        .from("alunos")
+        .select("nome")
+        .eq("id", emprestimo.aluno_id)
+        .single();
+      aluno_nome = aluno?.nome ?? null;
+    }
+
+    // Buscar nome do professor
+    let professor_nome = null;
+    if (emprestimo.professor_id) {
+      const { data: professor } = await supabase
+        .from("professores")
+        .select("nome")
+        .eq("id", emprestimo.professor_id)
+        .single();
+      professor_nome = professor?.nome ?? null;
+    }
+
     // Verificar disponibilidade do livro
     await verificarDisponibilidadeLivro(emprestimo.livro_id)
 
-    // Criar o empréstimo
+    // Criar o empréstimo com os nomes salvos
     const { data, error } = await supabase
       .from("emprestimos")
-      .insert(emprestimo)
+      .insert({
+        ...emprestimo,
+        livro_nome,
+        aluno_nome,
+        professor_nome,
+      })
       .select()
       .single()
 
@@ -100,6 +138,7 @@ export async function createEmprestimo(
 }
 
 export async function devolverLivro(id: string) {
+  // Atualiza o status do empréstimo
   const { data, error } = await supabase
     .from("emprestimos")
     .update({
@@ -108,8 +147,28 @@ export async function devolverLivro(id: string) {
     })
     .eq("id", id)
     .select()
-    .single()
+    .single();
 
-  if (error) throw error
-  return data as Emprestimo
+  if (error) throw error;
+
+  // Atualiza a quantidade_disponivel do livro
+  if (data?.livro_id) {
+    // Busca o valor atual
+    const { data: livroAtual, error: livroError } = await supabase
+      .from("livros")
+      .select("quantidade_disponivel")
+      .eq("id", data.livro_id)
+      .single();
+
+    if (livroError) throw livroError;
+
+    if (livroAtual && typeof livroAtual.quantidade_disponivel === 'number') {
+      await supabase
+        .from("livros")
+        .update({ quantidade_disponivel: livroAtual.quantidade_disponivel + 1 })
+        .eq("id", data.livro_id);
+    }
+  }
+
+  return data as Emprestimo;
 } 

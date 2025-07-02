@@ -14,6 +14,54 @@ import type { Aluno } from "@/types"
 import type { Professor } from "@/types"
 import type { Livro } from "@/types"
 import type { Emprestimo } from "@/types"
+import {
+  Sheet,
+  SheetTrigger,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetDescription,
+  SheetFooter,
+  SheetClose,
+} from "@/components/ui/sheet";
+import { ComboBox } from "@/components/ui/combobox";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
+
+function DatePickerFiltro({ label, value, onChange }: { label: string, value: string, onChange: (val: string) => void }) {
+  const [open, setOpen] = useState(false);
+  const date = value ? new Date(value) : undefined;
+  return (
+    <div>
+      <label className="block text-xs font-medium mb-1">{label}</label>
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger asChild>
+          <button
+            type="button"
+            className="w-full rounded-md border border-zinc-300 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800 px-3 py-2 text-left focus:outline-none focus:ring-2 focus:ring-blue-400"
+          >
+            {date ? format(date, "dd/MM/yyyy", { locale: ptBR }) : <span className="text-zinc-400">Selecione a data</span>}
+          </button>
+        </PopoverTrigger>
+        <PopoverContent className="p-0 w-auto" align="start">
+          <Calendar
+            mode="single"
+            selected={date}
+            onSelect={d => {
+              setOpen(false);
+              onChange(d ? d.toISOString().slice(0, 10) : "");
+            }}
+            locale={ptBR}
+            initialFocus
+            captionLayout="dropdown"
+          />
+        </PopoverContent>
+      </Popover>
+    </div>
+  );
+}
 
 export default function EmprestimosPage() {
   const [emprestimos, setEmprestimos] = useState<Emprestimo[]>([])
@@ -21,7 +69,16 @@ export default function EmprestimosPage() {
   const [professores, setProfessores] = useState<Professor[]>([])
   const [livros, setLivros] = useState<Livro[]>([])
   const [loading, setLoading] = useState(true)
-  const [tab, setTab] = useState<'todos' | 'atrasados' | 'devolvidos'>('todos')
+  const [filtros, setFiltros] = useState({
+    livro: "",
+    usuario: "",
+    status: "",
+    dataEmprestimoMin: "",
+    dataEmprestimoMax: "",
+    dataDevolucaoMin: "",
+    dataDevolucaoMax: "",
+  });
+  const [sheetOpen, setSheetOpen] = useState(false);
 
   async function loadEmprestimos() {
     try {
@@ -73,19 +130,33 @@ export default function EmprestimosPage() {
     const livro = livros.find(l => l.id === e.livro_id);
     return {
       ...e,
-      aluno_nome: aluno ? aluno.nome : "",
-      professor_nome: professor ? professor.nome : "",
-      livro_nome: livro ? livro.titulo : "",
+      aluno_nome: (e as any).aluno_nome || (aluno ? aluno.nome : ""),
+      professor_nome: (e as any).professor_nome || (professor ? professor.nome : ""),
+      livro_nome: (e as any).livro_nome || (livro ? livro.titulo : ""),
       livro_autor: livro ? livro.autor : "",
     };
   });
 
-  const emprestimosFiltrados = emprestimosComNomes.filter(e => {
-    if (tab === 'todos') return true;
-    if (tab === 'atrasados') return e.status === 'emprestado' && e.data_devolucao && new Date(e.data_devolucao) < new Date();
-    if (tab === 'devolvidos') return e.status === 'devolvido';
-    return true;
-  });
+  const livrosUnicos = livros.map(l => ({ id: l.id, nome: l.titulo }));
+  const usuariosUnicos = [
+    ...alunos.map(a => ({ id: a.id, nome: a.nome + " (Aluno)" })),
+    ...professores.map(p => ({ id: p.id, nome: p.nome + " (Professor)" })),
+  ];
+
+  const emprestimosFiltrados = emprestimosComNomes
+    .filter(e => !filtros.livro || e.livro_id === filtros.livro)
+    .filter(e => !filtros.usuario || e.aluno_id === filtros.usuario || e.professor_id === filtros.usuario)
+    .filter(e => {
+      if (!filtros.status) return true;
+      if (filtros.status === 'atrasado') {
+        return e.status === 'emprestado' && e.data_devolucao && new Date(e.data_devolucao) < new Date();
+      }
+      return e.status === filtros.status;
+    })
+    .filter(e => !filtros.dataEmprestimoMin || (e.data_emprestimo && new Date(e.data_emprestimo) >= new Date(filtros.dataEmprestimoMin)))
+    .filter(e => !filtros.dataEmprestimoMax || (e.data_emprestimo && new Date(e.data_emprestimo) <= new Date(filtros.dataEmprestimoMax + 'T23:59:59')))
+    .filter(e => !filtros.dataDevolucaoMin || (e.data_devolucao && new Date(e.data_devolucao) >= new Date(filtros.dataDevolucaoMin)))
+    .filter(e => !filtros.dataDevolucaoMax || (e.data_devolucao && new Date(e.data_devolucao) <= new Date(filtros.dataDevolucaoMax + 'T23:59:59')));
 
   if (loading) {
     return (
@@ -103,32 +174,63 @@ export default function EmprestimosPage() {
             <ArrowLeftRight className="text-blue-600 w-9 h-9 animate-arrow" />
             <h1 className="text-4xl font-extrabold text-gray-900 dark:text-gray-100">Empréstimos</h1>
           </div>
-        </div>
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4 px-2">
-          <div className="flex justify-center sm:justify-start gap-2 mb-2 sm:mb-0">
-            <Button
-              variant={tab === 'todos' ? 'default' : 'ghost'}
-              className={`px-4 py-2 font-bold transition-all scale-100 hover:scale-105 ${tab !== 'todos' ? 'bg-zinc-100 dark:bg-zinc-800' : ''}`}
-              onClick={() => setTab('todos')}
-            >
-              Empréstimos
-            </Button>
-            <Button
-              variant={tab === 'atrasados' ? 'default' : 'ghost'}
-              className={`px-4 py-2 font-bold transition-all scale-100 hover:scale-105 ${tab !== 'atrasados' ? 'bg-zinc-100 dark:bg-zinc-800' : ''}`}
-              onClick={() => setTab('atrasados')}
-            >
-              Atrasados
-            </Button>
-            <Button
-              variant={tab === 'devolvidos' ? 'default' : 'ghost'}
-              className={`px-4 py-2 font-bold transition-all scale-100 hover:scale-105 ${tab !== 'devolvidos' ? 'bg-zinc-100 dark:bg-zinc-800' : ''}`}
-              onClick={() => setTab('devolvidos')}
-            >
-              Devolvidos
-            </Button>
-          </div>
-          <div className="flex justify-center sm:justify-end">
+          <div className="flex gap-2">
+            <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
+              <SheetTrigger asChild>
+                <Button variant="outline" className="min-h-[28px] sm:min-h-[36px] text-xs sm:text-sm">Filtros Avançados</Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="max-w-md w-full bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 flex flex-col h-full">
+                <SheetHeader>
+                  <SheetTitle className="text-2xl font-bold mb-2">Filtros Avançados</SheetTitle>
+                  <SheetDescription className="mb-4 text-base">Refine sua busca de empréstimos usando múltiplos critérios.</SheetDescription>
+                </SheetHeader>
+                <form className="flex flex-col gap-6 mt-2 flex-1 overflow-y-auto">
+                  <div>
+                    <label className="block text-sm font-semibold mb-1">Livro</label>
+                    <ComboBox
+                      items={livrosUnicos}
+                      value={filtros.livro}
+                      onChange={val => setFiltros(f => ({ ...f, livro: val }))}
+                      placeholder="Selecione ou busque um livro"
+                      displayValue={item => item.nome}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold mb-1">Usuário</label>
+                    <ComboBox
+                      items={usuariosUnicos}
+                      value={filtros.usuario}
+                      onChange={val => setFiltros(f => ({ ...f, usuario: val }))}
+                      placeholder="Selecione ou busque um usuário"
+                      displayValue={item => item.nome}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold mb-1">Status</label>
+                    <select className="w-full rounded-md border border-zinc-300 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400" value={filtros.status} onChange={e => setFiltros(f => ({ ...f, status: e.target.value }))}>
+                      <option value="">Todos</option>
+                      <option value="emprestado">Emprestado</option>
+                      <option value="devolvido">Devolvido</option>
+                      <option value="atrasado">Atrasado</option>
+                    </select>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <DatePickerFiltro label="Empréstimo (de)" value={filtros.dataEmprestimoMin} onChange={val => setFiltros(f => ({ ...f, dataEmprestimoMin: val }))} />
+                    <DatePickerFiltro label="Empréstimo (até)" value={filtros.dataEmprestimoMax} onChange={val => setFiltros(f => ({ ...f, dataEmprestimoMax: val }))} />
+                    <DatePickerFiltro label="Devolução (de)" value={filtros.dataDevolucaoMin} onChange={val => setFiltros(f => ({ ...f, dataDevolucaoMin: val }))} />
+                    <DatePickerFiltro label="Devolução (até)" value={filtros.dataDevolucaoMax} onChange={val => setFiltros(f => ({ ...f, dataDevolucaoMax: val }))} />
+                  </div>
+                  <div className="flex flex-row gap-2 items-center mt-4 justify-center">
+                    <Button type="button" variant="ghost" className="flex-1 max-w-xs py-2 text-base font-semibold border border-zinc-300 dark:border-zinc-700" onClick={() => setFiltros({ livro: "", usuario: "", status: "", dataEmprestimoMin: "", dataEmprestimoMax: "", dataDevolucaoMin: "", dataDevolucaoMax: "" })}>
+                      Resetar
+                    </Button>
+                    <Button type="button" className="flex-1 max-w-xs py-2 text-base font-semibold" onClick={() => setSheetOpen(false)}>
+                      Aplicar
+                    </Button>
+                  </div>
+                </form>
+              </SheetContent>
+            </Sheet>
             <EmprestimoDialog onSuccess={loadEmprestimos} trigger={
               <Button variant="default" className="px-6 py-2 text-base font-bold flex items-center gap-2 shadow-lg transition-all scale-100 hover:scale-105">
                 <Plus className="h-5 w-5" />
@@ -175,13 +277,12 @@ export default function EmprestimosPage() {
                       }
                     >
                       <td className="px-4 py-3 align-top border-r border-zinc-200 dark:border-zinc-800">
-                        <div className="font-bold text-zinc-800 dark:text-zinc-100">{emp.livro_nome}</div>
-                        <div className="text-xs text-zinc-400 dark:text-zinc-500">{emp.livro_autor}</div>
+                        <div className="font-bold text-zinc-800 dark:text-zinc-100">{emp.livro_nome || 'Livro removido'}</div>
                       </td>
                       <td className="px-4 py-3 align-top text-zinc-700 dark:text-zinc-200 border-r border-zinc-200 dark:border-zinc-800">
-                        <div className="font-bold text-zinc-800 dark:text-zinc-100">{emp.aluno_nome || emp.professor_nome}</div>
+                        <div className="font-bold text-zinc-800 dark:text-zinc-100">{emp.aluno_nome || emp.professor_nome || 'Usuário removido'}</div>
                         <div className="text-xs text-zinc-400 dark:text-zinc-500 mt-1">
-                          {emp.aluno_nome ? "Aluno" : "Professor"}
+                          {emp.aluno_nome ? 'Aluno' : (emp.professor_nome ? 'Professor' : '')}
                         </div>
                       </td>
                       <td className="px-4 py-3 align-top text-center text-zinc-700 dark:text-zinc-200 border-r border-zinc-200 dark:border-zinc-800">

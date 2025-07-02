@@ -5,6 +5,7 @@ export async function getLivros() {
   const { data, error } = await supabase
     .from("livros")
     .select("*")
+    .eq("deletado", false)
     .order("titulo")
 
   if (error) throw error
@@ -45,7 +46,8 @@ export async function createLivro(livro: Omit<Livro, "id" | "created_at">) {
       .from("livros")
       .insert([{
         ...livro,
-        quantidade_disponivel: livro.quantidade // Inicialmente, todos os livros estão disponíveis
+        quantidade_disponivel: livro.quantidade, // Inicialmente, todos os livros estão disponíveis
+        ano: livro.ano, // novo campo
       }])
       .select()
       .single()
@@ -81,6 +83,9 @@ export async function updateLivro(id: string, livro: Partial<Livro>) {
     if (errorEmprestimos) throw errorEmprestimos;
     livroAtualizado.quantidade_disponivel = (livro.quantidade as number) - (emprestados || 0);
   }
+  if (livro.ano !== undefined) {
+    livroAtualizado.ano = livro.ano;
+  }
   const { data, error } = await supabase
     .from("livros")
     .update(livroAtualizado)
@@ -93,8 +98,11 @@ export async function updateLivro(id: string, livro: Partial<Livro>) {
 }
 
 export async function deleteLivro(id: string) {
-  void id;
-  // Instead of deleting, we'll just return success
-  // This prevents actual deletion in the database
+  // Soft delete: marca o livro como deletado
+  const { error } = await supabase
+    .from('livros')
+    .update({ deletado: true })
+    .eq('id', id);
+  if (error) throw error;
   return Promise.resolve();
 } 

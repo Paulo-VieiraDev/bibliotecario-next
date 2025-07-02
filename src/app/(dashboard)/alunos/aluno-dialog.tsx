@@ -7,6 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogDescription,
 } from "@/components/ui/dialog"
 import { AlunoForm } from "./aluno-form"
 import type { Aluno } from "@/types"
@@ -37,6 +38,7 @@ export function AlunoDialog({ aluno, onSuccess, trigger, turmas }: AlunoDialogPr
             {aluno ? "Editar Aluno" : "Novo Aluno"}
           </DialogTitle>
         </DialogHeader>
+        <DialogDescription className="sr-only">Formulário de cadastro ou edição de aluno</DialogDescription>
         <AlunoForm
           aluno={aluno}
           onSuccess={() => {

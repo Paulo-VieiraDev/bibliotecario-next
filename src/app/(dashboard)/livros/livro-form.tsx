@@ -53,9 +53,10 @@ const livroSchema = z.object({
   quantidade_disponivel: z.coerce.number().min(0),
   vida_util: z.coerce.number().optional(),
   categoria: z.string().min(1, "Categoria é obrigatória"),
-  ano_serie: z.string().min(1).optional(),
-  etapa: z.string().min(1).optional(),
-  tipo_didatico: z.string().min(1).optional(),
+  ano: z.coerce.number().min(1000, "Ano inválido").max(new Date().getFullYear(), "Ano inválido"),
+  ano_serie: z.string().transform(val => val === "" ? undefined : val).optional(),
+  etapa: z.string().transform(val => val === "" ? undefined : val).optional(),
+  tipo_didatico: z.string().transform(val => val === "" ? undefined : val).optional(),
 }).refine((data) => {
   if (data.categoria === "Didático") {
     return data.ano_serie && data.etapa && data.tipo_didatico;
@@ -223,22 +224,48 @@ export function LivroForm({ livro, onSuccess, onCancel }: LivroFormProps) {
               )}
             />
           </div>
-          <FormField
-            control={form.control}
-            name="vida_util"
-            render={({ field }) => (
-              <FormItem>
-                <div className="flex items-center mb-1">
-                  <span className="px-2 py-0.5 rounded-full bg-gray-200 text-gray-700 text-xs font-semibold mr-2">Vida útil</span>
-                  <FormLabel className="text-gray-700 font-semibold text-xs sm:text-sm mb-0.5 sm:mb-1">Vida útil (anos) <span className='text-gray-400'>(opcional)</span></FormLabel>
-                </div>
-                <FormControl>
-                  <Input type="number" min={1} {...field} placeholder="Ex: 3" className="w-full min-h-[28px] sm:min-h-[36px] px-1 sm:px-2 py-1 sm:py-2 text-xs sm:text-sm rounded sm:rounded-md" value={field.value ?? ""} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <div className="flex flex-col md:flex-row gap-4 w-full">
+            <FormField
+              control={form.control}
+              name="ano"
+              render={({ field }) => (
+                <FormItem className="flex-1">
+                  <div className="flex items-center mb-1">
+                    <span className="px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 text-xs font-semibold mr-2">Ano</span>
+                    <FormLabel className="text-gray-700 font-semibold text-xs sm:text-sm mb-0.5 sm:mb-1">Ano do livro</FormLabel>
+                  </div>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      min={1000}
+                      max={new Date().getFullYear()}
+                      placeholder="Ano do livro"
+                      className="w-full min-h-[28px] sm:min-h-[36px] px-1 sm:px-2 py-1 sm:py-2 text-xs sm:text-sm rounded sm:rounded-md"
+                      value={field.value ?? ""}
+                      onChange={field.onChange}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="vida_util"
+              render={({ field }) => (
+                <FormItem className="flex-1">
+                  <div className="flex items-center mb-1">
+                    <span className="px-2 py-0.5 rounded-full bg-gray-200 text-gray-700 text-xs font-semibold mr-2">Vida útil</span>
+                    <FormLabel className="text-gray-700 font-semibold text-xs sm:text-sm mb-0.5 sm:mb-1">Vida útil <span className='text-gray-400'>(opcional)</span></FormLabel>
+                  </div>
+                  <FormControl>
+                    <Input type="number" min={1} {...field} placeholder="Ex: 3" className="w-full min-h-[28px] sm:min-h-[36px] px-1 sm:px-2 py-1 sm:py-2 text-xs sm:text-sm rounded sm:rounded-md" value={field.value ?? ""} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
           <FormField
             control={form.control}
             name="categoria"
@@ -251,7 +278,7 @@ export function LivroForm({ livro, onSuccess, onCancel }: LivroFormProps) {
                 <FormControl>
                   <select
                     {...field}
-                    className="border border-zinc-300 dark:border-zinc-700 rounded-md px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white text-zinc-900 dark:bg-zinc-900 dark:text-zinc-100 dark:placeholder-zinc-400 transition-colors"
+                    className="min-h-[28px] sm:min-h-[36px] px-1 sm:px-2 py-1 sm:py-2 text-xs sm:text-sm rounded sm:rounded-md w-full border border-zinc-300 dark:border-zinc-700 focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white text-zinc-900 dark:bg-zinc-900 dark:text-zinc-100 flex items-center"
                     onChange={e => {
                       field.onChange(e)
                       setCategoria(e.target.value)
@@ -283,7 +310,7 @@ export function LivroForm({ livro, onSuccess, onCancel }: LivroFormProps) {
                       <FormControl>
                         <select
                           {...field}
-                          className="border border-zinc-300 dark:border-zinc-700 rounded-md px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white text-zinc-900 dark:bg-zinc-900 dark:text-zinc-100 dark:placeholder-zinc-400 transition-colors"
+                          className="min-h-[28px] sm:min-h-[36px] px-1 sm:px-2 py-1 sm:py-2 text-xs sm:text-sm rounded sm:rounded-md w-full border border-zinc-300 dark:border-zinc-700 focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white text-zinc-900 dark:bg-zinc-900 dark:text-zinc-100 flex items-center"
                           onChange={e => {
                             field.onChange(e)
                             setAnoSerieSelecionado(e.target.value)
@@ -299,15 +326,15 @@ export function LivroForm({ livro, onSuccess, onCancel }: LivroFormProps) {
                     </FormItem>
                   )}
                 />
-                <div className="flex-1">
+                <FormItem className="flex-1">
                   <div className="flex items-center mb-1">
                     <span className="px-2 py-0.5 rounded-full bg-green-100 text-green-700 text-xs font-semibold mr-2">Etapa</span>
                     <FormLabel className="text-gray-700 font-semibold text-xs sm:text-sm mb-0.5 sm:mb-1">Etapa do ensino</FormLabel>
                   </div>
-                  <div className="w-full text-xs sm:text-sm text-gray-700 font-medium border border-indigo-200 rounded-md py-2 bg-indigo-50 px-3 min-h-[28px] sm:min-h-[36px] flex items-center">
+                  <div className="min-h-[28px] sm:min-h-[36px] px-1 sm:px-2 py-1 sm:py-2 text-xs sm:text-sm rounded sm:rounded-md w-full border border-indigo-200 bg-indigo-50 text-gray-700 font-medium flex items-center">
                     {etapaDoEnsino(anoSerieSelecionado) || "Selecione o ano/série"}
                   </div>
-                </div>
+                </FormItem>
               </div>
               <input
                 type="hidden"
@@ -326,7 +353,7 @@ export function LivroForm({ livro, onSuccess, onCancel }: LivroFormProps) {
                     <FormControl>
                       <select
                         {...field}
-                        className="border border-zinc-300 dark:border-zinc-700 rounded-md px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white text-zinc-900 dark:bg-zinc-900 dark:text-zinc-100 dark:placeholder-zinc-400 transition-colors"
+                        className="min-h-[28px] sm:min-h-[36px] px-1 sm:px-2 py-1 sm:py-2 text-xs sm:text-sm rounded sm:rounded-md w-full border border-zinc-300 dark:border-zinc-700 focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white text-zinc-900 dark:bg-zinc-900 dark:text-zinc-100 flex items-center"
                         onChange={e => {
                           field.onChange(e)
                           setTipoDidaticoSelecionado(e.target.value)
