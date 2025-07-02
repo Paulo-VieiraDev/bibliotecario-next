@@ -28,6 +28,13 @@ import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
+type EmprestimoComNomes = Emprestimo & {
+  aluno_nome?: string;
+  professor_nome?: string;
+  livro_nome?: string;
+  livro_autor?: string;
+};
+
 function DatePickerFiltro({ label, value, onChange }: { label: string, value: string, onChange: (val: string) => void }) {
   const [open, setOpen] = useState(false);
   const date = value ? new Date(value) : undefined;
@@ -122,15 +129,15 @@ export default function EmprestimosPage() {
     }
   }
 
-  const emprestimosComNomes = emprestimos.map(e => {
+  const emprestimosComNomes: EmprestimoComNomes[] = emprestimos.map(e => {
     const aluno = alunos.find(a => a.id === e.aluno_id);
     const professor = professores.find(p => p.id === e.professor_id);
     const livro = livros.find(l => l.id === e.livro_id);
     return {
       ...e,
-      aluno_nome: (e as unknown as any).aluno_nome || (aluno ? aluno.nome : ""),
-      professor_nome: (e as unknown as any).professor_nome || (professor ? professor.nome : ""),
-      livro_nome: (e as unknown as any).livro_nome || (livro ? livro.titulo : ""),
+      ...(typeof (e as EmprestimoComNomes).aluno_nome === 'undefined' && { aluno_nome: aluno ? aluno.nome : "" }),
+      ...(typeof (e as EmprestimoComNomes).professor_nome === 'undefined' && { professor_nome: professor ? professor.nome : "" }),
+      ...(typeof (e as EmprestimoComNomes).livro_nome === 'undefined' && { livro_nome: livro ? livro.titulo : "" }),
       livro_autor: livro ? livro.autor : "",
     };
   });
