@@ -1,110 +1,93 @@
-# Biblioteca Escolar
+✒️ Descrição do Projeto
+Bibliotecário Escolar é uma plataforma web completa, desenvolvida como Trabalho de Conclusão de Curso em Análise e Desenvolvimento de Sistemas. O projeto foi criado para solucionar a ineficiência e os erros comuns na gestão manual de bibliotecas escolares, oferecendo uma solução digital, moderna e centralizada para o controle de livros, alunos e empréstimos.
 
-Sistema de gerenciamento de biblioteca escolar desenvolvido com Next.js 14, TypeScript, Tailwind CSS e Supabase.
+A aplicação automatiza todo o fluxo de trabalho, desde o cadastro do acervo até a notificação de devoluções, permitindo que os profissionais da educação otimizem seu tempo e tenham acesso a dados estratégicos para a melhoria contínua do ambiente educacional.
 
-## Descrição
+🚀 Funcionalidades Principais
+📊 Dashboard Analítico: Painel com métricas e gráficos em tempo real sobre o acervo, status dos empréstimos e os livros mais populares.
 
-Este sistema foi criado para facilitar o controle de livros, empréstimos, devoluções e organização do acervo escolar. Possui interface moderna, responsiva e diversas automações para o dia a dia do bibliotecário.
+👤 Autenticação de Usuários: Sistema de login seguro para garantir que apenas pessoas autorizadas acessem a plataforma.
 
-## Funcionalidades
-- Autenticação de usuários (Supabase)
-- Cadastro, edição e exclusão de livros
-- Cadastro, edição e exclusão de alunos e professores
-- Controle de empréstimos, devoluções e renovações
-- Notificações automáticas:
-  - Atrasos de devolução
-  - Lembrete de devolução (faltam 3 dias)
-  - Mensagem de bom dia
-  - Parabéns a cada 5 empréstimos
-  - Livro devolvido com atraso
-  - Porcentagem do ano restante (todo dia 1º do mês)
-- Relatórios com gráficos (Recharts)
-- Tema claro/escuro
-- Layout responsivo e moderno
+📚 Gestão de Livros (CRUD): Funcionalidade completa para cadastrar, editar, visualizar e remover livros do acervo.
 
-## Tecnologias
-- [Next.js 14](https://nextjs.org/)
-- [TypeScript](https://www.typescriptlang.org/)
-- [Tailwind CSS](https://tailwindcss.com/)
-- [Supabase](https://supabase.com/)
-- [Recharts](https://recharts.org/)
+🧑‍🎓 Gestão de Alunos e Professores (CRUD): Módulos dedicados para gerenciar os usuários do sistema.
 
-## Como rodar o projeto
+🔄 Controle de Empréstimos: Fluxo de trabalho intuitivo para registrar empréstimos e devoluções, com atualização de status em tempo real.
 
-### 1. Clone o repositório
-```bash
-git clone https://github.com/SEU_USUARIO/NOME_DO_REPOSITORIO.git
-cd NOME_DO_REPOSITORIO
-```
+🔔 Notificações Automáticas: Sistema que alerta os gestores sobre prazos de devolução que estão se aproximando.
 
-### 2. Instale as dependências
-```bash
-npm install
-```
+🔍 Busca e Filtros Avançados: Ferramenta de pesquisa poderosa para localizar livros e empréstimos usando múltiplos critérios.
 
-### 3. Configure as variáveis de ambiente
-Crie um arquivo `.env.local` na raiz do projeto com as seguintes variáveis:
+🎨 Interface Moderna: Design limpo, responsivo para todos os dispositivos e com a opção de Modo Dark.
 
-```env
-NEXT_PUBLIC_SUPABASE_URL=https://xxxx.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=sua_chave_anon
-```
-Pegue esses valores no painel do [Supabase](https://app.supabase.com/).
+🛠️ Tecnologias Utilizadas
+A arquitetura do projeto foi construída com as tecnologias mais modernas do ecossistema JavaScript, visando alta performance, escalabilidade e manutenibilidade.
 
-### 4. Configure o banco de dados
-- Crie as tabelas e funções SQL no Supabase conforme o projeto (livros, alunos, emprestimos, etc).
-- Você pode usar o SQL Editor do Supabase para rodar os scripts.
+Frontend:
 
-### 5. Configure as notificações automáticas (pg_cron)
-O sistema utiliza o [pg_cron](https://supabase.com/docs/guides/database/extensions/pgcron) para agendar notificações automáticas. Exemplo de job SQL:
+Next.js: Framework React para renderização no servidor (SSR) e geração de sites estáticos (SSG).
 
-```sql
-select cron.schedule(
-  'Notificações automáticas da biblioteca',
-  '0 8 * * *',
-$$
--- (Cole aqui o bloco de notificações automáticas do README ou do arquivo /sql/notificacoes_cron.sql)
-$$
-);
-```
+React: Biblioteca para construção de interfaces de usuário reativas e componentizadas.
 
-### 6. Rode o projeto localmente
-```bash
+TypeScript: Superset do JavaScript que adiciona tipagem estática ao código.
+
+Tailwind CSS: Framework CSS utility-first para estilização ágil e customizada.
+
+Shadcn/ui: Coleção de componentes de UI reutilizáveis, acessíveis e construídos sobre Radix UI.
+
+Backend & Infraestrutura:
+
+Supabase: Plataforma Backend-as-a-Service (BaaS) sobre PostgreSQL, utilizada para:
+
+Banco de Dados Relacional Seguro (com RLS).
+
+Autenticação de Usuários.
+
+APIs geradas automaticamente.
+
+Vercel: Plataforma de nuvem para hospedagem e deploy contínuo (CI/CD) da aplicação.
+
+⚙️ Como Rodar o Projeto Localmente
+Siga os passos abaixo para executar a aplicação no seu ambiente de desenvolvimento.
+
+Pré-requisitos:
+
+Node.js (versão 18 ou superior)
+
+Git
+
+Um gerenciador de pacotes (npm, yarn ou pnpm)
+
+Uma conta no Supabase para criar o banco de dados.
+
+Passos:
+
+Clone o repositório;
+
+Instale as dependências;
+
+Crie um arquivo chamado .env.local na raiz do projeto.
+
+Copie o conteúdo do arquivo .env.example (você deve criar este arquivo no seu repo!) para o .env.local.
+
+Preencha o arquivo .env.local com as suas chaves do Supabase:
+
+Snippet de código
+
+NEXT_PUBLIC_SUPABASE_URL="SUA_URL_DO_PROJETO_SUPABASE"
+NEXT_PUBLIC_SUPABASE_ANON_KEY="SUA_CHAVE_ANON_SUPABASE"
+Configure o Banco de Dados no Supabase:
+
+No painel do seu projeto Supabase, vá para o "SQL Editor".
+
+Crie as tabelas necessárias para o projeto.
+
+Execute a aplicação:
+
+Bash
+
 npm run dev
-```
-Acesse [http://localhost:3000](http://localhost:3000) no navegador.
+Acesse http://localhost:3000 no seu navegador para ver a aplicação funcionando.
 
----
-
-## Scripts úteis
-- `npm run dev` — roda o projeto em modo desenvolvimento
-- `npm run build` — build de produção
-- `npm run start` — roda o build de produção
-
----
-
-## Como contribuir
-1. Faça um fork do projeto
-2. Crie uma branch: `git checkout -b minha-feature`
-3. Faça commit das suas alterações: `git commit -m 'feat: minha nova feature'`
-4. Faça push para o seu fork: `git push origin minha-feature`
-5. Abra um Pull Request
-
-## Contato/Suporte
-- Email: seuemail@dominio.com
-- [Abrir issue no GitHub](https://github.com/SEU_USUARIO/NOME_DO_REPOSITORIO/issues)
-
----
-
-## Boas práticas para o GitHub
-- Inclua um `.gitignore` adequado (já incluso).
-- Mantenha o `README.md` atualizado com instruções de uso e deploy.
-- Use branches para novas features/correções.
-- Faça commits claros e frequentes.
-
-## Estrutura recomendada
-- src/app: páginas e rotas
-- src/components: componentes reutilizáveis
-- src/services: integrações externas
-- src/lib: utilidades e configs
-- src/types: tipos TypeScript
+👨‍💻 Autor
+Feito com ❤️ por Paulo Vieira.
